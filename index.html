@@ -4508,8 +4508,8 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       }, 900);
     }, 5200);
   }
-  $("#tender-upi").addEventListener("click", openUpi);
-  $("#btn-upi-refresh").addEventListener("click", openUpi);
+  $("#tender-upi").addEventListener("click", () => openUpi());
+  $("#btn-upi-refresh").addEventListener("click", () => openUpi());
 
   /* ---------- cash flow ---------- */
   $("#tender-cash").addEventListener("click", () => {
