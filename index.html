@@ -918,6 +918,20 @@ button.pick-price:hover{background:var(--field)}
 .switch.is-on{background:var(--green)}
 .switch.is-on span{transform:translateX(18px)}
 
+/* settings — one grouped-list pattern (Apple Settings style): sentence-case headers,
+   descriptions as footers, fixed row height, uniform buttons and segmented controls */
+#screen-settings .set-card-title{font-size:13px;font-weight:600;letter-spacing:0;text-transform:none;color:var(--ink-60);margin:0 2px 10px}
+#screen-settings .set-hint-inline{display:block;margin:3px 0 0;font-size:12px;color:var(--ink-38);line-height:1.4}
+#screen-settings .set-divider{font-size:13px;font-weight:600;letter-spacing:0;text-transform:none;color:var(--ink-60);padding:16px 14px 6px;background:transparent}
+#screen-settings .set-divider .set-hint-inline{margin-left:0}
+#screen-settings .set-row{min-height:44px;align-items:center;padding-top:11px;padding-bottom:11px}
+#screen-settings .set-row-main small{line-height:1.35}
+#screen-settings .ghost-btn.sm{min-width:76px;height:34px;padding:0 14px;display:inline-flex;align-items:center;justify-content:center;border-radius:10px;font-size:13px;font-weight:600}
+#screen-settings .seg-ctrl.sm .seg{min-height:32px;padding:0 12px;display:flex;align-items:center;justify-content:center}
+#screen-settings .dash-link{width:100%;justify-content:space-between;min-height:56px}
+#screen-settings .drawer-foot,#screen-settings .set-hint{text-align:left;margin:8px 4px 0;font-size:12px;color:var(--ink-38);line-height:1.45}
+
+
 /* grow — modern */
 .grow-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
 .grow-stat{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:12px;text-align:left}
@@ -11215,6 +11229,7 @@ function renderSettings() {
     ], z: null };
 
     // team + a believable activity trail
+    state.staff = (state.staff || []).filter((x) => x.id !== "st-seed-ravi");
     state.staff.push({ id: "st-seed-ravi", name: "Ravi", pin: "1234", role: "cashier" });
     state.audit.push(
       { ts: mAgo(120), who: "Owner", cat: "drawer", what: "Day started with float ₹500.00" },
