@@ -1485,6 +1485,14 @@ button.sheet-empty:active{transform:scale(.98)}
 .upi-app-first{background:var(--brand,#0e7c86);border-color:transparent;color:#fff}
 .upi-app-first::before{content:"★ ";font-size:10px}
 
+/* whatsapp business link + fulfilment sheet */
+.wa-link-btns{display:flex;gap:8px;flex-wrap:wrap}
+.fulfil-summary{font-size:13px;font-weight:600;color:var(--ink);background:var(--field);border-radius:10px;padding:10px 12px;text-align:center}
+.order-cust{display:flex;flex-direction:column;gap:2px;font-size:12.5px;color:var(--ink-60);background:var(--field);border-radius:10px;padding:8px 10px;margin-top:8px}
+.order-cust-phone{font-weight:650;color:var(--ink)}
+.order-delivery{display:flex;gap:6px;align-items:baseline;font-size:12.5px;color:var(--ink-60);margin-top:6px}
+.order-delivery strong{color:var(--brand,#0057b8);font-size:12.5px}
+
 </style>
 </head>
 <body>
@@ -2125,6 +2133,7 @@ button.sheet-empty:active{transform:scale(.98)}
             <button class="ghost-btn ghost-sm" id="btn-order-wa">+ WhatsApp order</button>
             <button class="ghost-btn ghost-sm" id="btn-order-catalogue">+ Catalogue pick</button>
             <button class="ghost-btn ghost-sm" id="btn-paylink">Payment link</button>
+            <button class="ghost-btn ghost-sm" id="btn-order-walink">WhatsApp Biz link</button>
           </div>
           <div class="orders-stats" id="orders-stats"></div>
           <div class="tx-list" id="orders-list"></div>
@@ -3023,6 +3032,75 @@ button.sheet-empty:active{transform:scale(.98)}
           <button class="ghost-btn" id="paylink-paid">Customer paid — record it (demo)</button>
           <button class="ghost-btn" id="paylink-close">Close</button>
           <small class="set-hint">Simulation — the link opens UPI on the customer's phone in a real deployment.</small>
+        </div>
+      </div>
+
+      <!-- whatsapp business link sheet -->
+      <div class="sheet" id="walink-sheet" role="dialog" aria-label="WhatsApp Business link" hidden>
+        <div class="sheet-grab" aria-hidden="true"></div>
+        <div class="sheet-head"><span>WhatsApp Business</span></div>
+        <div class="sheet-form">
+          <p class="set-hint" style="margin-top:0">Share your catalogue and order link — customers order from the WhatsApp Business catalogue and orders land here with their name, number and address.</p>
+          <label class="ob-field">
+            <span>Catalogue link</span>
+            <input id="walink-cat" type="text" readonly>
+          </label>
+          <label class="ob-field">
+            <span>Chat link · opens WhatsApp with your message</span>
+            <input id="walink-chat" type="text" readonly>
+          </label>
+          <label class="ob-field">
+            <span>Prefilled customer message</span>
+            <input id="walink-msg" type="text" maxlength="80" autocomplete="off" placeholder="Hi! I want to order from your catalogue…">
+          </label>
+          <div class="form-chips">
+            <button class="chip" id="walink-copy-cat" type="button">Copy catalogue link</button>
+            <button class="chip" id="walink-copy-chat" type="button">Copy chat link</button>
+          </div>
+          <button class="charge-btn" id="walink-share">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm5.3 14.1c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .2-3.4-.7-2.9-1.1-4.7-4-4.9-4.2-.1-.2-1.1-1.5-1.1-2.9s.7-2 1-2.3c.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.9 2.1c.1.2.1.4 0 .6l-.4.6-.4.5c-.1.1-.3.3-.1.6.2.3.8 1.3 1.7 2.1 1.2 1.1 2.2 1.4 2.5 1.5.3.1.5.1.7-.1l1-1.2c.2-.3.4-.2.7-.1l2 1c.3.1.5.2.6.4 0 .1 0 .7-.2 1.1z"/></svg>
+            Share catalogue on WhatsApp (simulated)
+          </button>
+          <button class="ghost-btn" id="walink-close">Close</button>
+          <small class="set-hint">Simulation — the links open WhatsApp on the customer&#39;s phone in a real deployment.</small>
+        </div>
+      </div>
+
+      <!-- order fulfilment: customer details + delivery -->
+      <div class="sheet" id="fulfil-sheet" role="dialog" aria-label="Customer and delivery" hidden>
+        <div class="sheet-grab" aria-hidden="true"></div>
+        <div class="sheet-head"><span>Customer &amp; delivery</span></div>
+        <div class="sheet-form">
+          <label class="ob-field">
+            <span>Customer name</span>
+            <input id="fulfil-name" type="text" maxlength="28" autocomplete="off" placeholder="e.g. Priya Nair">
+          </label>
+          <label class="ob-field">
+            <span>Phone</span>
+            <input id="fulfil-phone" type="tel" maxlength="14" autocomplete="off" placeholder="98XXX XXXXX">
+          </label>
+          <label class="ob-field">
+            <span>Delivery address</span>
+            <input id="fulfil-addr" type="text" maxlength="90" autocomplete="off" placeholder="Flat, street, landmark, city">
+          </label>
+          <span class="set-hint">Delivery by</span>
+          <div class="form-chips" id="fulfil-partner">
+            <button class="chip pick" data-p="Rapido Parcel" type="button">Rapido Parcel</button>
+            <button class="chip" data-p="Porter" type="button">Porter</button>
+            <button class="chip" data-p="Own delivery" type="button">Own delivery</button>
+          </div>
+          <label class="ob-field">
+            <span>Delivery charge (₹) <small style="text-transform:none;letter-spacing:0;font-weight:400">optional</small></span>
+            <input id="fulfil-fee" type="text" inputmode="decimal" autocomplete="off" placeholder="0">
+          </label>
+          <span class="set-hint">Delivery charge paid</span>
+          <div class="form-chips" id="fulfil-fee-when">
+            <button class="chip" data-w="pickup" type="button">At pickup</button>
+            <button class="chip pick" data-w="delivery" type="button">At delivery</button>
+          </div>
+          <div class="fulfil-summary" id="fulfil-summary"></div>
+          <button class="charge-btn" id="fulfil-create">Create order</button>
+          <button class="ghost-btn" id="fulfil-cancel">Cancel</button>
         </div>
       </div>
 
@@ -9298,12 +9376,14 @@ function renderSettings() {
   /* ---------- online orders ---------- */
   const ORDER_FLOW = ["new", "accepted", "ready", "out", "delivered"];
   const ORDER_LABEL = { new: "New", accepted: "Accepted", ready: "Ready", out: "Out for delivery", delivered: "Delivered", cancelled: "Cancelled" };
-  const ORDER_SOURCE = { whatsapp: "WhatsApp", catalogue: "Catalogue", link: "Payment link" };
-  function createOrder({ source, customer, lines, note }) {
+  const ORDER_SOURCE = { whatsapp: "WhatsApp", catalogue: "Catalogue", wabiz: "WhatsApp Business", link: "Payment link" };
+  function createOrder({ source, customer, lines, note, phone, address, delivery }) {
     const t = totals(lines);
     const o = {
       id: "ord-" + Math.random().toString(36).slice(2, 8), source,
       customer: customer || "WhatsApp customer", lines,
+      phone: phone || "", address: address || "",
+      delivery: delivery || null,   /* {partner, feeCents, feeTiming: "pickup"|"delivery"} */
       sub: t.sub, disc: t.disc, tax: t.tax, total: t.total,
       status: "new", pay: "unpaid", note: note || "", date: now(), storeId: curStoreId(),
     };
@@ -9358,7 +9438,22 @@ function renderSettings() {
         pl.addEventListener("click", () => openPayLink(o.total, `Order · ${o.customer}`, o.id));
         actions.appendChild(pl);
       }
-      row.append(head, meta, totalRow, actions);
+      row.append(head, meta, totalRow);
+      if (o.phone || o.address) {
+        const cust = el("div", "order-cust");
+        if (o.phone) cust.append(el("span", "order-cust-phone", "\u260E " + o.phone));
+        if (o.address) cust.append(el("span", null, o.address));
+        row.appendChild(cust);
+      }
+      if (o.delivery && o.delivery.partner) {
+        const d = o.delivery;
+        const dl = el("div", "order-delivery");
+        dl.append(el("strong", null, d.partner),
+          el("span", null, (d.feeCents ? " · charge " + fmt(d.feeCents) : " · no charge") +
+            " · paid at " + (d.feeTiming === "pickup" ? "pickup" : "delivery")));
+        row.appendChild(dl);
+      }
+      row.appendChild(actions);
       list.appendChild(row);
     });
   }
@@ -9484,11 +9579,85 @@ function renderSettings() {
   });
   $("#wa-confirm").addEventListener("click", () => {
     if (!waDraftLines) return;
-    createOrder({ source: "whatsapp", customer: "WhatsApp customer", lines: waDraftLines });
     closeSheetEl();
-    toast("Order created from WhatsApp message");
+    openFulfil({ source: "whatsapp", lines: waDraftLines, presetName: "WhatsApp customer", note: "WhatsApp chat order" });
   });
   $("#waorder-cancel").addEventListener("click", closeSheetEl);
+
+  /* ---------- fulfilment sheet: customer details + delivery (shared by WA & catalogue) ---------- */
+  let fulfilCtx = null, fulfilPartner = "Rapido Parcel", fulfilFeeWhen = "delivery";
+  function renderFulfilSummary() {
+    const box = $("#fulfil-summary");
+    if (!box || !fulfilCtx) return;
+    const t = totals(fulfilCtx.lines);
+    const fee = Math.round((parseFloat($("#fulfil-fee").value) || 0) * 100);
+    box.textContent = `${fulfilCtx.lines.reduce((a, l) => a + l.qty, 0)} items · ${fmt(t.total)}` +
+      (fee ? ` + ${fmt(fee)} delivery` : "");
+  }
+  function openFulfil(ctx) {
+    fulfilCtx = ctx;
+    fulfilPartner = "Rapido Parcel"; fulfilFeeWhen = "delivery";
+    $("#fulfil-partner").querySelectorAll(".chip").forEach((c) => c.classList.toggle("pick", c.dataset.p === fulfilPartner));
+    $("#fulfil-fee-when").querySelectorAll(".chip").forEach((c) => c.classList.toggle("pick", c.dataset.w === fulfilFeeWhen));
+    $("#fulfil-name").value = ctx.presetName && !/customer$/i.test(ctx.presetName) ? ctx.presetName : "";
+    $("#fulfil-phone").value = ""; $("#fulfil-addr").value = ""; $("#fulfil-fee").value = "";
+    renderFulfilSummary();
+    openSheetElFn($("#fulfil-sheet"));
+  }
+  $("#fulfil-partner").addEventListener("click", (e) => {
+    const c = e.target.closest(".chip");
+    if (!c) return;
+    fulfilPartner = c.dataset.p;
+    $("#fulfil-partner").querySelectorAll(".chip").forEach((x) => x.classList.toggle("pick", x === c));
+  });
+  $("#fulfil-fee-when").addEventListener("click", (e) => {
+    const c = e.target.closest(".chip");
+    if (!c) return;
+    fulfilFeeWhen = c.dataset.w;
+    $("#fulfil-fee-when").querySelectorAll(".chip").forEach((x) => x.classList.toggle("pick", x === c));
+  });
+  $("#fulfil-fee").addEventListener("input", renderFulfilSummary);
+  $("#fulfil-create").addEventListener("click", () => {
+    if (!fulfilCtx) return;
+    const name = $("#fulfil-name").value.trim() || fulfilCtx.presetName || "WhatsApp customer";
+    const phone = $("#fulfil-phone").value.trim();
+    const addr = $("#fulfil-addr").value.trim();
+    if (!phone) { toast("Customer phone is needed for delivery"); return; }
+    if (!addr) { toast("Add the delivery address"); return; }
+    const fee = Math.max(0, Math.round((parseFloat($("#fulfil-fee").value) || 0) * 100));
+    createOrder({
+      source: fulfilCtx.source, customer: name, lines: fulfilCtx.lines,
+      phone, address: addr,
+      delivery: { partner: fulfilPartner, feeCents: fee, feeTiming: fulfilFeeWhen },
+      note: fulfilCtx.note || "",
+    });
+    closeSheetEl();
+    toast(`Order created · ${fulfilPartner}${fee ? " · " + fmt(fee) + " at " + fulfilFeeWhen : ""}`);
+  });
+  $("#fulfil-cancel").addEventListener("click", closeSheetEl);
+
+  /* ---------- whatsapp business link ---------- */
+  const waDigits = () => String((state.auth && state.auth.mobile) || "9876543210").replace(/\D/g, "");
+  function renderWaLinks() {
+    const msg = $("#walink-msg").value.trim() || `Hi ${state.bizName}! I want to order from your WhatsApp catalogue.`;
+    $("#walink-cat").value = `https://wa.me/c/91${waDigits()}`;
+    $("#walink-chat").value = `https://wa.me/91${waDigits()}?text=${encodeURIComponent(msg)}`;
+  }
+  $("#btn-order-walink").addEventListener("click", () => {
+    renderWaLinks();
+    openSheetElFn($("#walink-sheet"));
+  });
+  $("#walink-msg").addEventListener("input", renderWaLinks);
+  const copyInput = (sel, label) => {
+    const v = $(sel).value;
+    const done = () => toast(`${label} copied`);
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(v).then(done, () => toast(v));
+    else toast(v);
+  };
+  $("#walink-copy-cat").addEventListener("click", () => copyInput("#walink-cat", "Catalogue link"));
+  $("#walink-copy-chat").addEventListener("click", () => copyInput("#walink-chat", "Chat link"));
+  $("#walink-share").addEventListener("click", () => toast("Catalogue link shared on WhatsApp (simulated)"));
+  $("#walink-close").addEventListener("click", closeSheetEl);
 
   /* ---------- whatsapp catalogue pick -> order ---------- */
   const catPicks = new Map();
@@ -9527,9 +9696,8 @@ function renderSettings() {
   $("#catpick-create").addEventListener("click", () => {
     const lines = catPickLines();
     if (!lines.length) { toast("Pick at least one item"); return; }
-    createOrder({ source: "catalogue", customer: "Catalogue customer", lines });
     closeSheetEl();
-    toast("Order created from catalogue pick");
+    openFulfil({ source: "wabiz", lines, presetName: "WhatsApp Business customer", note: "WhatsApp Business catalogue order" });
   });
   $("#catpick-close").addEventListener("click", closeSheetEl);
 
@@ -9766,6 +9934,21 @@ function renderSettings() {
       { amount: 76800, date: dAgo(2) },
       { amount: 104500, date: dAgo(3) },
     );
+
+    // whatsapp business demo order — full customer + delivery details
+    if (!state.orders.length) {
+      const wl = [it(0, 4), it(2, 2)];
+      const wt = totals(wl);
+      state.orders.unshift({
+        id: "ord-wabizdemo", source: "wabiz",
+        customer: "Priya Nair", phone: "98110 22334",
+        address: "22/B Rose Apartments, MG Road, Pune 411001",
+        delivery: { partner: "Rapido Parcel", feeCents: 4000, feeTiming: "delivery" },
+        lines: wl, sub: wt.sub, disc: wt.disc, tax: wt.tax, total: wt.total,
+        status: "new", pay: "unpaid", note: "WhatsApp Business catalogue order", date: mAgo(12),
+        storeId: "s1",
+      });
+    }
 
     renderAll();
   }
