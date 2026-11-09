@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <title>Square POS — Interactive Demo</title>
-<meta name="description" content="A hands-on interactive simulation of the Square point-of-sale app: ring up sales, take payments, then explore the dashboard, invoices and customer loyalty tools owners use daily." />
+<meta name="description" content="A hands-on interactive simulation of the Square point-of-sale app: ring up sales, take payments, then explore the dashboard, invoices and customer discount tools owners use daily." />
 <style>
 /* ============ Square POS Demo — design tokens ============ */
 :root{
@@ -1447,6 +1447,32 @@ button.pick-price:hover{background:var(--field)}
 .catpick-total{margin-top:12px;font-size:13.5px;font-weight:650;color:var(--ink);text-align:center}
 select.field-input{appearance:auto}
 
+/* ---------- supplier ledger + invoice attachments ---------- */
+.pur-inv{cursor:pointer}
+.pur-inv-thumb{display:block;max-width:120px;max-height:84px;border-radius:8px;border:1px solid var(--line);margin-top:8px;object-fit:cover}
+.inv-preview-img{display:block;width:100%;border-radius:10px;border:1px solid var(--line)}
+.inv-preview-pdf{width:100%;height:380px;border:1px solid var(--line);border-radius:10px;background:var(--field);margin-top:8px}
+#pur-f-invoice{font-size:13px;color:var(--ink-60);padding:8px 0}
+
+/* barcode camera scanner */
+.scan-frame{position:relative;border-radius:14px;overflow:hidden;background:#0b1220;aspect-ratio:4/3;display:flex;align-items:center;justify-content:center}
+.scan-frame video{width:100%;height:100%;object-fit:cover;display:block}
+.scan-laser{position:absolute;left:10%;right:10%;top:50%;height:2px;background:linear-gradient(90deg,transparent,#22d3ee,#22d3ee,transparent);box-shadow:0 0 10px 2px rgba(34,211,238,.55);animation:scan-sweep 1.8s ease-in-out infinite;pointer-events:none}
+.scan-frame::after{content:"";position:absolute;inset:12%;border:2px solid rgba(34,211,238,.55);border-radius:10px;pointer-events:none}
+@keyframes scan-sweep{0%,100%{top:22%}50%{top:78%}}
+.scan-status{margin:2px 0 0;font-size:13px;color:var(--muted,#8a93a6);text-align:center;min-height:18px}
+@media (prefers-reduced-motion: reduce){.scan-laser{animation:none;top:50%}}
+
+/* scan barcode action tile */
+.tile-scan{background:transparent !important;border:1.5px dashed var(--line,rgba(138,147,166,.45));display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;min-height:96px;color:var(--accent,#22d3ee)}
+.tile-scan:active{transform:scale(.97)}
+.tile-scan-ico{display:flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:50%;background:rgba(34,211,238,.12);color:var(--accent,#22d3ee)}
+.tile-scan .tile-name{color:inherit;font-weight:600}
+.tile-scan .tile-price{color:var(--muted,#8a93a6);font-size:11px}
+.tile-scan .lib-dot{display:flex;align-items:center;justify-content:center;background:rgba(34,211,238,.12) !important;color:var(--accent,#22d3ee)}
+.tile-scan .lib-info strong{color:var(--accent,#22d3ee)}
+.grid.as-list .tile-scan{flex-direction:row;justify-content:flex-start;gap:12px;min-height:56px;padding:10px 12px}
+
 </style>
 </head>
 <body>
@@ -1523,8 +1549,7 @@ select.field-input{appearance:auto}
               </div>
             </div>
             <label class="scan-bar">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h2l1.6-2.4A1 1 0 0 1 8.4 5h7.2a1 1 0 0 1 .8.6L18 8h2a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/><circle cx="12" cy="13" r="3.4"/></svg>
-              <input id="lib-scan" type="text" inputmode="numeric" autocomplete="off" placeholder="Scan barcode or type code · Enter adds to sale">
+              <input id="lib-scan" type="text" autocomplete="off" placeholder="Search item or type code · Enter adds">
             </label>
             <div class="grid" id="item-grid"><!-- tiles / rows injected --></div>
           </div>
@@ -1626,7 +1651,7 @@ select.field-input{appearance:auto}
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 6l6 6-6 6"/></svg>
               </button>
               <button class="dash-link" id="dash-link-customers">
-                <span class="dash-link-main"><strong>Customers &amp; loyalty</strong><small id="dash-cust-summary">—</small></span>
+                <span class="dash-link-main"><strong>Customers &amp; discounts</strong><small id="dash-cust-summary">—</small></span>
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 6l6 6-6 6"/></svg>
               </button>
               <button class="dash-link" id="dash-link-stock">
@@ -1782,7 +1807,7 @@ select.field-input{appearance:auto}
           </div>
           <button class="attach-row" id="btn-attach">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="8" r="3.6"/><path d="M5 19.5c1.2-3.4 3.9-5 7-5s5.8 1.6 7 5"/></svg>
-            <span id="attach-label">Add customer — earn loyalty points</span>
+            <span id="attach-label">Add customer — keep visit history</span>
             <span class="attach-clear" id="attach-clear" hidden>Remove</span>
           </button>
           <p class="tender-note">UPI is free to accept — settlement same day. Card fee 1.9% applies.</p>
@@ -1925,6 +1950,17 @@ select.field-input{appearance:auto}
           </div>
           <div class="voice-samples" id="voice-samples"></div>
           <div class="tx-list" id="khata-list"></div>
+        </section>
+
+        <!-- SUPPLIERS · UDHAAR (what we owe) -->
+        <section class="screen" id="screen-suppliers" data-screen="suppliers">
+          <div class="flow-head">
+            <span class="flow-head-title">Suppliers · udhaar</span>
+            <span class="tx-total" id="sledger-total"></span>
+            <button class="ghost-btn ghost-sm" id="btn-sup-pay">Pay</button>
+        <button class="ghost-btn ghost-sm" id="btn-sup-add">+ Supplier</button>
+          </div>
+          <div class="tx-list" id="sledger-list"></div>
         </section>
 
         <!-- STOCK (INVENTORY) + PURCHASES -->
@@ -2159,7 +2195,7 @@ select.field-input{appearance:auto}
                 <button class="switch is-on" id="sw-mod-khata" role="switch" aria-checked="true"><span></span></button>
               </div>
               <div class="set-row">
-                <div class="set-row-main"><strong>Customers &amp; loyalty</strong><small>directory, visits &amp; reward points</small></div>
+                <div class="set-row-main"><strong>Customers &amp; discounts</strong><small>directory, visits &amp; optional discounts</small></div>
                 <button class="switch is-on" id="sw-mod-customers" role="switch" aria-checked="true"><span></span></button>
               </div>
               <div class="set-row">
@@ -2229,14 +2265,18 @@ select.field-input{appearance:auto}
                 <input id="set-note" type="text" maxlength="60" placeholder="e.g. No returns after 7 days" autocomplete="off">
               </label>
             </div>
-            <div class="set-card">
-              <div class="set-card-title">Loyalty</div>
+            <div class="set-card" id="set-disc-card">
+              <div class="set-card-title">Customer discounts</div>
               <div class="set-row">
-                <div class="set-row-main"><strong>Free item at</strong><small>customers earn 1 pt per ₹100 spent</small></div>
+                <div class="set-row-main"><strong>Discount module</strong><small>flat % off for tagged customers — totally optional</small></div>
+                <button class="switch" id="set-disc-toggle" role="switch" aria-checked="false"><span></span></button>
+              </div>
+              <div class="set-row" id="set-disc-pct-row" hidden>
+                <div class="set-row-main"><strong>Discount</strong><small>auto-applied the moment a customer is tagged</small></div>
                 <div class="stock-step">
-                  <button class="step-btn" id="set-pts-minus" aria-label="Lower reward threshold">−</button>
-                  <span class="step-val" id="set-pts-val">100</span>
-                  <button class="step-btn" id="set-pts-plus" aria-label="Raise reward threshold">+</button>
+                  <button class="step-btn" id="set-disc-minus" aria-label="Lower discount">−</button>
+                  <span class="step-val" id="set-disc-val">5%</span>
+                  <button class="step-btn" id="set-disc-plus" aria-label="Raise discount">+</button>
                 </div>
               </div>
             </div>
@@ -2521,11 +2561,103 @@ select.field-input{appearance:auto}
         </div>
       </div>
 
+      <!-- barcode camera scanner sheet -->
+      <div class="sheet" id="scan-sheet" role="dialog" aria-label="Scan barcode" hidden>
+        <div class="sheet-grab" aria-hidden="true"></div>
+        <div class="sheet-head"><span>Scan barcode</span></div>
+        <div class="sheet-form">
+          <div class="scan-frame">
+            <video id="scan-video" playsinline muted></video>
+            <div class="scan-laser" aria-hidden="true"></div>
+          </div>
+          <p class="scan-status" id="scan-status">Starting camera…</p>
+          <label class="ob-field">
+            <span>Type code instead</span>
+            <input id="scan-manual" type="text" inputmode="numeric" autocomplete="off" placeholder="4-digit product code · Enter adds">
+          </label>
+          <button class="ghost-btn" id="scan-cancel">Close scanner</button>
+        </div>
+      </div>
+
+      <!-- supplier quick-pay sheet -->
+      <div class="sheet" id="suppay-sheet" role="dialog" aria-label="Pay supplier" hidden>
+        <div class="sheet-grab" aria-hidden="true"></div>
+        <div class="sheet-head"><span>Pay supplier</span></div>
+        <div class="sheet-form">
+          <label class="ob-field">
+            <span>Supplier</span>
+            <input id="suppay-f-name" type="text" maxlength="28" autocomplete="off" placeholder="Who are you paying?">
+          </label>
+          <div class="form-chips" id="suppay-sup-chips"></div>
+          <label class="ob-field">
+            <span>Amount (₹)</span>
+            <input id="suppay-f-amt" type="text" inputmode="decimal" autocomplete="off" placeholder="0.00">
+          </label>
+          <div class="form-chips" id="suppay-f-chips"></div>
+          <span class="set-hint">Paid via</span>
+          <div class="form-chips" id="suppay-f-method">
+            <button class="chip pick" data-m="Cash" type="button">Cash</button>
+            <button class="chip" data-m="UPI" type="button">UPI</button>
+            <button class="chip" data-m="Bank transfer" type="button">Bank transfer</button>
+          </div>
+          <button class="charge-btn" id="suppay-f-pay">Record payment</button>
+          <button class="ghost-btn" id="suppay-f-cancel">Cancel</button>
+        </div>
+      </div>
+
+      <!-- add supplier sheet -->
+      <div class="sheet" id="supadd-sheet" role="dialog" aria-label="Add supplier" hidden>
+        <div class="sheet-grab" aria-hidden="true"></div>
+        <div class="sheet-head"><span>Add supplier</span></div>
+        <div class="sheet-form">
+          <label class="ob-field">
+            <span>Supplier name</span>
+            <input id="supa-f-name" type="text" maxlength="28" autocomplete="off" placeholder="e.g. Sharma Distributors">
+          </label>
+          <label class="ob-field">
+            <span>Opening udhaar (₹) <small style="text-transform:none;letter-spacing:0;font-weight:400">optional — already owed</small></span>
+            <input id="supa-f-due" type="text" inputmode="decimal" autocomplete="off" placeholder="0">
+          </label>
+          <button class="charge-btn" id="supa-f-save">Save supplier</button>
+          <button class="ghost-btn" id="supa-f-cancel">Cancel</button>
+        </div>
+      </div>
+
+      <!-- supplier detail sheet -->
+      <div class="sheet" id="supdetail-sheet" role="dialog" aria-label="Supplier ledger" hidden>
+        <div class="sheet-grab" aria-hidden="true"></div>
+        <div class="sheet-head"><span id="supd-name">Supplier</span></div>
+        <div class="sheet-form">
+          <div class="tag-vpa">
+            <span class="tag-vpa-label">Lifetime purchases <span id="supd-total"></span></span>
+            <strong id="supd-due"></strong>
+          </div>
+          <div id="supd-entries"></div>
+          <button class="charge-btn" id="supd-pay">Pay supplier</button>
+          <button class="ghost-btn" id="supd-cancel">Close</button>
+        </div>
+      </div>
+
+      <!-- invoice preview sheet -->
+      <div class="sheet" id="invpreview-sheet" role="dialog" aria-label="Invoice preview" hidden>
+        <div class="sheet-grab" aria-hidden="true"></div>
+        <div class="sheet-head"><span id="invp-title">Distributor invoice</span></div>
+        <div class="sheet-form">
+          <div id="invp-body"></div>
+          <button class="ghost-btn" id="invp-close">Close</button>
+        </div>
+      </div>
+
       <!-- purchase add sheet -->
       <div class="sheet" id="purchase-sheet" role="dialog" aria-label="Add purchase" hidden>
         <div class="sheet-grab" aria-hidden="true"></div>
         <div class="sheet-head"><span>Add purchase (stock-in)</span></div>
         <div class="sheet-form">
+          <label class="ob-field">
+            <span>Distributor invoice <small style="text-transform:none;letter-spacing:0;font-weight:400">image or PDF</small></span>
+            <input id="pur-f-invoice" type="file" accept="image/*,.pdf">
+          </label>
+          <div id="pur-f-invoice-prev"></div>
           <span class="ob-field"><span>Item</span></span>
           <div class="voice-samples form-chips" id="pur-f-items"></div>
           <div class="form-2col">
@@ -2543,10 +2675,22 @@ select.field-input{appearance:auto}
             <input id="pur-f-supplier" type="text" maxlength="24" autocomplete="off" placeholder="e.g. Sharma Distributors">
           </label>
           <div class="sup-chips" id="sup-chips"></div>
-          <label class="sup-later">
-            <input type="checkbox" id="pur-f-later">
-            <span>Pay later — add to supplier udhaar</span>
-          </label>
+          <span class="ob-field"><span>Payment</span></span>
+          <div class="voice-samples form-chips" id="pur-f-paymode">
+            <button class="chip pick" data-pay="now">Pay now</button>
+            <button class="chip" data-pay="later">Pay later · udhaar</button>
+            <button class="chip" data-pay="already">Already paid</button>
+          </div>
+          <div id="pur-f-method-wrap">
+            <span class="ob-field"><span>Pay via</span></span>
+            <div class="voice-samples form-chips" id="pur-f-method">
+              <button class="chip pick" data-m="Cash">Cash</button>
+              <button class="chip" data-m="UPI">UPI</button>
+              <button class="chip" data-m="Bank">Bank transfer</button>
+            </div>
+          </div>
+          <p class="set-hint" id="pur-f-later-note" hidden>Added to the supplier's udhaar — settle later from Suppliers.</p>
+          <p class="set-hint" id="pur-f-already-note" hidden>Recorded as already paid — the bill shows settled, no money moves now.</p>
           <button class="charge-btn" id="pur-f-save">Add purchase</button>
         </div>
       </div>
@@ -2911,8 +3055,9 @@ select.field-input{appearance:auto}
         <button class="drawer-item" data-drawer="invoices">Invoices</button>
         <span class="drawer-sec">Manage</span>
         <button class="drawer-item" data-drawer="stock">Stock &amp; purchases</button>
+        <button class="drawer-item" data-drawer="suppliers">Suppliers · udhaar</button>
         <button class="drawer-item" data-drawer="khata">Khata · udhaar book</button>
-        <button class="drawer-item" data-drawer="customers">Customers &amp; loyalty</button>
+        <button class="drawer-item" data-drawer="customers">Customers &amp; discounts</button>
         <span class="drawer-sec">Grow</span>
         <button class="drawer-item" data-drawer="grow">Grow · CRM</button>
         <button class="drawer-item" data-drawer="dashboard">Dashboard</button>
@@ -3037,7 +3182,7 @@ select.field-input{appearance:auto}
                 <button class="switch is-on" data-obmod="khata" role="switch" aria-checked="true"><span></span></button>
               </div>
               <div class="set-row">
-                <div class="set-row-main"><strong>Customers &amp; loyalty</strong><small>directory, visits &amp; reward points</small></div>
+                <div class="set-row-main"><strong>Customers &amp; discounts</strong><small>directory, visits &amp; optional discounts</small></div>
                 <button class="switch is-on" data-obmod="customers" role="switch" aria-checked="true"><span></span></button>
               </div>
               <div class="set-row">
@@ -3963,7 +4108,6 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
   const LOW_STOCK_AT = 5;
   const TAX_RATE = 0.05;                   // GST 5% (food service)
   const YESTERDAY_GROSS = 90000;           // paise, static comparison baseline
-  const POINTS_PER_REWARD = 100;           // 100 pts = free drink
   /* owner-tunable versions of the constants above — set in Settings */
   const taxRate = () => state.settings.taxRate ?? TAX_RATE;
   const gstOn = () => state.settings.gstApplies !== false;
@@ -3973,10 +4117,12 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
   /* headless UI — voice & chat may execute these areas */
   const hlOn = (k) => (state.settings.headless || {})[k] !== false;
   const HL_LABEL = { item: "Item add", stock: "Stock", inventory: "Inventory", invoice: "Invoice" };
-  const MODULE_LABEL = { invoice: "Invoicing", khata: "Khata · udhaar", customers: "Customers & loyalty", stock: "Stock & purchases", social: "Social & campaigns" };
+  const MODULE_LABEL = { invoice: "Invoicing", khata: "Khata · udhaar", customers: "Customers & discounts", stock: "Stock & purchases", social: "Social & campaigns" };
   const MODULE_HOME = { invoices: "invoice", khata: "khata", customers: "customers", stock: "stock", social: "social" };
   const lowAt = () => state.settings.lowStockAt ?? LOW_STOCK_AT;
-  const ptsPerReward = () => state.settings.pointsPerReward ?? POINTS_PER_REWARD;
+  /* customer discount module — simple flat % off, opt-in from Settings */
+  const discOn = () => !!state.settings.discountOn;
+  const discPct = () => state.settings.discountPct ?? 5;
   const shopVpa = () => state.settings.upiVpa || `${vpaSlug(state.bizName)}@okhdfc`;
 
   /* ---------- multi-store: owner sees all, staff see their store only ---------- */
@@ -4027,6 +4173,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
     stock: {},
     purchases: [],
     suppliers: [],
+    supEntries: [],
     supPay: [],
     expenses: [],
     drawer: null,
@@ -4055,7 +4202,8 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       tagline: "", address: "", gstin: "", receiptNote: "",
       taxRate: 0.05,            // GST slab — owner picks 0/5/12/18/28%
       lowStockAt: 5,            // "low" alert threshold
-      pointsPerReward: 100,     // loyalty — pts for a free item
+      discountOn: false,        // customer discount module — merchant opts in
+      discountPct: 5,           // flat % off for tagged customers
       upiVpa: "",               // override for QR / payment links
     },
     auth: { mobile: null, channel: "wa", otp: null },
@@ -4186,6 +4334,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
         transactions: state.transactions, invoices: state.invoices, customers: state.customers,
         khata: state.khata, staticPayments: state.staticPayments, purchases: state.purchases,
         suppliers: state.suppliers, supPay: state.supPay,
+        supEntries: state.supEntries,
         activeStaff: state.activeStaff,
         settlements: state.settlements, campaigns: state.campaigns, stock: state.stock,
         expenses: state.expenses, drawer: state.drawer, staff: state.staff, audit: state.audit,
@@ -4217,6 +4366,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
     state.staticPayments = d.staticPayments || [];
     state.purchases = d.purchases || [];
     state.suppliers = d.suppliers || [];
+    state.supEntries = d.supEntries || [];
     state.supPay = d.supPay || [];
     state.expenses = d.expenses || [];
     state.drawer = d.drawer || null;
@@ -4311,6 +4461,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
     if (name === "transactions") renderTransactions();
     if (name === "customers") { renderCustomers(); renderAnalytics(); }
     if (name === "khata") renderKhata();
+    if (name === "suppliers") renderSupplierLedger();
     if (name === "stock") { renderStock(); renderPurchases(); }
     if (name === "recon") { renderRecon(); startSoundbox(); }
     if (name === "settle") renderSettlement();
@@ -4390,9 +4541,19 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
 
   /* ---------- item grid ---------- */
   const grid = $("#item-grid");
+  grid.addEventListener("click", (e) => {
+    if (e.target.closest(".tile-scan")) { e.stopPropagation(); openScanner(); }
+  });
   function renderGrid() {
     grid.innerHTML = "";
     const listView = state.settings.libraryView === "list";
+    /* scan barcode action tile — always first, separate from search */
+    const scanTile = el("button", listView ? "lib-row tile-scan" : "tile tile-scan");
+    scanTile.setAttribute("aria-label", "Scan barcode with camera");
+    scanTile.innerHTML = listView
+      ? '<span class="lib-dot tile-scan-ico"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h2l1.6-2.4A1 1 0 0 1 8.4 5h7.2a1 1 0 0 1 .8.6L18 8h2a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1-1-1z"/><circle cx="12" cy="13" r="3.4"/></svg></span><span class="lib-info"><strong>Scan barcode</strong><small>Camera scan or type code</small></span><span class="lib-price"></span>'
+      : '<span class="tile-scan-ico"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h2l1.6-2.4A1 1 0 0 1 8.4 5h7.2a1 1 0 0 1 .8.6L18 8h2a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1-1-1z"/><circle cx="12" cy="13" r="3.4"/></svg></span><span class="tile-name">Scan barcode</span><span class="tile-price">camera · type</span>';
+    grid.appendChild(scanTile);
     grid.classList.toggle("as-list", listView);
     const q = (($("#lib-scan") && $("#lib-scan").value) || "").trim().toLowerCase();
     const items = state.catalog.filter((it) =>
@@ -4456,6 +4617,14 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       });
       grid.appendChild(b);
     });
+    /* qty badges must survive grid rebuilds */
+    state.catalog.forEach((item) => {
+      const badge = grid.querySelector(`[data-for="${item.id}"]`);
+      if (!badge) return;
+      const line = state.cart.get(item.id);
+      badge.textContent = line ? line.qty : "";
+      badge.classList.toggle("show", !!line);
+    });
     syncLibView();
     if (!state.settings.seenEditTip) {
       state.settings.seenEditTip = true;
@@ -4471,7 +4640,18 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
     renderCart();
   }
 
+  function syncAutoDisc() {
+    if (discOn() && state.attachedCustomer) {
+      const sub = cartLines().reduce((a, l) => a + l.price * l.qty, 0);
+      state.discountCents = Math.round((sub * discPct()) / 100);
+      state.autoDisc = true;
+    } else if (state.autoDisc) {
+      state.discountCents = 0;
+      state.autoDisc = false;
+    }
+  }
   function renderCart() {
+    syncAutoDisc();
     const n = cartCount(), { total } = cartTotals();
     const grand = total + state.keypadCents;
     $("#peek-count").textContent = n === 0 ? "No items" : `${n} item${n > 1 ? "s" : ""}`;
@@ -4530,27 +4710,109 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
 
   /* scan/search bar: filters the library; Enter adds an exact-code (or single) match */
   const scanEl = $("#lib-scan");
-  const scanBarIcon = document.querySelector(".scan-bar svg");
-  if (scanBarIcon) scanBarIcon.addEventListener("click", () => {
-    scanEl && scanEl.focus();
-    toast("Camera scan is ready on your phone — point it at a barcode");
+
+  /* shared scan-code matcher: exact 4-digit code, or last-4 digits of a full barcode */
+  function matchScanCode(digits) {
+    if (!digits) return null;
+    const exact = state.catalog.find((it) => String(it.code || "") === digits);
+    if (exact) return exact;
+    const tail = digits.slice(-4);
+    return state.catalog.find((it) => String(it.code || "") === tail) || null;
+  }
+  function onScanMatch(pick, viaCamera) {
+    if (!pick) {
+      if (viaCamera) setScanStatus("Barcode not in your catalog — check the code");
+      return;
+    }
+    if (state.stock[pick.id] === 0) { toast(`${pick.name} is out of stock`); if (viaCamera) setScanStatus("That item is out of stock — scan another"); return; }
+    stopScanner();
+    closeSheetEl();
+    addToCart({ key: pick.id, name: pick.name, price: pick.price });
+    toast(`Scanned ${pick.name} · ${fmt(pick.price)}`);
+    if (scanEl) { scanEl.value = ""; renderGrid(); }
+    renderKeypadQuick();
+  }
+
+  /* ---------- camera barcode scanner (getUserMedia + native BarcodeDetector) ---------- */
+  let scanStream = null, scanTimer = null, scanDetector = null, scanCooling = false;
+  const scanVideo = $("#scan-video"), scanStatusEl = $("#scan-status"), scanManual = $("#scan-manual");
+  function setScanStatus(msg) { if (scanStatusEl) scanStatusEl.textContent = msg; }
+  function stopScanner() {
+    if (scanTimer) { clearInterval(scanTimer); scanTimer = null; }
+    if (scanStream) { scanStream.getTracks().forEach((t) => t.stop()); scanStream = null; }
+    if (scanVideo) scanVideo.srcObject = null;
+    scanDetector = null; scanCooling = false;
+  }
+  async function openScanner() {
+    openSheetElFn($("#scan-sheet"));
+    if (scanManual) scanManual.value = "";
+    setScanStatus("Starting camera…");
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      setScanStatus("Camera not available in this browser — type the code below.");
+      scanManual && scanManual.focus();
+      return;
+    }
+    if (!("BarcodeDetector" in window)) {
+      setScanStatus("Live scanning needs Chrome or Edge on Android — type the code below.");
+      scanManual && scanManual.focus();
+      return;
+    }
+    try {
+      scanStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" }, audio: false });
+    } catch (err) {
+      const name = err && err.name;
+      setScanStatus(name === "NotAllowedError" || name === "SecurityError"
+        ? "Camera permission blocked — allow it in browser settings, or type the code below."
+        : "No camera found on this device — type the code below.");
+      scanStream = null;
+      scanManual && scanManual.focus();
+      return;
+    }
+    if (!$("#scan-sheet") || $("#scan-sheet").hidden) { stopScanner(); return; } /* closed while waiting */
+    try {
+      scanDetector = new BarcodeDetector({ formats: ["ean_13", "ean_8", "upc_a", "upc_e", "code_128", "code_39", "qr_code"] });
+    } catch (_) {
+      try { scanDetector = new BarcodeDetector(); } catch (_) { scanDetector = null; }
+    }
+    scanVideo.srcObject = scanStream;
+    scanVideo.play().catch(() => {});
+    setScanStatus("Point the camera at a product barcode…");
+    clearInterval(scanTimer);
+    scanTimer = setInterval(async () => {
+      if (scanCooling || !scanDetector || !scanVideo || !scanVideo.videoWidth) return;
+      try {
+        const codes = await scanDetector.detect(scanVideo);
+        if (codes && codes.length) {
+          const raw = String(codes[0].rawValue || "").replace(/\D/g, "");
+          if (!raw) return;
+          scanCooling = true;
+          setTimeout(() => { scanCooling = false; }, 1500);
+          onScanMatch(matchScanCode(raw), true);
+        }
+      } catch (_) { /* frame not ready yet — keep trying */ }
+    }, 400);
+  }
+  if (scanManual) scanManual.addEventListener("keydown", (e) => {
+    if (e.key !== "Enter") return;
+    const q = scanManual.value.trim().replace(/\D/g, "");
+    if (!q) return;
+    onScanMatch(matchScanCode(q), false);
+    if (!$("#scan-sheet").hidden) scanManual.value = "";
   });
+  const scanCancel = $("#scan-cancel");
+  if (scanCancel) scanCancel.addEventListener("click", closeSheetEl);
+
   if (scanEl) {
     scanEl.addEventListener("input", renderGrid);
     scanEl.addEventListener("keydown", (e) => {
       if (e.key !== "Enter") return;
       const q = scanEl.value.trim().toLowerCase();
       if (!q) return;
-      const byCode = state.catalog.find((it) => (it.code || "") === q);
+      const byCode = matchScanCode(q.replace(/\D/g, ""));
       const hits = state.catalog.filter((it) => it.name.toLowerCase().includes(q) || (it.hi || "").includes(q) || (it.code || "").includes(q));
       const pick = byCode || (hits.length === 1 ? hits[0] : null);
       if (!pick) { toast(hits.length ? "Type more to narrow to one item" : "No item matches this code"); return; }
-      if (state.stock[pick.id] === 0) { toast(`${pick.name} is out of stock`); return; }
-      addToCart({ key: pick.id, name: pick.name, price: pick.price });
-      toast(`Scanned ${pick.name} · ${fmt(pick.price)}`);
-      scanEl.value = "";
-      renderGrid();
-      renderKeypadQuick();
+      onScanMatch(pick, false);
     });
   }
 
@@ -4565,6 +4827,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
   function closeSheetEl() {
     if (!openSheetEl) return;
     const s = openSheetEl;
+    if (s && s.id === "scan-sheet") stopScanner();
     openSheetEl = null;
     s.classList.remove("show"); sheetBackdrop.classList.remove("show");
     setTimeout(() => { s.hidden = true; sheetBackdrop.hidden = true; }, 300);
@@ -4682,27 +4945,31 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
   $("#btn-charge").addEventListener("click", startCheckout);
   $("#btn-sheet-charge").addEventListener("click", startCheckout);
 
-  /* ---------- attach customer (loyalty) ---------- */
+  /* ---------- attach customer (tag for visits & discounts) ---------- */
   const attachSheet = $("#attach-sheet");
   function renderAttachRow() {
     const row = $("#btn-attach");
     const label = $("#attach-label");
     const clear = $("#attach-clear");
     if (state.attachedCustomer) {
-      const pts = Math.floor(cartTotals().total / 100);
       row.classList.add("attached");
-      label.textContent = `${state.attachedCustomer.name} · will earn ${pts} pts`;
+      label.textContent = discOn()
+        ? `${state.attachedCustomer.name} · ${discPct()}% off applied`
+        : `${state.attachedCustomer.name} attached`;
       clear.hidden = false;
     } else {
       row.classList.remove("attached");
-      label.textContent = "Add customer — earn loyalty points";
+      label.textContent = discOn()
+        ? `Add customer — they get ${discPct()}% off`
+        : "Add customer — keep visit history";
       clear.hidden = true;
     }
   }
   $("#btn-attach").addEventListener("click", (e) => {
     if (state.attachedCustomer && e.target.id === "attach-clear") {
       state.attachedCustomer = null;
-      renderAttachRow();
+      renderAttachRow(); renderCart();
+      $("#tender-total").textContent = fmt(cartTotals().total);
       return;
     }
     const list = $("#attach-list");
@@ -4712,13 +4979,14 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       const av = el("span", "cust-avatar", c.initials);
       av.style.background = c.color;
       const main = el("div", "tx-main");
-      main.append(el("strong", null, c.name), el("small", null, `${c.points} pts · ${c.visits} visits`));
+      main.append(el("strong", null, c.name), el("small", null, `${c.visits} visits · ${fmt(c.spent)} spent`));
       row.append(av, main);
       row.addEventListener("click", () => {
         state.attachedCustomer = c;
-        renderAttachRow();
+        renderAttachRow(); renderCart();
+        $("#tender-total").textContent = fmt(cartTotals().total);
         closeSheetEl();
-        toast(`${c.name} added to sale`);
+        toast(`${c.name} added to sale${discOn() ? ` · ${discPct()}% off applied` : ""}`);
       });
       list.appendChild(row);
     });
@@ -4931,7 +5199,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       id, name: titleCase(name), hi: "",
       initials: name.split(/\s+/).map((w) => w[0]).join("").slice(0, 2).toUpperCase(),
       color: TILE_COLORS[state.customers.length % TILE_COLORS.length],
-      points: 0, visits: 0, spent: 0, lastSeenDays: 0, lastVisit: "Today",
+      visits: 0, spent: 0, lastSeenDays: 0, lastVisit: "Today",
       since: dateStr(now()).replace(/,/g, ""), email: "", vpa: vpa || d.vpa || null, recent: [],
       mobile: d.mobile || null, bday: d.bday || null, area: d.area || null, note: d.note || null,
       creditLimit: d.creditLimit || null,
@@ -4961,9 +5229,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
     const local = vpa.split("@")[0].replace(/[0-9]+/g, " ");
     return titleCase(local.replace(/[._-]+/g, " ").replace(/\s+/g, " ").trim());
   }
-  function creditVisit(c, total, firstLineName) {
-    const pts = Math.floor(total / 100);
-    c.points += pts;
+  function recordVisit(c, total, firstLineName) {
     c.visits += 1;
     c.spent += total;
     c.lastVisit = "Today";
@@ -4972,7 +5238,6 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       c.recent.unshift(firstLineName);
       c.recent = c.recent.slice(0, 4);
     }
-    return pts;
   }
 
   /* tag sheet */
@@ -5152,13 +5417,13 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       const av = el("span", "cust-avatar", c.initials);
       av.style.background = c.color;
       const main = el("div", "cust-pick-main");
-      main.append(el("strong", null, c.name), el("small", null, `${c.visits} visits \u00b7 ${c.points} pts`));
+      main.append(el("strong", null, c.name), el("small", null, `${c.visits} visits \u00b7 ${fmt(c.spent)} spent`));
       row.append(av, main);
       row.addEventListener("click", () => {
         if (khataCtx) { khataCtx = false; closeSheetEl(); completeKhataSale(c); return; }
         custCtxTx.customerId = c.id;
         custCtxTx.customerName = c.name;
-        custCtxTx.pointsEarned = creditVisit(c, custCtxTx.total, custCtxTx.lines[0] && custCtxTx.lines[0].name);
+        recordVisit(c, custCtxTx.total, custCtxTx.lines[0] && custCtxTx.lines[0].name);
         persistState();
         closeSheetEl();
         if (state.viewReceiptTx === custCtxTx) { renderReceipt(custCtxTx); renderReceiptActions(custCtxTx, false); }
@@ -5193,14 +5458,13 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       storeId: curStoreId(),
       date: now(), refunded: false,
     };
-    // loyalty — attached customer, or auto-tagged via their UPI handle
+    // tag customer — attached at counter, or auto-tagged via their UPI handle
     let cust = state.attachedCustomer;
     if (!cust && payment.method === "upi" && payment.payerVpa) cust = customerByVpa(payment.payerVpa);
     if (cust) {
-      const pts = creditVisit(cust, t.total, lines[0] && lines[0].name);
+      recordVisit(cust, t.total, lines[0] && lines[0].name);
       tx.customerName = cust.name;
       tx.customerId = cust.id;
-      tx.pointsEarned = pts;
       tx.autoTagged = !state.attachedCustomer;
     }
     state.transactions.unshift(tx);
@@ -5240,7 +5504,9 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
     const loy = $("#success-loyalty");
     if (cust) {
       loy.hidden = false;
-      loy.textContent = `+${tx.pointsEarned} loyalty pts for ${cust.name} (${cust.points} total)`;
+      loy.textContent = t.disc
+        ? `${cust.name} tagged · you saved ${fmt(t.disc)}${discOn() ? ` · ${discPct()}% customer discount` : ""}`
+        : `${cust.name} tagged · visit recorded`;
     } else loy.hidden = true;
 
     // UPI payer card — auto-tagged, or one-tap tagging for a new handle
@@ -5454,9 +5720,9 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       row.append(el("span", null, "Invoice payment"), el("span", "r", fmt(tx.total)));
       r.appendChild(row);
     }
-    if (tx.pointsEarned) {
+    if (tx.disc) {
       const pr = el("div", "rc-line rc-mut");
-      pr.append(el("span", null, "Loyalty earned"), el("span", "r", `+${tx.pointsEarned} pts`));
+      pr.append(el("span", null, "Discount given"), el("span", "r", "\u2212" + fmt(tx.disc)));
       r.appendChild(pr);
     }
     if (tx.refunded) {
@@ -5828,7 +6094,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
     if (gross > 0 && uniqCust.size >= 3) {
       insights.push({ tone: repeatCount >= Math.ceil(uniqCust.size / 2) ? "good" : "info",
         title: `${repeatCount} of ${uniqCust.size} buyers are regulars`,
-        note: repeatCount >= Math.ceil(uniqCust.size / 2) ? "Loyalty is working \u2014 push a reward campaign" : "New faces today \u2014 capture their numbers",
+        note: repeatCount >= Math.ceil(uniqCust.size / 2) ? "Regulars keep returning \u2014 push a discount campaign" : "New faces today \u2014 capture their numbers",
         go: "customers" });
     }
     // at-risk regulars
@@ -5859,9 +6125,9 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
     $("#dash-inv-summary").textContent = open.length
       ? `${open.length} open · ${fmt(openSum)} outstanding`
       : "All invoices paid";
-    const ptsToday = active.reduce((a, t) => a + (t.pointsEarned || 0), 0);
+    const discToday = active.reduce((a, t) => a + (t.disc || 0), 0);
     $("#dash-cust-summary").textContent =
-      `${state.customers.length} members · ${ptsToday} pts earned today`;
+      `${state.customers.length} members · ${discToday ? fmt(discToday) + " discounts given today" : "no discounts today"}`;
   }
   $("#dash-link-invoices").addEventListener("click", () => goRoot("invoices"));
   $("#dash-link-stock").addEventListener("click", () => goRoot("stock"));
@@ -6057,7 +6323,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       const av = el("span", "cust-avatar", c.initials);
       av.style.background = c.color;
       const main = el("div", "tx-main");
-      main.append(el("strong", null, c.name), el("small", null, `${c.visits} visits · ${c.points} pts`));
+      main.append(el("strong", null, c.name), el("small", null, `${c.visits} visits · ${fmt(c.spent)} spent`));
       const right = el("span", "tx-amt");
       right.style.cssText = "font-size:12.5px;color:var(--ink-60)";
       right.textContent = c.lastVisit;
@@ -6097,20 +6363,16 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
     }
 
     const card = el("div", "loyalty-card");
-    const PPR = ptsPerReward();
     const top = el("div", "loyalty-top");
-    top.append(el("strong", null, `${c.points} pts`), el("span", null, `${PPR} pts = free item`));
-    const track = el("div", "loyalty-track");
-    const fill = el("div", "loyalty-fill");
-    const progress = (c.points % PPR) / PPR;
-    fill.style.width = Math.max(3, progress * 100) + "%";
-    track.appendChild(fill);
-    const toGo = PPR - (c.points % PPR);
-    const note = el("div", "loyalty-note",
-      c.points >= PPR
-        ? `${Math.floor(c.points / PPR)} reward(s) available · ${toGo === PPR ? PPR : toGo} pts to the next`
-        : `${toGo} pts to a free item`);
-    card.append(top, track, note);
+    const note = el("div", "loyalty-note");
+    if (discOn()) {
+      top.append(el("strong", null, `${discPct()}% off every bill`), el("span", null, "customer discount"));
+      note.textContent = "Applies automatically when you tag this customer at checkout";
+    } else {
+      top.append(el("strong", null, "No discount"), el("span", null, "discount module off"));
+      note.textContent = "Turn on customer discounts from Settings if you want to offer one";
+    }
+    card.append(top, note);
 
     const stats = el("div", "dash-stats");
     [["Visits", String(c.visits)], ["Total spent", fmt(c.spent)], ["Last visit", c.lastVisit]].forEach(([label, val]) => {
@@ -6684,7 +6946,7 @@ function renderSettings() {
     document.querySelectorAll("#set-tax .seg").forEach((s) =>
       s.classList.toggle("is-on", Math.abs(parseFloat(s.dataset.tax) - taxRate()) < 0.001));
     $("#set-low-val").textContent = String(lowAt());
-    $("#set-pts-val").textContent = String(ptsPerReward());
+    renderDiscSettings();
     // GST applicability + library view (GST depends on the Invoicing module)
     const invOn = modOn("invoice");
     const swG = $("#sw-gst");
@@ -6787,9 +7049,26 @@ function renderSettings() {
   };
   $("#set-low-minus").addEventListener("click", () => { bump("lowStockAt", "#set-low-val", -1, 1, 50); renderStock(); renderGrid(); });
   $("#set-low-plus").addEventListener("click", () => { bump("lowStockAt", "#set-low-val", 1, 1, 50); renderStock(); renderGrid(); });
-  /* loyalty threshold stepper */
-  $("#set-pts-minus").addEventListener("click", () => bump("pointsPerReward", "#set-pts-val", -50, 50, 1000));
-  $("#set-pts-plus").addEventListener("click", () => bump("pointsPerReward", "#set-pts-val", 50, 50, 1000));
+  /* customer discount module toggle + % stepper */
+  $("#set-disc-toggle").addEventListener("click", () => {
+    state.settings.discountOn = !discOn();
+    persistState(); renderDiscSettings(); renderAttachRow(); renderCart();
+    toast(discOn() ? `Customer discounts on · ${discPct()}% off` : "Customer discounts off");
+  });
+  $("#set-disc-minus").addEventListener("click", () => bumpDisc(-1));
+  $("#set-disc-plus").addEventListener("click", () => bumpDisc(1));
+  function bumpDisc(d) {
+    state.settings.discountPct = Math.min(20, Math.max(1, discPct() + d));
+    persistState(); renderDiscSettings(); renderAttachRow(); renderCart();
+  }
+  function renderDiscSettings() {
+    const on = discOn();
+    const tgl = $("#set-disc-toggle");
+    tgl.classList.toggle("is-on", on);
+    tgl.setAttribute("aria-checked", on ? "true" : "false");
+    $("#set-disc-pct-row").hidden = !on;
+    $("#set-disc-val").textContent = discPct() + "%";
+  }
   document.querySelectorAll("#set-voice-lang .seg").forEach((s) =>
     s.addEventListener("click", () => {
       state.settings.voiceLang = s.dataset.lang;
@@ -7217,22 +7496,40 @@ function renderSettings() {
   }
   function addPurchase(rec) {
     state.stock[rec.item.id] = (state.stock[rec.item.id] ?? 0) + rec.qty;
+    // payment: "now" (pay supplier on the spot) | "later" (supplier udhaar) | "already" (settled earlier)
+    const payMode = rec.payMode || (rec.payLater ? "later" : "already");
+    const method = rec.method || (payMode === "now" ? "Cash" : null);
+    const amt = rec.qty * rec.rate;
     const sup = rec.supplier ? ensureSupplier(rec.supplier) : null;
     if (sup) {
-      sup.total += rec.qty * rec.rate;
-      if (rec.payLater) sup.due += rec.qty * rec.rate;
+      sup.total += amt;
+      if (payMode === "later") sup.due += amt;
+      state.supEntries.unshift({
+        id: "se-" + Date.now().toString(36) + Math.random().toString(36).slice(2, 4),
+        supplierId: sup.id, type: "credit", amount: amt,
+        desc: `${rec.qty}× ${rec.item.name} @ ${fmt(rec.rate)}${payMode === "later" ? " (udhaar)" : ""}`,
+        date: now(), invoice: rec.invoice || null,
+      });
+      if (payMode === "now") {
+        state.supEntries.unshift({ id: "se-p" + Date.now().toString(36), supplierId: sup.id, type: "paid", amount: amt, desc: `Paid via ${method}`, date: now() });
+        if (method === "Cash" && typeof drawerCashOut === "function") drawerCashOut(amt, "Supplier payment — " + sup.name);
+      }
+      if (payMode === "already")
+        state.supEntries.unshift({ id: "se-a" + Date.now().toString(36), supplierId: sup.id, type: "paid", amount: amt, desc: "Settled earlier — bill paid in advance", date: now() });
     }
     state.purchases.unshift({
       id: "po-" + Date.now() + Math.random().toString(36).slice(2, 4),
       itemId: rec.item.id, name: rec.item.name, qty: rec.qty, rate: rec.rate,
-      total: rec.qty * rec.rate, date: now(), source: rec.source || "voice",
-      supplier: sup ? sup.name : null, payLater: !!rec.payLater,
+      total: amt, date: now(), source: rec.source || "voice",
+      supplier: sup ? sup.name : null, payMode, method: payMode === "now" ? method : null,
+      invoice: rec.invoice || null,
     });
     if (typeof auditLog === "function")
-      auditLog("purchase", `Stock-in ${rec.qty}× ${rec.item.name} @ ${fmt(rec.rate)}${sup ? " from " + sup.name : ""}${rec.payLater ? " (udhaar)" : ""}`);
+      auditLog("purchase", `Stock-in ${rec.qty}× ${rec.item.name} @ ${fmt(rec.rate)}${sup ? " from " + sup.name : ""}${payMode === "later" ? " (udhaar)" : payMode === "now" ? " (paid " + method + ")" : " (already paid)"}`);
     persistState();
     refreshStockUI();
     renderPurchases();
+    renderSupplierLedger();
   }
   function addPurchaseFromPhrase(text) {
     $("#pur-transcript").textContent = `“${text}”`;
@@ -7272,9 +7569,14 @@ function renderSettings() {
       const sw = el("span", "stock-swatch");
       sw.style.background = it ? it.color : "var(--t-slate)";
       const main = el("div", "pur-main");
+      const payLabel = p.payMode === "later" ? " · udhaar" : p.payMode === "now" ? ` · paid ${p.method || ""}` : p.payMode === "already" ? " · already paid" : "";
       main.append(el("strong", null, p.name),
-        el("small", null, `${p.qty} × ${fmt(p.rate)} · ${relTime(p.date)} · ${p.source}${p.supplier ? " · " + p.supplier : ""}${p.payLater ? " · udhaar" : ""}`));
+        el("small", null, `${p.qty} × ${fmt(p.rate)} · ${relTime(p.date)} · ${p.source}${p.supplier ? " · " + p.supplier : ""}${payLabel}${p.invoice ? " · invoice attached" : ""}`));
       row.append(sw, main, el("span", "pur-amt", fmt(p.total)));
+      if (p.invoice) {
+        row.classList.add("pur-inv");
+        row.addEventListener("click", () => openInvoicePreview(p));
+      }
       list.appendChild(row);
     });
     renderReorder();
@@ -7361,24 +7663,192 @@ function renderSettings() {
       box.appendChild(c);
     });
   }
+  /* shared: record a supplier payment (reduces due, logs entry, cash-out if Cash) */
+  function recordSupplierPayment(sup, cents, method) {
+    sup.due = Math.max(0, (sup.due || 0) - cents);
+    state.supPay.unshift({
+      id: "sp-" + Date.now(), supplierId: sup.id, name: sup.name,
+      amt: cents, date: now(), method: method || "Cash",
+    });
+    state.supEntries.unshift({ id: "se-s" + Date.now().toString(36), supplierId: sup.id, type: "paid", amount: cents, desc: "Payment · " + (method || "Cash"), date: now() });
+    if ((method || "Cash") === "Cash" && typeof drawerCashOut === "function") drawerCashOut(cents, "Supplier payment — " + sup.name);
+    if (typeof auditLog === "function") auditLog("supplier", `Paid ${fmt(cents)} to ${sup.name} · ${method || "Cash"}`);
+    persistState();
+    renderSuppliers();
+    if (typeof renderSupplierLedger === "function") renderSupplierLedger();
+  }
   $("#supp-pay").addEventListener("click", () => {
     if (!suppEditing) return;
     const payIn = parseFloat($("#supp-amt").value);
     const pay = Math.min(suppEditing.due, Math.max(0, Math.round((payIn || 0) * 100)));
     if (!pay) { toast("Enter an amount"); return; }
-    suppEditing.due -= pay;
-    state.supPay.unshift({
-      id: "sp-" + Date.now(), supplierId: suppEditing.id, name: suppEditing.name,
-      amt: pay, date: now(),
-    });
-    if (typeof drawerCashOut === "function") drawerCashOut(pay, "Supplier payment — " + suppEditing.name);
-    if (typeof auditLog === "function") auditLog("supplier", `Paid ${fmt(pay)} to ${suppEditing.name}`);
-    persistState();
+    recordSupplierPayment(suppEditing, pay, "Cash");
     closeSheetEl();
     toast(`Paid ${fmt(pay)} to ${suppEditing.name}`);
-    renderSuppliers();
+    renderSupplierLedger();
+    if (supDetailFor && supDetailFor.id === suppEditing.id) openSupDetail(suppEditing);
   });
   $("#supp-cancel").addEventListener("click", closeSheetEl);
+
+  /* ---------- supplier quick-pay (header "Pay" on the Suppliers screen) ---------- */
+  let supPayTarget = null, supPayMethod = "Cash";
+  function renderSupPayChips() {
+    const box = $("#suppay-sup-chips");
+    box.innerHTML = "";
+    const withDue = state.suppliers.filter((s) => (s.due || 0) > 0);
+    const list = withDue.length ? withDue : state.suppliers;
+    if (!list.length) {
+      box.appendChild(el("p", "set-hint", "No suppliers yet — add one first."));
+      return;
+    }
+    list.slice(0, 6).forEach((s) => {
+      const c = el("button", "chip" + (supPayTarget && supPayTarget.id === s.id ? " pick" : ""), `${s.name}${(s.due || 0) > 0 ? " · " + fmt(s.due) : ""}`);
+      c.addEventListener("click", () => {
+        supPayTarget = s;
+        $("#suppay-f-name").value = s.name;
+        $("#suppay-f-amt").value = (s.due / 100).toFixed(2);
+        renderSupPayChips();
+        renderSupPayAmtChips();
+      });
+      box.appendChild(c);
+    });
+  }
+  function renderSupPayAmtChips() {
+    const box = $("#suppay-f-chips");
+    box.innerHTML = "";
+    const due = supPayTarget ? supPayTarget.due || 0 : 0;
+    if (!due) return;
+    [["Full", due], ["Half", Math.round(due / 2)]].forEach(([label, cents]) => {
+      const c = el("button", "chip", `${label} · ${fmt(cents)}`);
+      c.addEventListener("click", () => { $("#suppay-f-amt").value = (cents / 100).toFixed(2); });
+      box.appendChild(c);
+    });
+  }
+  $("#btn-sup-pay").addEventListener("click", () => {
+    supPayMethod = "Cash";
+    $("#suppay-f-method").querySelectorAll(".chip").forEach((x) => x.classList.toggle("pick", x.dataset.m === "Cash"));
+    supPayTarget = state.suppliers.find((s) => (s.due || 0) > 0) || state.suppliers[0] || null;
+    $("#suppay-f-name").value = supPayTarget ? supPayTarget.name : "";
+    $("#suppay-f-amt").value = supPayTarget ? (supPayTarget.due / 100).toFixed(2) : "";
+    renderSupPayChips();
+    renderSupPayAmtChips();
+    openSheetElFn($("#suppay-sheet"));
+  });
+  $("#suppay-f-name").addEventListener("input", () => {
+    const q = $("#suppay-f-name").value.trim().toLowerCase();
+    supPayTarget = state.suppliers.find((s) => s.name.toLowerCase() === q) || supPayTarget;
+    renderSupPayChips();
+    renderSupPayAmtChips();
+  });
+  $("#suppay-f-method").addEventListener("click", (e) => {
+    const c = e.target.closest(".chip");
+    if (!c) return;
+    supPayMethod = c.dataset.m;
+    $("#suppay-f-method").querySelectorAll(".chip").forEach((x) => x.classList.toggle("pick", x === c));
+  });
+  $("#suppay-f-pay").addEventListener("click", () => {
+    const name = $("#suppay-f-name").value.trim();
+    const sup = state.suppliers.find((s) => s.name.toLowerCase() === name.toLowerCase());
+    if (!sup) { toast("Pick a supplier from your list"); return; }
+    if (!(sup.due > 0)) { toast(`${sup.name} has no due — nothing to pay`); return; }
+    const payIn = parseFloat($("#suppay-f-amt").value);
+    const pay = Math.min(sup.due, Math.max(0, Math.round((payIn || 0) * 100)));
+    if (!pay) { toast("Enter an amount"); return; }
+    recordSupplierPayment(sup, pay, supPayMethod);
+    closeSheetEl();
+    toast(`Paid ${fmt(pay)} to ${sup.name} · ${supPayMethod}${sup.due > 0 ? " · " + fmt(sup.due) + " still due" : " · settled"}`);
+  });
+  $("#suppay-f-cancel").addEventListener("click", closeSheetEl);
+
+  /* ---------- suppliers · udhaar ledger (drawer section) ---------- */
+  let supDetailFor = null;
+  function renderSupplierLedger() {
+    const list = $("#sledger-list");
+    if (!list) return;
+    const dueTotal = state.suppliers.reduce((a, x) => a + (x.due || 0), 0);
+    $("#sledger-total").textContent = dueTotal ? fmt(dueTotal) + " due" : "All settled";
+    list.innerHTML = "";
+    if (!state.suppliers.length) {
+      list.appendChild(el("p", "tx-empty", "No suppliers yet.\nAdd one here, or type a name on a stock-in."));
+      return;
+    }
+    state.suppliers.forEach((sup) => {
+      const row = el("button", "tx-row");
+      const av = el("span", "cust-avatar", sup.name.split(/\s+/).map((w) => w[0]).join("").slice(0, 2).toUpperCase());
+      av.style.background = "var(--brand-soft)";
+      av.style.color = "var(--brand-deep)";
+      const entries = state.supEntries.filter((e) => e.supplierId === sup.id);
+      const last = entries[0];
+      const main = el("div", "tx-main");
+      main.append(el("strong", null, sup.name),
+        el("small", null, (sup.due || 0) > 0
+          ? `${fmt(sup.due)} due${last ? " · " + (last.type === "credit" ? "Bill" : "Paid") + " · " + last.desc + " · " + relTime(last.date) : ""}`
+          : last ? `Settled · ${last.type === "credit" ? "Bill" : "Paid"} · ${last.desc} · ${relTime(last.date)}` : `${fmt(sup.total || 0)} lifetime`));
+      const amt = el("span", "khata-bal" + (sup.due > 0 ? " due" : ""), sup.due > 0 ? fmt(sup.due) : "Settled");
+      row.append(av, main, amt);
+      row.addEventListener("click", () => openSupDetail(sup));
+      list.appendChild(row);
+    });
+  }
+  function openSupDetail(sup) {
+    supDetailFor = sup;
+    $("#supd-name").textContent = sup.name;
+    $("#supd-total").textContent = fmt(sup.total || 0);
+    $("#supd-due").textContent = sup.due > 0 ? fmt(sup.due) + " due" : "Settled";
+    const box = $("#supd-entries");
+    box.innerHTML = "";
+    const entries = state.supEntries.filter((e) => e.supplierId === sup.id).slice(0, 12);
+    if (!entries.length) box.appendChild(el("p", "sheet-empty", "No bills or payments yet."));
+    entries.forEach((en) => {
+      const row = el("div", "khata-entry");
+      const left = el("div");
+      left.append(el("div", null, en.desc + (en.invoice ? " · invoice attached" : "")),
+        el("div", "mut", dateStr(en.date) + " · " + timeStr(en.date)));
+      row.append(left, el("span", "amt " + en.type, (en.type === "credit" ? "+" : "\u2212") + fmt(en.amount)));
+      box.appendChild(row);
+    });
+    $("#supd-pay").hidden = !(sup.due > 0);
+    openSheetElFn($("#supdetail-sheet"));
+  }
+  $("#supd-pay").addEventListener("click", () => { const s = supDetailFor; closeSheetEl(); if (s) openSuppSheet(s); });
+  $("#supd-cancel").addEventListener("click", closeSheetEl);
+  $("#btn-sup-add").addEventListener("click", () => {
+    $("#supa-f-name").value = ""; $("#supa-f-due").value = "";
+    openSheetElFn($("#supadd-sheet"));
+  });
+  $("#supa-f-save").addEventListener("click", () => {
+    const name = $("#supa-f-name").value.trim();
+    if (!name) { toast("Supplier name is required"); return; }
+    const s = ensureSupplier(name);
+    const dueIn = parseFloat($("#supa-f-due").value);
+    if (dueIn > 0) {
+      const due = Math.round(dueIn * 100);
+      s.due += due;
+      state.supEntries.unshift({ id: "se-o" + Date.now().toString(36), supplierId: s.id, type: "credit", amount: due, desc: "Opening udhaar", date: now() });
+    }
+    persistState(); closeSheetEl();
+    renderSupplierLedger(); renderSuppliers();
+    toast(`${s.name} added${dueIn > 0 ? " · " + fmt(s.due) + " due" : ""}`);
+  });
+  $("#supa-f-cancel").addEventListener("click", closeSheetEl);
+  function openInvoicePreview(p) {
+    if (!p.invoice) return;
+    $("#invp-title").textContent = p.invoice.name || "Distributor invoice";
+    const box = $("#invp-body");
+    box.innerHTML = "";
+    if (p.invoice.mime === "image") {
+      const img = el("img", "inv-preview-img");
+      img.src = p.invoice.data;
+      box.appendChild(img);
+    } else {
+      box.appendChild(el("p", "set-hint", p.invoice.name + " — PDF attached to this stock-in."));
+      const iframe = el("iframe", "inv-preview-pdf");
+      iframe.src = p.invoice.data;
+      box.appendChild(iframe);
+    }
+    openSheetElFn($("#invpreview-sheet"));
+  }
+  $("#invp-close").addEventListener("click", closeSheetEl);
 
   /* stock sub-tabs */
   document.querySelectorAll("[data-stab]").forEach((tab) => {
@@ -7490,8 +7960,8 @@ function renderSettings() {
     } else if (custAddLink) {
       const tx = custAddLink; custAddLink = null;
       tx.customerId = c.id; tx.customerName = c.name;
-      const pts = creditVisit(c, tx.total, tx.lines[0] && tx.lines[0].name);
-      tx.pointsEarned = pts; tx.autoTagged = false;
+      recordVisit(c, tx.total, tx.lines[0] && tx.lines[0].name);
+      tx.autoTagged = false;
       persistState();
       renderTransactions(); renderReceipt(tx); renderReceiptActions(tx);
       toast(`${c.name} added & linked to this sale`);
@@ -7588,7 +8058,12 @@ function renderSettings() {
     $("#pur-f-qty").value = "";
     $("#pur-f-rate").value = "";
     $("#pur-f-supplier").value = "";
-    $("#pur-f-later").checked = false;
+    purPayMode = "now";
+    purMethod = "Cash";
+    purInvoice = null;
+    $("#pur-f-invoice").value = "";
+    $("#pur-f-invoice-prev").innerHTML = "";
+    renderPurPayUI();
     const chips = $("#sup-chips");
     chips.innerHTML = "";
     state.suppliers.slice(0, 4).forEach((s) => {
@@ -7598,6 +8073,60 @@ function renderSettings() {
     });
     openSheetElFn($("#purchase-sheet"));
   }
+  let purPayMode = "now", purMethod = "Cash", purInvoice = null;
+  function renderPurPayUI() {
+    $("#pur-f-paymode").querySelectorAll(".chip").forEach((c) => c.classList.toggle("pick", c.dataset.pay === purPayMode));
+    $("#pur-f-method-wrap").style.display = purPayMode === "now" ? "" : "none";
+    $("#pur-f-method").querySelectorAll(".chip").forEach((c) => c.classList.toggle("pick", c.dataset.m === purMethod));
+    $("#pur-f-later-note").hidden = purPayMode !== "later";
+    $("#pur-f-already-note").hidden = purPayMode !== "already";
+  }
+  $("#pur-f-paymode").addEventListener("click", (e) => {
+    const c = e.target.closest(".chip");
+    if (!c) return;
+    purPayMode = c.dataset.pay;
+    renderPurPayUI();
+  });
+  $("#pur-f-method").addEventListener("click", (e) => {
+    const c = e.target.closest(".chip");
+    if (!c) return;
+    purMethod = c.dataset.m;
+    renderPurPayUI();
+  });
+  $("#pur-f-invoice").addEventListener("change", (e) => {
+    const f = e.target.files && e.target.files[0];
+    if (!f) { purInvoice = null; $("#pur-f-invoice-prev").innerHTML = ""; return; }
+    if (f.type === "application/pdf" || f.name.toLowerCase().endsWith(".pdf")) {
+      if (f.size > 400 * 1024) { toast("PDF too large for the demo — keep it under 400 KB"); e.target.value = ""; return; }
+      const rd = new FileReader();
+      rd.onload = () => {
+        purInvoice = { name: f.name, mime: "pdf", data: rd.result };
+        $("#pur-f-invoice-prev").innerHTML = "";
+        $("#pur-f-invoice-prev").appendChild(el("p", "set-hint", "Attached: " + f.name));
+      };
+      rd.readAsDataURL(f);
+      return;
+    }
+    if (!f.type.startsWith("image/")) { toast("Attach an image or PDF"); e.target.value = ""; return; }
+    const rd = new FileReader();
+    rd.onload = () => {
+      const img = new Image();
+      img.onload = () => {
+        const cv = document.createElement("canvas");
+        const sc = Math.min(1, 900 / img.width);
+        cv.width = Math.round(img.width * sc);
+        cv.height = Math.round(img.height * sc);
+        cv.getContext("2d").drawImage(img, 0, 0, cv.width, cv.height);
+        purInvoice = { name: f.name, mime: "image", data: cv.toDataURL("image/jpeg", 0.72) };
+        $("#pur-f-invoice-prev").innerHTML = "";
+        const th = el("img", "pur-inv-thumb");
+        th.src = purInvoice.data;
+        $("#pur-f-invoice-prev").appendChild(th);
+      };
+      img.src = rd.result;
+    };
+    rd.readAsDataURL(f);
+  });
   $("#btn-add-purchase").addEventListener("click", openPurchaseSheet);
   $("#pur-f-save").addEventListener("click", () => {
     const qty = parseInt($("#pur-f-qty").value, 10);
@@ -7606,13 +8135,14 @@ function renderSettings() {
     if (!(qty > 0)) { toast("Add a quantity"); return; }
     const rate = rateIn > 0 ? Math.round(rateIn * 100) : Math.round(purSheetItem.price * 0.8);
     const supName = $("#pur-f-supplier").value.trim();
-    const payLater = $("#pur-f-later").checked;
     addPurchase({
       item: purSheetItem, qty: Math.min(9999, qty), rate, source: "typed",
-      supplier: supName || null, payLater: !!payLater,
+      supplier: supName || null, payMode: purPayMode,
+      method: purPayMode === "now" ? purMethod : null,
+      invoice: purInvoice,
     });
     closeSheetEl();
-    toast(`Stock-in: ${qty}× ${purSheetItem.name}${supName ? " · " + titleCase(supName) : ""}${payLater ? " (udhaar)" : ""}`);
+    toast(`Stock-in: ${qty}× ${purSheetItem.name}${supName ? " · " + titleCase(supName) : ""}${purPayMode === "later" ? " (udhaar)" : purPayMode === "now" ? " (paid " + purMethod + ")" : " (already paid)"}`);
   });
 
   /* audit + drawer — shared hooks (drawer detail lands in the Drawer feature) */
@@ -8156,7 +8686,7 @@ function renderSettings() {
     if (payer) {
       tx.customerId = payer.id;
       tx.customerName = payer.name;
-      tx.pointsEarned = creditVisit(payer, tx.total, tx.lines[0] && tx.lines[0].name);
+      recordVisit(payer, tx.total, tx.lines[0] && tx.lines[0].name);
       tx.autoTagged = true;
     }
     state.transactions.unshift(tx);
@@ -8403,8 +8933,8 @@ function renderSettings() {
       msg: (first) => `${first}, just in at ${state.bizName}: ${newestItemName()}! Fresh stock — come grab yours before it runs out.` },
     { id: "fest",   name: "Festival offer",       audLabel: "All customers",          aud: () => true,
       msg: () => `Festive dhamaka at ${state.bizName}! Flat 10% off this weekend. Bring a friend along!` },
-    { id: "points", name: "Double points day",    audLabel: "Regulars · 10+ visits",  aud: (c) => c.visits >= 10,
-      msg: (first) => `${first}, you're one of our regulars — earn 2× loyalty points all day tomorrow. See you at the counter!` },
+    { id: "disc", name: "Regulars discount day", audLabel: "Regulars · 10+ visits",  aud: (c) => c.visits >= 10,
+      msg: (first) => `${first}, you're one of our regulars — show this message tomorrow for an extra 5% off at the counter. See you!` },
   ];
   function tplMsg(tpl, first, c) {
     const custom = (state.waTemplates && state.waTemplates[tpl.id] || "").trim();
@@ -9014,13 +9544,13 @@ function renderSettings() {
     const lastIdx = I.length - 1;
 
     state.customers.push(
-      { id: "c1", name: "Maya Kapoor",  hi: "माया",  initials: "MK", color: "var(--t-terra)", points: 62,  visits: 18, spent: 224000, lastSeenDays: 0,  lastVisit: "Today",       since: "Mar 2024", email: "maya.k@example.com",   vpa: "maya.k@okhdfc",   recent: [I[0].name, I[ci(3)].name] },
-      { id: "c2", name: "Arjun Mehta",  hi: "अर्जुन", initials: "AM", color: "var(--t-slate)", points: 128, visits: 9,  spent: 98400,  lastSeenDays: 1,  lastVisit: "Yesterday",   since: "Jan 2025", email: "arjun.m@example.com",  vpa: "arjun.m@okicici", recent: [I[ci(1)].name, I[ci(4)].name] },
-      { id: "c3", name: "Priya Shah",   hi: "प्रिया", initials: "PS", color: "var(--t-plum)",  points: 41,  visits: 6,  spent: 64200,  lastSeenDays: 4,  lastVisit: "Mon",         since: "Jun 2025", email: "priya.s@example.com",  vpa: null,              recent: [I[ci(2)].name], creditLimit: 200000 },
-      { id: "c4", name: "Vikram Nair",  hi: "विक्रम", initials: "VN", color: "var(--t-pine)",  points: 210, visits: 31, spent: 418000, lastSeenDays: 2,  lastVisit: "Fri",         since: "Nov 2023", email: "vikram.n@example.com", vpa: "vikram.n@okaxis", recent: [I[0].name, I[ci(6)].name] },
-      { id: "c5", name: "Sana Qureshi", hi: "सना",   initials: "SQ", color: "var(--t-ochre)", points: 23,  visits: 3,  spent: 27600,  lastSeenDays: 12, lastVisit: "12 days ago", since: "Feb 2026", email: "sana.q@example.com",   vpa: null,              recent: [I[lastIdx].name] },
-      { id: "c6", name: "Rohan Iyer",   hi: "रोहन",  initials: "RI", color: "var(--t-umber)", points: 9,   visits: 1,  spent: 9900,   lastSeenDays: 21, lastVisit: "3 wks ago",   since: "Oct 2026", email: "rohan.i@example.com",  vpa: null,              recent: [I[ci(3)].name] },
-      { id: "c7", name: "Meera Pillai", hi: "मीरा",  initials: "MP", color: "var(--t-sage)",  points: 37,  visits: 5,  spent: 41200,  lastSeenDays: 24, lastVisit: "24 days ago", since: "Aug 2025", email: "meera.p@example.com",  vpa: null,              recent: [I[ci(5)].name] },
+      { id: "c1", name: "Maya Kapoor",  hi: "माया",  initials: "MK", color: "var(--t-terra)", visits: 18, spent: 224000, lastSeenDays: 0,  lastVisit: "Today",       since: "Mar 2024", email: "maya.k@example.com",   vpa: "maya.k@okhdfc",   recent: [I[0].name, I[ci(3)].name] },
+      { id: "c2", name: "Arjun Mehta",  hi: "अर्जुन", initials: "AM", color: "var(--t-slate)", visits: 9,  spent: 98400,  lastSeenDays: 1,  lastVisit: "Yesterday",   since: "Jan 2025", email: "arjun.m@example.com",  vpa: "arjun.m@okicici", recent: [I[ci(1)].name, I[ci(4)].name] },
+      { id: "c3", name: "Priya Shah",   hi: "प्रिया", initials: "PS", color: "var(--t-plum)",  visits: 6,  spent: 64200,  lastSeenDays: 4,  lastVisit: "Mon",         since: "Jun 2025", email: "priya.s@example.com",  vpa: null,              recent: [I[ci(2)].name], creditLimit: 200000 },
+      { id: "c4", name: "Vikram Nair",  hi: "विक्रम", initials: "VN", color: "var(--t-pine)",  visits: 31, spent: 418000, lastSeenDays: 2,  lastVisit: "Fri",         since: "Nov 2023", email: "vikram.n@example.com", vpa: "vikram.n@okaxis", recent: [I[0].name, I[ci(6)].name] },
+      { id: "c5", name: "Sana Qureshi", hi: "सना",   initials: "SQ", color: "var(--t-ochre)", visits: 3,  spent: 27600,  lastSeenDays: 12, lastVisit: "12 days ago", since: "Feb 2026", email: "sana.q@example.com",   vpa: null,              recent: [I[lastIdx].name] },
+      { id: "c6", name: "Rohan Iyer",   hi: "रोहन",  initials: "RI", color: "var(--t-umber)", visits: 1,  spent: 9900,   lastSeenDays: 21, lastVisit: "3 wks ago",   since: "Oct 2026", email: "rohan.i@example.com",  vpa: null,              recent: [I[ci(3)].name] },
+      { id: "c7", name: "Meera Pillai", hi: "मीरा",  initials: "MP", color: "var(--t-sage)",  visits: 5,  spent: 41200,  lastSeenDays: 24, lastVisit: "24 days ago", since: "Aug 2025", email: "meera.p@example.com",  vpa: null,              recent: [I[ci(5)].name] },
     );
     state.customers.forEach((c) => { if (c.vpa) state.payers[c.vpa] = c.id; });
 
@@ -9136,18 +9666,25 @@ function renderSettings() {
     const supA = { id: "sup-seed-a", name: "Sharma Distributors", total: 0, due: 0 };
     const supB = { id: "sup-seed-b", name: "Gupta General Agency", total: 0, due: 0 };
     state.purchases.forEach((p) => {
-      p.supplier = supA.name; p.payLater = true;
+      p.supplier = supA.name; p.payLater = true; p.payMode = "later";
       supA.total += p.total; supA.due += p.total;
+      state.supEntries.unshift({ id: "se-" + p.id, supplierId: supA.id, type: "credit", amount: p.total, desc: `${p.qty}× ${p.name} @ ${fmt(p.rate)} (udhaar)`, date: p.date });
     });
+    state.supEntries.unshift({ id: "se-seed-pay1", supplierId: supA.id, type: "paid", amount: 15000, desc: "Paid via UPI", date: mAgo(700) });
+    supA.due = Math.max(0, supA.due - 15000);
     // one older purchase already settled
     const settledPo = {
       id: "po-seed-old", itemId: I[ci(3)].id, name: I[ci(3)].name,
       qty: 20, rate: Math.round(I[ci(3)].price * 0.75), date: mAgo(6000), source: "typed",
-      supplier: supB.name, payLater: false,
+      supplier: supB.name, payLater: false, payMode: "already",
     };
     settledPo.total = settledPo.qty * settledPo.rate;
     state.purchases.push(settledPo);
     supB.total += settledPo.total;
+    state.supEntries.unshift(
+      { id: "se-seed-b1", supplierId: supB.id, type: "credit", amount: settledPo.total, desc: `${settledPo.qty}× ${settledPo.name} @ ${fmt(settledPo.rate)}`, date: settledPo.date },
+      { id: "se-seed-b2", supplierId: supB.id, type: "paid", amount: settledPo.total, desc: "Settled earlier — bill paid in advance", date: mAgo(5900) },
+    );
     state.suppliers.push(supA, supB);
     state.supPay.push({ id: "sp-seed-1", supplierId: supB.id, name: supB.name, amt: 40000, date: mAgo(5900) });
 
@@ -9202,6 +9739,7 @@ function renderSettings() {
     renderStockSamples();
     renderPurSamples();
     renderPurchases();
+    renderSupplierLedger();
     renderRecon();
     renderOrders();
     renderCampaigns();
