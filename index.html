@@ -711,31 +711,34 @@ select.field-input{appearance:none;background-image:url("data:image/svg+xml,%3Cs
 .onboard-dots{display:flex;gap:6px;justify-content:center;padding:20px 0 4px}
 .onboard-dots span{width:22px;height:4px;border-radius:99px;background:var(--line);transition:background .25s var(--ease)}
 .onboard-dots span.is-on{background:var(--ink)}
-.onboard-body{flex:1;overflow-y:auto;padding:12px 22px 8px}
+.onboard-body{flex:1;overflow-y:auto;padding:14px 22px 8px}
 .ostep{display:none}
 .ostep.is-on{display:block;animation:ostepin .35s var(--ease)}
 @keyframes ostepin{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
-.ob-kicker{font-size:11.5px;font-weight:650;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-38);margin-bottom:8px}
-.ob-title{font-size:30px;font-weight:700;letter-spacing:-.03em;line-height:1.12;margin-bottom:10px}
-.ob-sub{font-size:14.5px;line-height:1.55;color:var(--ink-60);margin-bottom:20px}
+/* Apple-style onboarding: large title, plain labels, filled fields, one clear action */
+.ob-kicker{display:none}
+.ob-title{font-size:34px;font-weight:700;letter-spacing:-.025em;line-height:1.1;margin:6px 0 10px}
+.ob-sub{font-size:16px;line-height:1.4;color:var(--ink-60);margin-bottom:28px}
 .ob-field{display:block}
-.ob-field span{display:block;font-size:12.5px;font-weight:600;color:var(--ink-60);margin-bottom:6px}
+.ob-field + .ob-field{margin-top:20px}
+.ob-field span{display:block;font-size:13px;font-weight:600;color:var(--ink-60);margin-bottom:8px;padding-left:2px}
 .ob-field input{
-  width:100%;border:1.5px solid var(--line);border-radius:14px;background:var(--surface);
-  padding:13px 15px;font-size:16px;font-weight:550;color:var(--ink);outline:none;
-  transition:border-color .2s var(--ease);
+  width:100%;min-height:52px;border:0;border-radius:12px;background:rgba(118,118,128,.12);
+  padding:14px 16px;font-size:17px;font-weight:500;color:var(--ink);outline:none;
+  transition:box-shadow .2s var(--ease);
 }
-.ob-field input:focus{border-color:var(--ink)}
+.ob-field input::placeholder{color:var(--ink-38)}
+.ob-field input:focus{box-shadow:0 0 0 3px rgba(10,132,255,.35)}
 .ob-skiplink{
-  display:block;margin:18px auto 0;font-size:13.5px;font-weight:600;color:var(--ink-38);
-  text-decoration:underline;text-underline-offset:3px;
+  display:block;margin:26px auto 0;min-height:44px;padding:0 16px;font-size:16px;font-weight:500;color:#0a84ff;
+  background:none;border:0;
 }
 .onboard-foot{
-  display:flex;gap:10px;padding:14px 22px calc(16px + env(safe-area-inset-bottom));
-  border-top:1px solid var(--line);background:var(--surface);
+  display:flex;gap:10px;padding:12px 20px calc(14px + env(safe-area-inset-bottom));
+  background:var(--surface);
 }
-.onboard-foot .charge-btn{flex:1}
-.onboard-foot .ghost-btn{flex:0 0 auto;padding-left:18px;padding-right:18px}
+.onboard-foot .charge-btn{flex:1;min-height:52px;border-radius:14px;font-size:17px}
+.onboard-foot .ghost-btn{flex:0 0 auto;min-height:52px;padding-left:18px;padding-right:18px;border-radius:14px;font-size:17px}
 .onboard-foot .charge-btn:disabled{opacity:.35}
 
 /* business cards */
