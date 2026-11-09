@@ -2872,6 +2872,7 @@ button.sheet-empty:active{transform:scale(.98)}
             <span id="link-diff">Pick what was sold</span>
           </div>
           <button class="charge-btn" id="link-save" disabled>Save linked items</button>
+          <button class="ghost-btn" id="link-othinc" hidden>Not a sale — mark as other income</button>
           <button class="ghost-btn" id="link-cancel">Cancel</button>
         </div>
       </div>
@@ -5427,6 +5428,8 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       cBox.appendChild(chip);
     });
     renderLinkList();
+    // from payment recon, the merchant may realise it wasn't a sale at all
+    $("#link-othinc").hidden = !tx.staticPay;
     openSheetElFn(linkSheet);
   }
 
@@ -5491,12 +5494,25 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
     if (newTot === tx.total) { const t = totals(newLines); tx.sub = t.sub; tx.tax = t.tax; }
     // otherwise tx.tax and tx.total stay as billed — the payment already happened
     tx.needsLink = false;
+    if (tx.staticPay) tx.staticPay.matchedLabel = newLines.map((l) => `${l.qty}× ${l.name}`).join(" + ");
     persistState();
     closeSheetEl();
     if (state.viewReceiptTx === tx) { renderReceipt(tx); renderReceiptActions(tx, false); }
     renderTransactions();
     renderDashboard();
+    renderRecon();
     toast("Items linked \u2014 sale record updated");
+  });
+  $("#link-othinc").addEventListener("click", () => {
+    if (!linkCtx || !linkCtx.tx.staticPay) return;
+    const tx = linkCtx.tx;
+    tx.needsLink = false;
+    tx.staticPay.matchedLabel = "Other income";
+    persistState();
+    closeSheetEl();
+    renderTransactions();
+    renderRecon();
+    toast("Marked as other income");
   });
   $("#link-cancel").addEventListener("click", closeSheetEl);
 
@@ -8815,12 +8831,14 @@ function renderSettings() {
       recordVisit(payer, tx.total, tx.lines[0] && tx.lines[0].name);
       tx.autoTagged = true;
     }
+    tx.staticPay = pay;   // back-reference so item-tagging can update the recon label
     state.transactions.unshift(tx);
     decrementStock(tx.lines);
     if (state.trend.length) state.trend[6][payer ? "r" : "n"] += 1;
     updateReconBadge();
     renderRecon();
     persistState();
+    return tx;
   }
 
   /* ---------- settlement recon (T+1 UPI settlement) ---------- */
@@ -8963,8 +8981,12 @@ function renderSettings() {
         chip.addEventListener("click", () => { matchStatic(p, c); toast(`Matched: ${c.label}`); });
         actions.appendChild(chip);
       });
-      const other = el("button", "chip", p.guess.length ? "Something else" : "Mark as other income");
-      other.addEventListener("click", () => { matchStatic(p, null); toast("Marked as other income"); });
+      const other = el("button", "chip", p.guess.length ? "Something else" : "Pick items sold");
+      other.addEventListener("click", () => {
+        // open the item-tagging sheet instead of auto-marking other income
+        const tx = matchStatic(p, null);
+        openLinkSheet(tx);
+      });
       actions.appendChild(other);
       row.append(top, guess, actions);
       if (p.vpa) {
