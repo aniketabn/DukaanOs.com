@@ -1765,6 +1765,13 @@ select.field-input{appearance:auto}
               <span class="tender-text"><strong>Cash</strong><small>Count change automatically</small></span>
               <svg class="tender-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 6l6 6-6 6"/></svg>
             </button>
+            <button class="tender-opt" id="tender-khata">
+              <span class="tender-ic" aria-hidden="true">
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M5 4.5h11a2.5 2.5 0 0 1 2.5 2.5v10.5a2.5 2.5 0 0 1-2.5 2.5H5z"/><path d="M5 4.5A1.5 1.5 0 0 0 3.5 6v12A1.5 1.5 0 0 0 5 19.5"/><line x1="8.5" y1="8.5" x2="14.5" y2="8.5"/><line x1="8.5" y1="12" x2="13" y2="12"/></svg>
+              </span>
+              <span class="tender-text"><strong>Khata · udhaar</strong><small>Charge to customer — pay later</small></span>
+              <svg class="tender-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 6l6 6-6 6"/></svg>
+            </button>
             <button class="tender-opt" id="tender-split">
               <span class="tender-ic" aria-hidden="true">
                 <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 3v18"/><rect x="4" y="5" width="5.5" height="6" rx="1"/><rect x="14.5" y="13" width="5.5" height="6" rx="1"/></svg>
@@ -4865,6 +4872,17 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
     completeSale({ method: "cash", cashGiven: state.cashCents, change: state.cashCents - total });
   });
 
+  /* ---------- khata / udhaar: charge now, customer pays later ---------- */
+  $("#tender-khata").addEventListener("click", () => {
+    if (state.attachedCustomer) { completeKhataSale(state.attachedCustomer); return; }
+    khataCtx = true;
+    custCtxTx = null;
+    $("#pick-search").value = "";
+    renderCustPick("");
+    $("#cust-sheet .sheet-head span").textContent = "Charge to whose khata?";
+    openSheetElFn(custSheet);
+  });
+
   /* ---------- split payment: cash part now, remainder by UPI ---------- */
   const splitSheet = $("#split-sheet");
   $("#tender-split").addEventListener("click", () => {
@@ -5111,8 +5129,11 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
   /* ---------- add an existing customer to an untagged sale ---------- */
   const custSheet = $("#cust-sheet");
   let custCtxTx = null;
+  let khataCtx = false;   // customer pick is for a Khata (udhaar) charge
   function openCustSheet(tx) {
     custCtxTx = tx;
+    khataCtx = false;
+    $("#cust-sheet .sheet-head span").textContent = "Add customer to this sale";
     $("#pick-search").value = "";
     renderCustPick("");
     openSheetElFn(custSheet);
@@ -5134,6 +5155,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       main.append(el("strong", null, c.name), el("small", null, `${c.visits} visits \u00b7 ${c.points} pts`));
       row.append(av, main);
       row.addEventListener("click", () => {
+        if (khataCtx) { khataCtx = false; closeSheetEl(); completeKhataSale(c); return; }
         custCtxTx.customerId = c.id;
         custCtxTx.customerName = c.name;
         custCtxTx.pointsEarned = creditVisit(c, custCtxTx.total, custCtxTx.lines[0] && custCtxTx.lines[0].name);
@@ -5151,19 +5173,23 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
   $("#pick-search").addEventListener("input", (e) => renderCustPick(e.target.value));
   $("#pick-new").addEventListener("click", () => {
     const tx = custCtxTx; closeSheetEl();
-    openCustAdd(tx);
+    openCustAdd(khataCtx ? "khata" : tx);
   });
-  $("#cust-cancel").addEventListener("click", closeSheetEl);
+  $("#cust-cancel").addEventListener("click", () => { khataCtx = false; closeSheetEl(); });
 
 
   /* ---------- sale completion ---------- */
+  function completeKhataSale(cust) {
+    state.attachedCustomer = cust;
+    completeSale({ method: "khata" });
+  }
   function completeSale(payment) {
     const lines = cartLines().map((l) => ({ name: l.name, price: l.price, qty: l.qty }));
     const t = totals(lines, cartDisc());
     const tx = {
       id: "sq-" + Math.random().toString(36).slice(2, 8),
       lines, ...t, ...payment,
-      ff: payment.method === "card" ? "EDC" : payment.method === "upi" ? "QR" : "Cash",
+      ff: payment.method === "card" ? "EDC" : payment.method === "upi" ? "QR" : payment.method === "khata" ? "Khata" : "Cash",
       storeId: curStoreId(),
       date: now(), refunded: false,
     };
@@ -5179,6 +5205,15 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
     }
     state.transactions.unshift(tx);
     decrementStock(lines);
+    if (payment.method === "khata" && cust) {
+      state.khata.push({
+        id: "kh-" + Date.now(), custId: cust.id,
+        desc: "Udhaar · " + lines.map((l) => `${l.qty}× ${l.name}`).join(", "),
+        amount: t.total, type: "credit", date: now(),
+      });
+      if (cust.creditLimit && khataBalance(cust.id) > cust.creditLimit)
+        toast(`${cust.name} is over the set khata limit`, 2600);
+    }
     if (typeof auditLog === "function")
       auditLog("sale", `${lines.reduce((a, l) => a + l.qty, 0)} items · ${fmt(t.total)} · ${payment.method}${t.disc ? ` · disc ${fmt(t.disc)}` : ""}`);
     persistState();
@@ -5190,7 +5225,9 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
 
     $("#success-amount").textContent = fmt(t.total);
     $("#success-detail").textContent =
-      payment.method === "card"
+      payment.method === "khata"
+        ? `Added to ${cust ? cust.name + "'s" : "customer"} khata · collect ${fmt(t.total)} later`
+        : payment.method === "card"
         ? `Approved · ${payment.cardLabel}`
         : payment.method === "upi"
           ? `Received · UPI ref ${payment.upiRef}`
@@ -7425,7 +7462,7 @@ function renderSettings() {
     custAddLink = linkTx || null;
     ["#ca-f-name", "#ca-f-mobile", "#ca-f-vpa", "#ca-f-area", "#ca-f-note", "#ca-f-limit"].forEach((s) => { $(s).value = ""; });
     $("#ca-f-bday").value = "";
-    $("#ca-f-save").textContent = linkTx ? "Save & add to sale" : "Save customer";
+    $("#ca-f-save").textContent = linkTx === "khata" ? "Save & charge to khata" : linkTx ? "Save & add to sale" : "Save customer";
     openSheetElFn($("#custadd-sheet"));
     setTimeout(() => $("#ca-f-name").focus(), 250);
   }
@@ -7447,7 +7484,10 @@ function renderSettings() {
     });
     closeSheetEl();
     renderCustomers(); renderAnalytics(); renderDashboard();
-    if (custAddLink) {
+    if (custAddLink === "khata") {
+      custAddLink = null;
+      completeKhataSale(c);
+    } else if (custAddLink) {
       const tx = custAddLink; custAddLink = null;
       tx.customerId = c.id; tx.customerName = c.name;
       const pts = creditVisit(c, tx.total, tx.lines[0] && tx.lines[0].name);
