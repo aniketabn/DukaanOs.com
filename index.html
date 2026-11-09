@@ -8,6 +8,7 @@
 <style>
 /* ============ Square POS Demo — design tokens ============ */
 :root{
+  /* Apple HIG typography and spacing; Bajaj palette kept for brand colours */
   --paper:#e9eff7;          /* Bajaj light stage */
   --ink:#0d2242;            /* deep navy text */
   --ink-60:rgba(13,34,66,.62);
@@ -25,9 +26,10 @@
   --t-slate:#8496ab; --t-plum:#9b86ab; --t-umber:#96826c; --t-pine:#6e938a;
   --r-tile:14px;
   --ease:cubic-bezier(.22,.8,.3,1);
-  --font:"Inter",-apple-system,"Segoe UI",sans-serif;
-  --mono:"IBM Plex Mono",ui-monospace,monospace;
+  --font:-apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue",sans-serif;
+  --mono:var(--font);       /* numbers use the system font with tabular digits */
 }
+body{font-variant-numeric:tabular-nums}
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 [hidden]{display:none!important}
 html,body{height:100%}
@@ -41,9 +43,8 @@ button:disabled{cursor:not-allowed;opacity:.4}
 :focus-visible{outline:2px solid var(--brand);outline-offset:2px;border-radius:6px}
 
 /* ============ Stage / phone frame ============ */
-.stage{min-height:100dvh;display:flex;align-items:center;justify-content:center;gap:64px;padding:0}
-@media(min-width:560px){.stage{padding:32px}}
-.brief{max-width:340px;display:none}
+.stage{min-height:100dvh;display:flex;align-items:center;justify-content:center;padding:0}
+.brief{display:none}
 .brief-eyebrow{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-38);margin-bottom:12px}
 .brief-title{font-size:40px;font-weight:700;line-height:1.05;letter-spacing:-.02em;margin-bottom:16px}
 .brief-copy{color:var(--ink-60);margin-bottom:24px}
@@ -51,20 +52,12 @@ button:disabled{cursor:not-allowed;opacity:.4}
 .brief-steps li{display:flex;align-items:baseline;gap:12px;font-size:15px;color:var(--ink-60)}
 .brief-steps span{font-family:var(--mono);font-size:12px;color:var(--ink-38)}
 .brief-foot{font-family:var(--mono);font-size:13px;color:var(--ink-38)}
-@media(min-width:1024px){.brief{display:block}}
 
-.phone-wrap{flex:0 0 auto;width:100%;max-width:420px;display:flex}
+/* always a full mobile screen: full height, never a desktop frame, even in a browser window */
+.phone-wrap{flex:1 1 auto;width:100%;max-width:480px;display:flex;height:100dvh}
 .phone{
-  position:relative;flex:1 1 auto;min-width:0;height:100dvh;
+  position:relative;flex:1 1 auto;min-width:0;width:100%;height:100dvh;
   background:var(--surface);display:flex;flex-direction:column;overflow:hidden;
-}
-@media(min-width:560px){
-  .phone-wrap{width:auto;max-width:none}
-  .phone{
-    flex:0 0 auto;width:392px;height:min(830px,94dvh);
-    border-radius:44px;border:1px solid rgba(11,11,11,.14);
-    box-shadow:0 2px 6px rgba(11,11,11,.06),0 30px 70px -20px rgba(11,11,11,.28);
-  }
 }
 
 /* ============ Status bar / app bar ============ */
@@ -123,22 +116,29 @@ button:disabled{cursor:not-allowed;opacity:.4}
 .tile{
   border-radius:var(--r-tile);min-height:96px;padding:12px;
   display:flex;flex-direction:column;justify-content:space-between;align-items:flex-start;
-  text-align:left;color:#fff;position:relative;overflow:hidden;
-  transition:transform .15s var(--ease),filter .2s var(--ease);
-  box-shadow:inset 0 -40px 60px -40px rgba(0,0,0,.35);
+  text-align:left;color:var(--ink);background:var(--surface);border:1px solid var(--line);position:relative;overflow:hidden;
+  transition:transform .15s var(--ease),border-color .2s var(--ease);
+  box-shadow:0 1px 2px rgba(13,34,66,.05);
 }
 .tile:active{transform:scale(.95)}
-.tile:hover{filter:brightness(1.06)}
+.tile:hover{border-color:rgba(0,87,184,.35)}
 .tile-name{font-weight:650;font-size:15px;line-height:1.25;letter-spacing:-.01em;text-shadow:0 1px 2px rgba(0,0,0,.18)}
-.tile-price{font-family:var(--mono);font-size:13px;opacity:.92}
+.tile-price{font-family:var(--mono);font-size:13px;color:var(--ink-60)}
 .tile-qty{
   position:absolute;top:10px;right:10px;min-width:26px;height:26px;padding:0 7px;
-  border-radius:999px;background:#fff;color:var(--ink);
+  border-radius:999px;background:var(--brand);color:#fff;
   display:inline-flex;align-items:center;justify-content:center;
   font-weight:700;font-size:13px;transform:scale(0);
   transition:transform .25s var(--ease);
 }
-.tile-qty.show{transform:scale(1)}
+.tile-qty.show{transform:scale(1);padding:2px;box-shadow:0 2px 8px rgba(0,0,0,.18)}
+.tq-dec,.tq-inc{
+  display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;
+  border-radius:999px;flex:none;cursor:pointer;user-select:none;-webkit-user-select:none;
+  font-weight:800;font-size:14px;line-height:1;
+}
+.tq-dec:active,.tq-inc:active{background:rgba(0,0,0,.08)}
+.tq-n{min-width:14px;text-align:center}
 
 /* ============ Keypad / numpad ============ */
 .keypad-amount{
@@ -406,12 +406,17 @@ button:disabled{cursor:not-allowed;opacity:.4}
 
 .toast{
   position:absolute;left:50%;bottom:96px;transform:translateX(-50%) translateY(16px);
-  background:var(--brand);color:#fff;padding:11px 18px;border-radius:999px;
+  background:var(--brand);color:#fff;padding:11px 18px;border-radius:16px;
   font-size:13.5px;font-weight:600;opacity:0;pointer-events:none;z-index:40;
   transition:opacity .25s var(--ease),transform .25s var(--ease);
-  white-space:nowrap;max-width:88%;
+  white-space:normal;width:max-content;max-width:calc(100% - 32px);text-align:center;line-height:1.35;
 }
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* photo tiles keep white text over the photo */
+.tile.tile-has-photo{color:#fff}
+.tile.tile-has-photo .tile-price{color:rgba(255,255,255,.9)}
+.lib-row .lib-dot{background:var(--brand-soft)}
 
 /* ============ Motion preferences ============ */
 @media (prefers-reduced-motion:reduce){
@@ -460,6 +465,7 @@ button:disabled{cursor:not-allowed;opacity:.4}
   font-size:11.5px;font-weight:650;letter-spacing:.03em;
 }
 .pill-paid{background:var(--green-soft);color:var(--green)}
+.pill-cod{background:#FFF3D6;color:#8A5A00}
 .pill-unpaid{background:rgba(211,162,74,.18);color:#8a6414}
 .pill-overdue{background:rgba(200,55,55,.12);color:var(--red)}
 .filter-chips{display:flex;gap:8px;padding:12px 16px 4px;flex-wrap:wrap}
@@ -607,6 +613,7 @@ select.field-input{appearance:none;background-image:url("data:image/svg+xml,%3Cs
 .voice-label{font-size:13.5px;font-weight:600;color:var(--ink-60)}
 .voice-transcript{font-family:var(--mono);font-size:14px;color:var(--ink);min-height:18px}
 .voice-samples{display:flex;gap:8px;padding:6px 16px 2px;flex-wrap:wrap}
+.voice-samples:empty{display:none}
 
 /* ============ Khata rows ============ */
 .khata-bal{font-family:var(--mono);font-size:15px;font-weight:500;flex:0 0 auto}
@@ -1098,6 +1105,10 @@ button.pick-price:hover{background:var(--field)}
 .lib-row .tile-stock{position:static;flex:none;backdrop-filter:none}
 .lib-row .tile-qty{position:static;flex:none;transform:scale(0)}
 .lib-row .tile-qty.show{transform:scale(1)}
+.lib-row .tile-qty:not(.show){display:none}
+.lib-row > .lib-price,.lib-row > .lib-edit{flex:none}
+.lib-row{min-width:0;width:100%;box-sizing:border-box}
+#item-grid > .lib-row{min-width:0}
 .lib-row.is-out{opacity:.5}
 
 /* ---------- reports & GST ---------- */
@@ -1349,6 +1360,98 @@ button.pick-price:hover{background:var(--field)}
 .dash-custom input{flex:1;min-width:0;border:1px solid var(--line);border-radius:10px;padding:7px 9px;font:inherit;font-size:13px;background:var(--surface);color:var(--ink)}
 .dash-period .chip.pick{background:var(--brand);color:#fff}
 
+/* ---- Marketing: hero, creative studio ---- */
+.mk{--mk-a:var(--brand)}
+.dash-scroll.mk{display:flex;flex-direction:column;gap:12px;align-content:normal}
+.mk>*{flex:none}
+.mk-hero{position:relative;overflow:hidden;border-radius:24px;padding:20px 18px 18px;margin-bottom:14px;color:#fff;background:radial-gradient(120% 90% at 100% 0%,rgba(255,255,255,.30),transparent 55%),linear-gradient(155deg,var(--mk-a),color-mix(in srgb,var(--mk-a) 38%,#0b1f3f));display:flex;flex-direction:column;gap:14px}
+.mk-hero-kicker{font-size:12.5px;font-weight:600;opacity:.85}
+.mk-hero-title{font-size:23px;line-height:1.15;font-weight:750;letter-spacing:-.02em;margin-top:4px}
+.mk-hero-btn{align-self:flex-start;background:#fff;color:var(--ink);font-weight:700;font-size:14px;padding:10px 16px;border-radius:999px}
+.mk-studio{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px}
+.mk-studio .dash-link{grid-column:1/-1}
+.mk-card{display:flex;flex-direction:column;gap:8px;background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:8px;min-width:0}
+.mk-card .cr{cursor:pointer}
+.mk-card-meta{display:flex;flex-direction:column;gap:6px;padding:0 4px 4px}
+.mk-card-meta strong{font-size:14px;font-weight:700;color:var(--ink);line-height:1.2}
+.mk-card-meta small{font-size:11.5px;color:var(--ink-60);line-height:1.35}
+.mk-card-btn{align-self:flex-start;font-size:12.5px;font-weight:700;color:var(--brand);background:var(--brand-soft);padding:6px 12px;border-radius:999px}
+.mk-card-btn:disabled{opacity:.4}
+/* creative canvas */
+.cr{position:relative;overflow:hidden;border-radius:18px;color:#fff;aspect-ratio:4/5;padding:12px;display:flex;flex-direction:column;align-items:flex-start;justify-content:flex-end;gap:5px;background:radial-gradient(90% 60% at 100% 0%,rgba(255,255,255,.30),transparent 60%),radial-gradient(70% 50% at 0% 100%,rgba(0,0,0,.22),transparent 70%),linear-gradient(160deg,var(--cr-a,var(--brand)),color-mix(in srgb,var(--cr-a,var(--brand)) 35%,#0b1f3f));box-shadow:0 10px 24px -14px rgba(13,34,66,.55)}
+.cr-shop{position:absolute;top:12px;left:12px;font-size:10.5px;font-weight:700;opacity:.9;max-width:70%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cr-glyph{position:absolute;right:10px;top:22px;font-size:70px;line-height:1;opacity:.2;font-weight:700}
+.cr-kicker{font-size:11px;font-weight:600;opacity:.88;max-width:92%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cr-title{font-size:19px;line-height:1.12;font-weight:750;letter-spacing:-.02em;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;max-width:96%}
+.cr-offer{font-size:11.5px;line-height:1.3;opacity:.92;max-width:96%;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.cr-cta{margin-top:4px;background:#fff;color:var(--ink);font-size:11px;font-weight:700;padding:6px 11px;border-radius:999px;max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cr-phone{aspect-ratio:9/16;width:62%;margin:0 auto}
+.cr-thumb{flex:none;width:62px;aspect-ratio:4/5;border-radius:12px;padding:7px;gap:2px;box-shadow:none;justify-content:flex-end}
+.cr-thumb .cr-glyph{font-size:34px;top:6px;right:6px}
+.cr-thumb .cr-kicker,.cr-thumb .cr-offer,.cr-thumb .cr-cta,.cr-thumb .cr-shop{display:none}
+.cr-thumb .cr-title{font-size:11px;-webkit-line-clamp:4}
+.cr-stage{display:flex;justify-content:center;margin:10px 0 12px}
+.cr-stage .cr{width:72%}
+.cr-stage .cr.cr-phone{width:48%}
+.cr-fmt{display:flex;gap:8px;margin-top:8px}
+.camp-sent{align-items:center}
+.grow-stat{border-radius:18px}
+/* ---- AI studio: clips, tools, library ---- */
+.mk-hero-actions{display:flex;gap:8px;flex-wrap:wrap}
+.mk-hero-btn.ghost{background:rgba(255,255,255,.18);color:#fff;box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.5)}
+.mk-tools{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+.mk-tool{display:flex;flex-direction:column;align-items:flex-start;gap:4px;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:14px;min-height:92px}
+.mk-tool strong{font-size:13.5px;font-weight:700;color:var(--ink);line-height:1.2}
+.mk-tool small{font-size:11.5px;color:var(--ink-60);line-height:1.35}
+.mk-lib{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}
+.mk-lib-item{display:flex;flex-direction:column;gap:6px;min-width:0}
+.mk-lib-item small{font-size:11px;color:var(--ink-60);line-height:1.3}
+.clip{position:relative;overflow:hidden;border-radius:18px;color:#fff;background:radial-gradient(90% 60% at 100% 0%,rgba(255,255,255,.3),transparent 60%),linear-gradient(160deg,var(--cr-a,var(--brand)),color-mix(in srgb,var(--cr-a,var(--brand)) 35%,#0b1f3f))}
+.clip-phone{aspect-ratio:9/16;width:100%;max-width:240px;margin:0 auto}
+.clip-square{aspect-ratio:1/1;width:100%;max-width:300px;margin:0 auto}
+.clip-post{aspect-ratio:4/5;width:100%;max-width:280px;margin:0 auto}
+.clip-thumb{aspect-ratio:9/16;max-width:none;margin:0}
+.clip-thumb .clip-hook,.clip-thumb .clip-offer,.clip-thumb .clip-cta{font-size:12px}
+.clip-thumb .clip-glyph{font-size:30px}
+.clip-thumb .clip-shop,.clip-thumb .clip-wa{display:none}
+.clip-thumb.clip-square{aspect-ratio:1/1}
+.clip-bar{position:absolute;left:10px;right:10px;top:10px;height:3px;border-radius:3px;background:rgba(255,255,255,.3);z-index:3;overflow:hidden}
+.clip-bar::after{content:"";position:absolute;inset:0;background:#fff;transform-origin:left center;animation:clipbar 9s linear infinite}
+@keyframes clipbar{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+.clip-scene{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;gap:8px;padding:28px 18px;opacity:0;animation:clipscene 9s infinite}
+.clip-scene.s2{animation-delay:3s}
+.clip-scene.s3{animation-delay:6s}
+@keyframes clipscene{0%{opacity:0;transform:translateY(14px)}6%{opacity:1;transform:none}31%{opacity:1}36%{opacity:0}100%{opacity:0}}
+.clip-glyph{font-size:52px;opacity:.25;font-weight:700;line-height:1}
+.clip-hook{font-size:24px;line-height:1.1;font-weight:750;letter-spacing:-.02em}
+.clip-offer{font-size:21px;line-height:1.15;font-weight:750;letter-spacing:-.01em}
+.clip-cta{font-size:19px;line-height:1.15;font-weight:750}
+.clip-shop{font-size:12px;opacity:.9}
+.clip-wa{margin-top:4px;background:#25d366;color:#fff;font-size:11px;font-weight:700;padding:6px 10px;border-radius:999px}
+@media (prefers-reduced-motion: reduce){.clip-scene,.clip-bar::after{animation:none}.clip-scene.s1{opacity:1}.clip-bar::after{transform:none}}
+.studio-form .form-chips{margin-bottom:6px}
+#st-out{margin-top:14px}
+.st-block{background:var(--field);border-radius:14px;padding:10px 12px;margin-top:10px}
+.st-block small{font-size:11px;font-weight:650;color:var(--ink-60);letter-spacing:.01em}
+.st-block p{font-size:13.5px;line-height:1.5;color:var(--ink);white-space:pre-wrap;margin-top:4px}
+.st-actions{display:flex;gap:8px;align-items:center;margin-top:12px;flex-wrap:wrap}
+.st-actions .charge-btn{flex:1;min-width:160px}
+/* ---- contextual illustrations ---- */
+.art{display:block;line-height:0}
+.art svg{width:100%;height:auto;display:block;color:#fff}
+.cr-art{position:absolute;right:10px;top:26px;width:40%;max-width:116px;pointer-events:none;opacity:.96}
+.clip-thumb .cr-art,.cr-thumb .cr-art{top:20px;width:52%}
+.clip-art{width:64%;max-width:200px;margin-bottom:4px}
+.clip-art.sm{width:34%;max-width:100px;margin-bottom:0}
+.clip-thumb .clip-art{width:70%}
+.mk-hero{padding-right:110px;min-height:150px}
+.mk-hero-art{position:absolute;right:4px;top:12px;width:100px;opacity:.95;pointer-events:none}
+.mk-hero-art .art{width:100%}
+.mk-tool{position:relative;padding-top:12px}
+.mk-tool-art{display:block;width:44px;height:44px;border-radius:14px;background:var(--mk-a,var(--brand));color:#fff;padding:6px;box-sizing:border-box;margin-bottom:2px}
+.mk-tool-art .art{width:100%;height:100%}
+.mk-tool-art svg{width:100%;height:100%}
+.mk-tool strong{margin-top:0}
 /* campaign composer */
 .cust-section-title{display:flex;align-items:center;justify-content:space-between;gap:8px}
 .camp-select{width:100%;border:1.5px solid var(--line);border-radius:12px;padding:10px 12px;font:inherit;font-size:14px;background:var(--surface);color:var(--ink)}
@@ -1386,9 +1489,10 @@ button.pick-price:hover{background:var(--field)}
 .ff-badge{flex:0 0 auto;align-self:center;font-size:10px;font-weight:700;letter-spacing:.04em;
   padding:3px 8px;border-radius:999px;background:var(--brand-soft);color:var(--brand-deep)}
 
-.orders-actions{display:flex;gap:8px;padding:10px 16px 0;flex-wrap:wrap}
+.orders-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:12px 16px 0}
+.orders-actions button{min-height:44px;font-size:13.5px;font-weight:650;width:100%}
 .orders-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:12px 16px 0}
-.order-card{margin:10px 16px 0;padding:12px 14px;border:1px solid var(--line);border-radius:14px;background:var(--surface)}
+.order-card{margin:0;padding:12px 14px;border:1px solid var(--line);border-radius:14px;background:var(--surface)}
 .order-head{display:flex;justify-content:space-between;align-items:center;gap:10px}
 .order-head strong{font-size:14.5px;color:var(--ink)}
 .order-src{flex:0 0 auto;font-size:10.5px;font-weight:700;letter-spacing:.05em;padding:3px 8px;border-radius:999px;background:var(--field);color:var(--ink-60)}
@@ -1430,18 +1534,34 @@ button.pick-price:hover{background:var(--field)}
 .wa-bubble{max-width:82%;padding:8px 12px;border-radius:12px;font-size:13.5px;line-height:1.45;box-shadow:0 1px 1px rgba(0,0,0,.06)}
 .wa-in{align-self:flex-start;background:#dcf8c6;border-top-left-radius:3px}
 .wa-out{align-self:flex-end;background:#fff;border-top-right-radius:3px}
-.wa-compose{display:flex;gap:8px;padding:10px 16px 0}
+.wa-compose{display:flex;flex-direction:column;gap:8px;padding:10px 16px 0;min-width:0}
+#waorder-sheet{overflow-x:hidden}
+#waorder-sheet,#fulfil-sheet{max-height:92%}
+#fulfil-sheet .sheet-form,#waorder-sheet .sheet-form{overflow-y:auto;min-height:0}
+#waorder-sheet .wa-chat{max-height:34dvh}
 .wa-compose input{flex:1;border:1px solid var(--line);border-radius:999px;padding:10px 16px;font:inherit;font-size:14px;background:var(--surface);color:var(--ink)}
-.wa-send{flex:0 0 auto;padding:0 16px;border-radius:999px;font-size:13.5px}
+.wa-send{width:100%;min-height:46px;border-radius:14px;font-size:14px}
+.order-map{font-size:12px;color:var(--brand-deep);text-decoration:underline;align-self:flex-start}
 .wa-draft{margin:10px 16px 0;padding:10px 12px;border:1px dashed var(--line);border-radius:12px;display:flex;flex-direction:column;gap:4px}
 .wa-sheet-actions{display:flex;flex-direction:column;gap:8px;padding:12px 16px 0}
+.wa-sheet-actions .charge-btn,.wa-sheet-actions .ghost-btn{width:100%}
 
-.catpick-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
+.catpick-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px}
+.catpick-tools{display:flex;flex-direction:column;gap:8px;margin-top:8px}
+.catpick-tools input{border:1.5px solid var(--line);border-radius:12px;padding:10px 14px;font:inherit;font-size:14px;color:var(--ink);background:var(--surface);min-height:44px}
+.catpick-tile.is-unpriced .catpick-price{color:var(--red)}
+.catpick-more{width:100%;margin-top:10px}
+#catpick-sheet{max-height:92%}
+#qty-sheet{z-index:12;max-height:70%}
+#catpick-sheet .sheet-form{overflow-y:auto;min-height:0}
+.catpick-name{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .catpick-tile{position:relative;display:flex;flex-direction:column;gap:2px;align-items:flex-start;padding:10px;border-radius:12px;
   border:1.5px solid var(--line);background:var(--surface);cursor:pointer;font:inherit;text-align:left;transition:border-color .15s var(--ease)}
 .catpick-tile.is-on{border-color:var(--brand);background:var(--brand-soft)}
 .catpick-name{font-size:12.5px;font-weight:650;color:var(--ink)}
 .catpick-price{font-family:var(--mono);font-size:11.5px;color:var(--ink-60)}
+.catpick-dec{position:absolute;top:-7px;left:-7px;width:20px;height:20px;border-radius:999px;background:var(--field);color:var(--ink);font-weight:800;font-size:13px;line-height:1;display:inline-flex;align-items:center;justify-content:center;box-shadow:0 1px 3px rgba(0,0,0,.2);cursor:pointer;user-select:none;-webkit-user-select:none}
+.catpick-dec:active{transform:scale(.9)}
 .catpick-qty{position:absolute;top:-7px;right:-7px;min-width:20px;height:20px;border-radius:999px;background:var(--brand);color:#fff;
   font-size:11px;font-weight:700;display:grid;place-items:center;padding:0 5px}
 .catpick-total{margin-top:12px;font-size:13.5px;font-weight:650;color:var(--ink);text-align:center}
@@ -1491,8 +1611,45 @@ button.sheet-empty:active{transform:scale(.98)}
 .order-cust{display:flex;flex-direction:column;gap:2px;font-size:12.5px;color:var(--ink-60);background:var(--field);border-radius:10px;padding:8px 10px;margin-top:8px}
 .order-cust-phone{font-weight:650;color:var(--ink)}
 .order-delivery{display:flex;gap:6px;align-items:baseline;font-size:12.5px;color:var(--ink-60);margin-top:6px}
-.order-delivery strong{color:var(--brand,#0057b8);font-size:12.5px}
+.order-delivery strong{color:var(--ink);font-size:12.5px;font-weight:650}
+.orders-stats .stat-tile span{text-transform:none;letter-spacing:0;font-size:12px;font-weight:600;color:var(--ink-60)}
+.order-breakdown{font-size:12px;color:var(--ink-60);margin-top:4px;line-height:1.4}
+.primary-btn{background:var(--brand);color:#fff;font-weight:700;font-size:14px;border-radius:12px;padding:0 14px;min-height:40px}
+.primary-btn.sm{min-height:36px;font-size:13px;padding:0 14px;border-radius:999px}
+.order-card .primary-btn{flex:1 1 auto}
+.order-empty{display:flex;flex-direction:column;gap:6px;align-items:center;text-align:center;padding:36px 20px;color:var(--ink-60)}
+.order-empty strong{font-size:15px;color:var(--ink)}
+.order-empty small{font-size:13px;line-height:1.5;max-width:280px}
 
+</style>
+<style>
+.sku-cats{display:flex;flex-direction:column;gap:6px;margin-top:8px}
+.sku-cat-row{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1.5px solid var(--line);border-radius:12px;background:var(--surface);font-size:14px;font-weight:600;color:var(--ink);cursor:pointer}
+.sku-cat-row input{width:18px;height:18px;accent-color:var(--ink);flex:none}
+.sku-cat-row .n{margin-left:auto;font-size:12px;font-weight:500;color:var(--ink-38)}
+.tile-brand{display:block;font-size:10.5px;font-weight:650;letter-spacing:.05em;text-transform:uppercase;opacity:.85;margin-bottom:2px}
+.sku-prices{margin-top:12px;display:flex;flex-direction:column;gap:6px}
+.lib-cats{display:flex;gap:8px;overflow-x:auto;padding:0 0 10px;scrollbar-width:none}
+.lib-cats::-webkit-scrollbar{display:none}
+.lib-cats .chip{flex:none}
+.scan-row{display:flex;gap:8px;align-items:stretch;margin:2px 0 10px}
+.scan-row .scan-bar{flex:1;margin:0}
+.scan-cam{flex:none;width:48px;border:1.5px solid var(--line);border-radius:12px;background:var(--surface);color:var(--brand);display:flex;align-items:center;justify-content:center}
+.scan-cam[hidden]{display:none}
+.cat-filter{position:sticky;top:0;z-index:3;display:flex;align-items:center;gap:10px;background:var(--surface);margin:0 -16px;padding:4px 16px 10px;font-size:13px;font-weight:600;color:var(--ink-60)}
+.cat-filter[hidden]{display:none}
+.cat-filter select{flex:1;min-width:0;min-height:44px;border:1.5px solid var(--line);border-radius:12px;background:var(--surface);color:var(--ink);font:inherit;font-size:14px;font-weight:600;padding:0 12px}
+.cat-filter select:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+.svc-cat{margin:14px 0 2px;font-size:12px;font-weight:650;letter-spacing:.04em;text-transform:uppercase;color:var(--ink-38)}
+.sku-cats::-webkit-scrollbar{display:none}
+.sku-cats .chip{flex:none}
+.sku-grid{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.sku-chip{display:inline-flex;align-items:center;gap:6px;max-width:100%;padding:8px 12px;border-radius:999px;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);font-size:13px;font-weight:600;text-align:left;cursor:pointer}
+.sku-chip.is-on{border-color:var(--ink);background:var(--field)}
+.veg-dot{display:inline-block;width:10px;height:10px;border-radius:2px;border:1.5px solid #fff;margin-right:6px;vertical-align:middle;flex:none}
+.veg-dot.veg{background:#1e8e3e;box-shadow:0 0 0 1px #1e8e3e}
+.veg-dot.nonveg{background:#c5221f;box-shadow:0 0 0 1px #c5221f}
+.sku-chip .veg-dot{border-color:transparent;box-shadow:none}
 </style>
 </head>
 <body>
@@ -1509,9 +1666,9 @@ button.sheet-empty:active{transform:scale(.98)}
     </p>
     <ol class="brief-steps">
       <li><span>1</span><strong>Onboarding</strong> — pick your business, the whole app re-shapes</li>
-      <li><span>2</span>Take payment — dynamic QR, static QR, card or cash; <strong>Recon</strong> auto-matches</li>
+      <li><span>2</span>Take payment — dynamic QR, static QR, card or cash; <strong>Payments</strong> auto-match</li>
       <li><span>3</span><strong>Stock</strong> — say “maggi 20 packet” or “atta khatam” to update inventory</li>
-      <li><span>4</span><strong>Khata</strong> + <strong>Grow</strong> — voice udhaar, then nudge customers back</li>
+      <li><span>4</span><strong>Khata</strong> + <strong>Marketing</strong> — voice udhaar, then nudge customers back</li>
     </ol>
     <p class="brief-foot">Best experienced in the phone frame →</p>
   </aside>
@@ -1568,9 +1725,13 @@ button.sheet-empty:active{transform:scale(.98)}
                 </button>
               </div>
             </div>
-            <label class="scan-bar">
-              <input id="lib-scan" type="text" autocomplete="off" placeholder="Search item or type code · Enter adds">
-            </label>
+            <div class="scan-row">
+              <label class="scan-bar">
+                <input id="lib-scan" type="text" autocomplete="off" placeholder="Search item or type code · Enter adds">
+              </label>
+              <button class="scan-cam" id="lib-cam" type="button" aria-label="Scan barcode with camera" hidden><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h2l1.6-2.4A1 1 0 0 1 8.4 5h7.2a1 1 0 0 1 .8.6L18 8h2a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/><circle cx="12" cy="13" r="3.2"/></svg></button>
+            </div>
+            <label class="cat-filter" id="lib-cats" hidden><span>Category</span><select id="lib-cat-sel"></select></label>
             <div class="grid" id="item-grid"><!-- tiles / rows injected --></div>
           </div>
 
@@ -2123,10 +2284,14 @@ button.sheet-empty:active{transform:scale(.98)}
             <span class="tx-total" id="orders-total"></span>
           </div>
           <div class="orders-actions">
-            <button class="ghost-btn ghost-sm" id="btn-order-wa">+ WhatsApp order</button>
-            <button class="ghost-btn ghost-sm" id="btn-order-catalogue">+ Catalogue pick</button>
-            <button class="ghost-btn ghost-sm" id="btn-paylink">Payment link</button>
-            <button class="ghost-btn ghost-sm" id="btn-order-walink">WhatsApp Biz link</button>
+            <button class="ghost-btn ghost-sm" id="btn-order-catalogue">WhatsApp Business catalogue order</button>
+            <button class="ghost-btn ghost-sm" id="btn-paylink">Send payment link</button>
+            <button class="ghost-btn ghost-sm" id="btn-order-walink">Share shop link</button>
+          </div>
+          <div class="orders-actions" id="orders-channels" style="grid-template-columns:repeat(auto-fit,minmax(110px,1fr))">
+            <button class="ghost-btn ghost-sm" data-channel="swiggy">Swiggy order</button>
+            <button class="ghost-btn ghost-sm" data-channel="zomato">Zomato order</button>
+            <button class="ghost-btn ghost-sm" data-channel="website">Website order</button>
           </div>
           <div class="orders-stats" id="orders-stats"></div>
           <div class="tx-list" id="orders-list"></div>
@@ -2135,13 +2300,30 @@ button.sheet-empty:active{transform:scale(.98)}
         <!-- GROW (CAMPAIGNS) -->
         <section class="screen" id="screen-grow" data-screen="grow">
           <div class="flow-head">
-            <span class="flow-head-title">Grow · CRM</span>
+            <span class="flow-head-title">Marketing</span>
             <span class="tx-total" id="grow-total"></span>
           </div>
-          <div class="dash-scroll">
+          <div class="dash-scroll mk" id="mk-root">
+            <section class="mk-hero">
+              <div class="mk-hero-art" id="mk-hero-art" aria-hidden="true"></div>
+              <div class="mk-hero-copy"><p class="mk-hero-kicker" id="mk-hero-kicker"></p><h2 class="mk-hero-title" id="mk-hero-title"></h2></div>
+              <div class="mk-hero-actions">
+                <button class="mk-hero-btn" id="btn-new-campaign">Create campaign</button>
+                <button class="mk-hero-btn ghost" id="btn-ai-studio">Make with AI</button>
+              </div>
+            </section>
             <div class="grow-stats" id="grow-stats"></div>
-            <div class="cust-section-title">Smart nudges<button class="ghost-btn sm" id="btn-new-campaign">+ New campaign</button></div>
-            <div id="campaign-templates"></div>
+            <div class="cust-section-title">Creative studio</div>
+            <div class="mk-studio" id="campaign-templates"></div>
+            <div class="cust-section-title">AI studio</div>
+            <div class="mk-tools">
+              <button class="mk-tool" data-studio="status"><span class="mk-tool-art" data-art="newarr"></span><strong>WhatsApp status video</strong><small>9:16 clip · 9 sec · AI copy</small></button>
+              <button class="mk-tool" data-studio="ad"><span class="mk-tool-art" data-art="udhaar"></span><strong>WhatsApp ad video</strong><small>1:1 clip with Chat now</small></button>
+              <button class="mk-tool" data-studio="reel"><span class="mk-tool-art" data-art="festive"></span><strong>Instagram reel</strong><small>9:16 clip for Meta</small></button>
+              <button class="mk-tool" id="btn-creator"><span class="mk-tool-art" data-art="regulars"></span><strong>Creator &amp; celebrity campaign</strong><small>Brief by category, not by name</small></button>
+            </div>
+            <div class="cust-section-title">Clip library</div>
+            <div class="mk-lib" id="studio-lib"></div>
             <div class="cust-section-title">Sent campaigns</div>
             <div id="campaign-list"></div>
           </div>
@@ -2172,15 +2354,19 @@ button.sheet-empty:active{transform:scale(.98)}
                 <button class="ghost-btn sm" id="btn-set-type">Change</button>
               </div>
               <div class="set-row">
-                <div class="set-row-main"><strong>Library</strong><small id="set-items-label">—</small></div>
+                <div class="set-row-main"><strong data-lex="libraryTab">Library</strong><small id="set-items-label">—</small></div>
                 <button class="ghost-btn sm" id="btn-set-items">Manage</button>
               </div>
               <div class="set-row">
-                <div class="set-row-main"><strong>Library view</strong><small>tiles or list on the register screen</small></div>
+                <div class="set-row-main"><strong data-lex="libraryView">Library view</strong><small>tiles or list on the register screen</small></div>
                 <div class="seg-ctrl sm" id="set-libview">
                   <button class="seg" data-view="tile">Tiles</button>
                   <button class="seg" data-view="list">List</button>
                 </div>
+              </div>
+              <div class="set-row">
+                <div class="set-row-main"><strong>Barcode scanning</strong><small>camera scan &amp; item codes on the register · off hides the scan tile</small></div>
+                <button class="switch is-on" id="sw-barcode" role="switch" aria-checked="true"><span></span></button>
               </div>
             </div>
             <div class="set-card">
@@ -2301,6 +2487,14 @@ button.sheet-empty:active{transform:scale(.98)}
                   <button class="step-btn" id="set-low-plus" aria-label="Raise low-stock threshold">+</button>
                 </div>
               </div>
+              <div class="set-row">
+                <div class="set-row-main"><strong>Opening stock for new items</strong><small>count given to an item added from search; change it per item in Stock</small></div>
+                <div class="stock-step">
+                  <button class="step-btn" id="set-open-minus" aria-label="Lower opening stock">−</button>
+                  <span class="step-val" id="set-open-val">15</span>
+                  <button class="step-btn" id="set-open-plus" aria-label="Raise opening stock">+</button>
+                </div>
+              </div>
               <label class="ob-field">
                 <span>Receipt footer note</span>
                 <input id="set-note" type="text" maxlength="60" placeholder="e.g. No returns after 7 days" autocomplete="off">
@@ -2381,7 +2575,7 @@ button.sheet-empty:active{transform:scale(.98)}
                 <button class="seg is-on" data-lang="en-IN">English</button>
                 <button class="seg" data-lang="hi-IN">हिंदी</button>
               </div>
-              <small class="set-hint">Mic language for khata, stock and purchases. Hindi sample phrases appear on every voice card.</small>
+              <small class="set-hint">Mic language for khata, stock and purchases.</small>
             </div>
             <div class="set-card">
               <div class="set-card-title">Data</div>
@@ -2464,6 +2658,7 @@ button.sheet-empty:active{transform:scale(.98)}
           <div class="flow-head">
             <span class="flow-head-title">Social · Meta</span>
             <span class="tx-total" id="social-shop"></span>
+            <button class="ghost-btn sm" id="btn-social-ai">Make with AI</button>
           </div>
           <div class="dash-scroll" id="social-body"></div>
         </section>
@@ -2486,7 +2681,7 @@ button.sheet-empty:active{transform:scale(.98)}
         </button>
         <button class="nav-item" data-nav="recon">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M4 8h13l-3-3M20 16H7l3 3"/></svg>
-          <span>Recon</span>
+          <span>Payments</span>
           <span class="nav-badge" id="recon-badge" hidden></span>
         </button>
         <button class="nav-item" data-nav="stock">
@@ -2499,7 +2694,7 @@ button.sheet-empty:active{transform:scale(.98)}
         </button>
         <button class="nav-item" data-nav="grow">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M3 11l14-6v14L3 13v-2z"/><path d="M7 13.5V17a2 2 0 0 0 4 0v-2.2"/></svg>
-          <span>Grow</span>
+          <span>Marketing</span>
         </button>
         <button class="nav-item" data-nav="dashboard">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>
@@ -2597,6 +2792,13 @@ button.sheet-empty:active{transform:scale(.98)}
             <input id="supp-amt" type="text" inputmode="decimal" autocomplete="off" placeholder="125">
           </label>
           <div class="voice-samples form-chips" id="supp-chips"></div>
+          <span class="set-hint">Pay via</span>
+          <div class="form-chips" id="supp-method">
+            <button class="chip pick" data-m="UPI" type="button">UPI</button>
+            <button class="chip" data-m="Netbanking" type="button">Netbanking</button>
+            <button class="chip" data-m="Cash" type="button">Cash</button>
+          </div>
+          <span class="set-hint" id="supp-rail-note">Instant UPI transfer to the supplier's VPA · no charge</span>
           <button class="charge-btn" id="supp-pay">Record payment</button>
           <button class="ghost-btn" id="supp-cancel">Cancel</button>
         </div>
@@ -2635,12 +2837,13 @@ button.sheet-empty:active{transform:scale(.98)}
             <input id="suppay-f-amt" type="text" inputmode="decimal" autocomplete="off" placeholder="0.00">
           </label>
           <div class="form-chips" id="suppay-f-chips"></div>
-          <span class="set-hint">Paid via</span>
+          <span class="set-hint">Pay via</span>
           <div class="form-chips" id="suppay-f-method">
-            <button class="chip pick" data-m="Cash" type="button">Cash</button>
-            <button class="chip" data-m="UPI" type="button">UPI</button>
-            <button class="chip" data-m="Bank transfer" type="button">Bank transfer</button>
+            <button class="chip pick" data-m="UPI" type="button">UPI</button>
+            <button class="chip" data-m="Netbanking" type="button">Netbanking</button>
+            <button class="chip" data-m="Cash" type="button">Cash</button>
           </div>
+          <span class="set-hint" id="suppay-f-rail-note">Instant UPI transfer to the supplier's VPA · no charge</span>
           <button class="charge-btn" id="suppay-f-pay">Record payment</button>
           <button class="ghost-btn" id="suppay-f-cancel">Cancel</button>
         </div>
@@ -2811,6 +3014,43 @@ button.sheet-empty:active{transform:scale(.98)}
         </div>
       </div>
 
+      <!-- AI studio: goal, format, language → copy + animated clip -->
+      <div class="sheet" id="studio-sheet" role="dialog" aria-label="AI studio" hidden>
+        <div class="sheet-grab" aria-hidden="true"></div>
+        <div class="sheet-head"><span>AI studio</span></div>
+        <div class="sheet-form studio-form">
+          <div class="exp-title">What is it for?</div>
+          <div class="form-chips" id="st-goals"></div>
+          <div class="exp-title">Format</div>
+          <div class="form-chips" id="st-fmts"></div>
+          <div class="exp-title">Language</div>
+          <div class="form-chips" id="st-langs"></div>
+          <label class="ob-field"><span>Your offer (optional)</span>
+            <input id="st-prompt" type="text" maxlength="60" autocomplete="off" placeholder="e.g. Buy 2 get 1 on oil, till Sunday">
+          </label>
+          <button class="charge-btn" id="st-gen">Generate</button>
+          <div id="st-out"></div>
+          <button class="ghost-btn" id="st-close">Close</button>
+        </div>
+      </div>
+
+      <!-- creator & celebrity brief: category and budget, never a named person -->
+      <div class="sheet" id="creator-sheet" role="dialog" aria-label="Creator campaign brief" hidden>
+        <div class="sheet-grab" aria-hidden="true"></div>
+        <div class="sheet-head"><span>Creator campaign</span></div>
+        <div class="sheet-form studio-form">
+          <div class="exp-title">Creator category</div>
+          <div class="form-chips" id="cr-cats"></div>
+          <div class="exp-title">Budget</div>
+          <div class="form-chips" id="cr-budget"></div>
+          <div class="exp-title">Deliverables</div>
+          <div class="form-chips" id="cr-deliv"></div>
+          <p class="set-hint">Celebrity bookings go through a licensed talent agency with signed consent. Nobody's name or likeness is used without a contract. You pick a category, and the agency proposes people from it.</p>
+          <button class="charge-btn" id="cr-send">Send brief (simulated)</button>
+          <button class="ghost-btn" id="cr-close">Close</button>
+        </div>
+      </div>
+
       <!-- campaign composer: template + contact list + send -->
       <div class="sheet" id="camp-sheet" role="dialog" aria-label="Create campaign" hidden>
         <div class="sheet-grab" aria-hidden="true"></div>
@@ -2831,8 +3071,16 @@ button.sheet-empty:active{transform:scale(.98)}
             <button class="chip" data-caud="miss">At-risk · 14+ days</button>
             <button class="chip" data-caud="reg">Regulars · 10+ visits</button>
           </div>
+          <div class="form-chips" id="camp-link-row" hidden>
+            <button class="chip pick" id="camp-attach-link" type="button">Attach payment link</button>
+          </div>
           <div class="exp-title">Send to <span id="camp-sel-count">0 selected</span></div>
           <div class="camp-contacts" id="camp-contacts"></div>
+          <div class="cr-fmt">
+            <button class="chip pick" data-campfmt="post" type="button">Post 4:5</button>
+            <button class="chip" data-campfmt="phone" type="button">Status 9:16</button>
+          </div>
+          <div class="cr-stage" id="camp-creative"></div>
           <div class="wa-bubble" id="camp-preview"></div>
           <button class="charge-btn" id="camp-send">Send campaign (simulated)</button>
           <button class="ghost-btn" id="camp-cancel">Cancel</button>
@@ -3027,11 +3275,31 @@ button.sheet-empty:active{transform:scale(.98)}
         </div>
       </div>
 
+      <!-- quantity for an item added from search -->
+      <div class="sheet" id="qty-sheet" role="dialog" aria-label="Add item to shop" hidden>
+        <div class="sheet-grab" aria-hidden="true"></div>
+        <div class="sheet-head"><span id="qty-title">Add to shop</span></div>
+        <div class="sheet-form">
+          <p class="set-hint" id="qty-hint" style="margin-top:0"></p>
+          <label class="ob-field">
+            <span>How many in stock now</span>
+            <input id="qty-input" type="tel" inputmode="numeric" autocomplete="off" placeholder="0">
+          </label>
+          <button class="charge-btn" id="qty-confirm">Add to shop</button>
+          <button class="ghost-btn" id="qty-untracked">Add without counting stock</button>
+          <button class="ghost-btn" id="qty-cancel">Cancel</button>
+        </div>
+      </div>
+
       <!-- payment link sheet -->
       <div class="sheet" id="paylink-sheet" role="dialog" aria-label="Payment link" hidden>
         <div class="sheet-grab" aria-hidden="true"></div>
         <div class="sheet-head"><span>Payment link</span></div>
         <div class="sheet-form">
+          <label class="ob-field">
+            <span>Order to collect (optional)</span>
+            <select id="paylink-order" class="camp-select"><option value="">Pick an unpaid order…</option></select>
+          </label>
           <div class="paylink-amount-row">
             <label class="ob-field paylink-amt-field">
               <span>Amount</span>
@@ -3102,6 +3370,7 @@ button.sheet-empty:active{transform:scale(.98)}
             <span>Delivery address</span>
             <input id="fulfil-addr" type="text" maxlength="90" autocomplete="off" placeholder="Flat, street, landmark, city">
           </label>
+          <div id="fulfil-delivery-block">
           <span class="set-hint">Delivery by</span>
           <div class="form-chips" id="fulfil-partner">
             <button class="chip pick" data-p="Rapido Parcel" type="button">Rapido Parcel</button>
@@ -3117,6 +3386,7 @@ button.sheet-empty:active{transform:scale(.98)}
             <button class="chip" data-w="pickup" type="button">At pickup</button>
             <button class="chip pick" data-w="delivery" type="button">At delivery</button>
           </div>
+          </div>
           <div class="fulfil-summary" id="fulfil-summary"></div>
           <button class="charge-btn" id="fulfil-create">Create order</button>
           <button class="ghost-btn" id="fulfil-cancel">Cancel</button>
@@ -3129,15 +3399,14 @@ button.sheet-empty:active{transform:scale(.98)}
         <div class="sheet-head"><span>WhatsApp order</span></div>
         <div class="wa-chat" id="wa-chat"></div>
         <div class="wa-compose">
-          <input id="wa-input" type="text" autocomplete="off" placeholder="Type what the customer asked for… e.g. 2 cutting chai 1 samosa">
+          <input id="wa-input" type="text" autocomplete="off" placeholder="Customer message: items, then Address: …">
           <button class="charge-btn wa-send" id="wa-convert">Convert to order</button>
         </div>
         <div class="wa-draft" id="wa-draft" hidden></div>
-        <div class="wa-sheet-actions" id="wa-actions" hidden>
-          <button class="charge-btn" id="wa-confirm">Create order</button>
+        <div class="wa-sheet-actions" id="wa-actions">
           <button class="ghost-btn" id="waorder-cancel">Discard</button>
         </div>
-        <small class="set-hint" style="padding:0 20px 14px;display:block">Simulation — in production the chat is the customer's real WhatsApp message and items parse automatically.</small>
+        <small class="set-hint" style="padding:0 20px 14px;display:block">Simulation — in production the number, message and location pin arrive from WhatsApp, and the order is created when you convert.</small>
       </div>
 
       <!-- catalogue pick sheet -->
@@ -3145,8 +3414,14 @@ button.sheet-empty:active{transform:scale(.98)}
         <div class="sheet-grab" aria-hidden="true"></div>
         <div class="sheet-head"><span>Catalogue pick · customer selection</span></div>
         <div class="sheet-form">
-          <p class="set-hint" style="margin-top:0">Your WhatsApp catalogue — tap what the customer picked, then create the order.</p>
+          <p class="set-hint" style="margin-top:0">Your full catalogue — tap what the customer picked, then create the order.</p>
+          <div class="catpick-tools">
+            <input id="catpick-q" type="search" autocomplete="off" placeholder="Search the full catalogue">
+            <select id="catpick-cat" class="camp-select" aria-label="Category"></select>
+          </div>
+          <p class="set-hint" id="catpick-count"></p>
           <div class="catpick-grid" id="catpick-grid"></div>
+          <button class="ghost-btn sm catpick-more" id="catpick-more" type="button" hidden>Show more</button>
           <div class="catpick-total" id="catpick-total"></div>
           <button class="charge-btn" id="catpick-create">Create order</button>
           <button class="ghost-btn" id="catpick-close">Close</button>
@@ -3169,8 +3444,8 @@ button.sheet-empty:active{transform:scale(.98)}
         <button class="drawer-item" data-drawer="suppliers">Suppliers · udhaar</button>
         <button class="drawer-item" data-drawer="khata">Khata · udhaar book</button>
         <button class="drawer-item" data-drawer="customers">Customers &amp; discounts</button>
-        <span class="drawer-sec">Grow</span>
-        <button class="drawer-item" data-drawer="grow">Grow · CRM</button>
+        <span class="drawer-sec">Marketing</span>
+        <button class="drawer-item" data-drawer="grow">Marketing</button>
         <button class="drawer-item" data-drawer="dashboard">Dashboard</button>
         <button class="drawer-item" data-drawer="reports">Reports</button>
         <button class="drawer-item" data-drawer="gst" id="drawer-gst">GST &amp; filing</button>
@@ -3249,7 +3524,7 @@ button.sheet-empty:active{transform:scale(.98)}
           <section class="ostep" data-ostep="2">
             <p class="ob-kicker">Nature of business</p>
             <h1 class="ob-title">What do you sell?</h1>
-            <p class="ob-sub">Every retail MCC is covered — search below or tap a letter to jump. Item library, recon combos, voice and stock all adapt to this one choice.</p>
+            <p class="ob-sub">Every retail shop type is covered. Search below or tap a letter to jump. Your item list, payment matching, voice and stock adapt to this one choice.</p>
             <p class="ob-regsel" id="ob-reg-banner" hidden></p>
             <label class="ob-field">
               <span>Search business types</span>
@@ -3278,6 +3553,43 @@ button.sheet-empty:active{transform:scale(.98)}
               </div>
             </div>
             <div class="voice-samples" id="ob-samples"></div>
+          </section>
+          <section class="ostep" data-ostep="sku">
+            <p class="ob-kicker">Starter list</p>
+            <h1 class="ob-title">Load your items.</h1>
+            <p class="ob-sub">Search for the items you sell, or upload a CSV for your own range. Items you sell often show on the register. You can change this anytime in Settings.</p>
+            <div class="form-chips" id="sku-mode">
+              <button class="chip pick" data-skumode="list" type="button">Standard list</button>
+              <button class="chip" data-skumode="csv" type="button">Upload CSV</button>
+              <button class="chip" data-skumode="manual" type="button">Add manually</button>
+            </div>
+            <div id="sku-list-panel">
+              <label class="ob-field">
+                <span>Search items</span>
+                <input id="sku-search" type="search" placeholder="e.g. atta, biscuit, surf" autocomplete="off">
+              </label>
+              <div class="sku-cats" id="sku-cats"></div>
+              <p class="set-hint" id="sku-status"></p>
+              <div class="sku-grid" id="sku-grid"></div>
+              <button class="load-more" id="sku-more" hidden>Show more</button>
+            </div>
+            <div id="sku-csv-panel" hidden>
+              <label class="ob-field">
+                <span>Choose a CSV file</span>
+                <input id="sku-file" type="file" accept=".csv,text/csv">
+              </label>
+              <p class="set-hint">Needs a <b>product</b> column and a <b>sale_price</b> column (rupees). <b>brand</b> is optional.</p>
+              <p class="set-hint" id="sku-csv-status"></p>
+            </div>
+            <p class="set-hint" id="sku-picked">0 items selected</p>
+            <div id="sku-prices" class="sku-prices" hidden></div>
+          </section>
+          <section class="ostep" data-ostep="svc">
+            <p class="ob-kicker">Your services</p>
+            <h1 class="ob-title">What do you offer?</h1>
+            <p class="ob-sub">Tick the services your salon offers. Each one becomes a tile on the register with its price and duration. You can change this anytime in Settings.</p>
+            <div class="sku-cats" id="svc-list"></div>
+            <p class="set-hint" id="svc-picked">0 services selected</p>
           </section>
           <section class="ostep" data-ostep="4">
             <p class="ob-kicker">Payments</p>
@@ -3315,6 +3627,11 @@ button.sheet-empty:active{transform:scale(.98)}
             <h1 class="ob-title">What should DukaanOS run?</h1>
             <p class="ob-sub">Switch features on or off — your menus and screens shape themselves. Everything stays changeable later in Settings.</p>
             <div class="set-table" id="obm-table">
+              <div class="set-divider">Counter hardware</div>
+              <div class="set-row">
+                <div class="set-row-main"><strong>Barcode scanning</strong><small>camera scan &amp; item codes on the register · switch off to remove the scan tile entirely</small></div>
+                <button class="switch is-on" data-obbar role="switch" aria-checked="true"><span></span></button>
+              </div>
               <div class="set-row">
                 <div class="set-row-main"><strong>Invoicing</strong><small>bill customers on credit &amp; track payments · powers GST</small></div>
                 <button class="switch is-on" data-obmod="invoice" role="switch" aria-checked="true"><span></span></button>
@@ -4195,7 +4512,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
   const SEGMENT_PACKS = {
     "5411": { /* Kirana & Grocery */
       tagline: "Kirana mode — barcode billing, khata and distributor-wise stock",
-      lexicon: { libraryTab: "Library", grossLabel: "Aaj ki bikri", khataTitle: "Khata book" },
+      lexicon: { libraryTab: "Items", libraryView: "Items view", grossLabel: "Aaj ki bikri", khataTitle: "Khata book" },
       modules: { invoice: true, khata: true, customers: true, stock: true, social: true },
       hero: "barcode",
       voice: ["cold drink 40 rupaye", "atta 5 kilo 275 rupaye", "kitna doodh bacha"],
@@ -4221,10 +4538,15 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       hero: "khata",
       voice: ["2 paan 20 rupaye", "gutkha 10 packet", "kiske paise baki hain"],
     },
+    "7230": { /* Salon & Beauty: the register list is services */
+      tagline: "",
+      lexicon: { libraryTab: "Services", libraryView: "Services view", grossLabel: "Gross sales", khataTitle: "Khata book" },
+      modules: { invoice: true, khata: true, customers: true, stock: true, social: true },
+    },
   };
   const DEFAULT_PACK = {
     tagline: "",
-    lexicon: { libraryTab: "Library", grossLabel: "Gross sales", khataTitle: "Khata book" },
+    lexicon: { libraryTab: "Library", libraryView: "Library view", grossLabel: "Gross sales", khataTitle: "Khata book" },
     modules: { invoice: true, khata: true, customers: true, stock: true, social: true },
     hero: "billing",
     voice: ["cold drink 40 rupaye", "bhujia 10 rupaye 20 packet", "kitna stock bacha"],
@@ -4245,7 +4567,20 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
     });
   }
   const defaultItemIds = (mcc) => MCC_STORES[mcc].items.filter((i) => i.pop).map((i) => i.id);
-  const CATALOG = MCC_STORES["5814"].items.filter((i) => i.pop).map((it, i) => ({ ...it, color: TILE_COLORS[i] }));
+  const CATALOG = MCC_STORES["5814"].items.filter((i) => i.pop).map((it) => ({ ...it }));
+  /* salon stock is consumables used in services, not the services themselves */
+  const SALON_STOCK = [
+    { id: "sk-shampoo", name: "Shampoo 500 ml", price: 32000 },
+    { id: "sk-cond", name: "Conditioner 200 ml", price: 24000 },
+    { id: "sk-facial", name: "Facial kit", price: 45000 },
+    { id: "sk-colour", name: "Hair colour tube", price: 18000 },
+    { id: "sk-bleach", name: "Bleach powder", price: 12000 },
+    { id: "sk-wax", name: "Wax strips pack", price: 9000 },
+    { id: "sk-gloves", name: "Disposable gloves pair", price: 1500 },
+    { id: "sk-cotton", name: "Cotton roll", price: 6000 },
+    { id: "sk-sanit", name: "Hand sanitiser 100 ml", price: 8500 },
+  ];
+  const stockItems = () => state.mcc === "7230" ? SALON_STOCK : state.catalog;
   const STOCK_SEED = [40, 35, 25, 12, 18, 4, 0, 22];   // per catalog index: one low, one out
   const LOW_STOCK_AT = 5;
   const TAX_RATE = 0.05;                   // GST 5% (food service)
@@ -4306,6 +4641,9 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
     bizName: "Cutting Chai Co.",
     myItemIds: defaultItemIds("5814"),
     customItems: [],
+    skuPicks: [],
+    skuCats: [],
+    svcIds: [],
     itemEdits: {},            // per-merchant name/price overrides on suggestion items
     regMcc: null,             // MCC from the merchant's QR / soundbox registration
     regVia: null,             // "QR code" | "Soundbox" — how the merchant registered
@@ -4337,7 +4675,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
     socialCampaigns: [],
     trend: [],
     settings: {
-      voiceLang: "en-IN", soundbox: true, autoRecon: true, gstApplies: true, libraryView: "tile",
+      voiceLang: "en-IN", soundbox: true, autoRecon: true, gstApplies: true, libraryView: "tile", barcode: true,
       payFF: { soundbox: true, standee: true, dqr: false, edc: false, linkpay: false, allinone: false },   // counter/remote payment form factors (drive payment recon)
     modules: { invoice: true, khata: true, customers: true, stock: true, social: true },
       headless: { item: true, stock: true, inventory: true, invoice: true },
@@ -4345,6 +4683,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       tagline: "", address: "", gstin: "", receiptNote: "",
       taxRate: 0.05,            // GST slab — owner picks 0/5/12/18/28%
       lowStockAt: 5,            // "low" alert threshold
+      openingStock: 15,         // stock given to an item added from search, before any stock is loaded
       discountOn: false,        // customer discount module — merchant opts in
       discountPct: 5,           // flat % off for tagged customers
       upiVpa: "",               // override for QR / payment links
@@ -4409,8 +4748,8 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
   function matchCatalogItem(t) {
     const toks = significantTokens(t);
     if (!toks.length) return null;
-    return state.catalog.find((i) => sameTokens(nameTokens(i.name), toks))
-        || state.catalog.find((i) => i.hi && sameTokens(nameTokens(i.hi), toks))
+    return stockItems().find((i) => sameTokens(nameTokens(i.name), toks))
+        || stockItems().find((i) => i.hi && sameTokens(nameTokens(i.hi), toks))
         || null;
   }
 
@@ -4419,7 +4758,13 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
     const sugg = MCC_STORES[state.mcc].items
       .filter((i) => state.myItemIds.includes(i.id))
       .map((i) => ({ ...i, ...(state.itemEdits[i.id] || {}) }));
-    state.catalog = [...sugg, ...state.customItems].map((it, i) => ({ ...it, color: it.color || TILE_COLORS[i % TILE_COLORS.length], code: it.code || skuFor(it.id) }));
+    const catItems = []; // category SKUs stay dormant: they show in search, not on the register
+    const svcs = svcItems();
+    if (state.stock) svcs.forEach((i) => { if (!(i.id in state.stock)) state.stock[i.id] = null; });
+    const catIds = new Set(catItems.map((i) => i.id));
+    const picks = (state.skuPicks || []).filter((i) => !catIds.has(i.id));
+    if (state.stock) catItems.forEach((i) => { if (!(i.id in state.stock)) state.stock[i.id] = null; });
+    state.catalog = [...sugg, ...state.customItems, ...picks, ...catItems, ...svcs].map((it, i) => ({ ...it, color: it.color || null, code: it.code || skuFor(it.id) }));
     persistProfile();
   }
   /* stable 4-digit scan code per item id — works with any barcode scanner that types + Enter */
@@ -4454,6 +4799,9 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       bizName: state.bizName, mcc: state.mcc,
       myItemIds: [...state.myItemIds],
       customItems: state.customItems.map((i) => ({ ...i })),
+      skuPicks: (state.skuPicks || []).map((i) => ({ ...i })),
+      skuCats: [...(state.skuCats || [])],
+      svcIds: [...(state.svcIds || [])],
       itemEdits: state.itemEdits,
       reg: state.regMcc ? { mcc: state.regMcc, via: reg[state.auth.mobile]?.reg?.via || "QR code" } : reg[state.auth.mobile]?.reg,
     };
@@ -4550,6 +4898,8 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
         state.settings.payFF.standee = pfSave.dqr;
         state.settings.payFF.dqr = false;
       }
+      // barcode scanning is opt-out: older saves predate the toggle
+      if (typeof state.settings.barcode !== "boolean") state.settings.barcode = true;
     }
     state.attachedCustomer = null;
     state.seededFor = state.auth.mobile;
@@ -4561,11 +4911,15 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
     state.mcc = m.mcc;
     state.myItemIds = m.myItemIds ? [...m.myItemIds] : defaultItemIds(m.mcc);
     state.customItems = m.customItems ? m.customItems.map((i) => ({ ...i })) : [];
+    state.skuPicks = m.skuPicks ? m.skuPicks.map((i) => ({ ...i })) : [];
+    state.skuCats = m.skuCats ? [...m.skuCats] : [];
+    state.svcIds = m.svcIds ? [...m.svcIds] : [];
     state.itemEdits = m.itemEdits || {};
     state.regMcc = m.reg ? m.reg.mcc : null;
     state.regVia = m.reg ? (m.reg.via || null) : null;
     state.bizName = m.bizName;
     syncCatalog();
+    if (SKU_MCCS.has(state.mcc)) loadSkuCatalogue(state.mcc).then(() => { syncCatalog(); renderGrid(); }).catch(() => {});
     if (m.data) {
       try { restoreState(m); renderAll(); }
       catch (_) { ensureSeeded(); }
@@ -4697,42 +5051,166 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
   grid.addEventListener("click", (e) => {
     if (e.target.closest(".tile-scan")) { e.stopPropagation(); openScanner(); }
   });
+  /* units sold per item name, all time, not counting refunds */
+  function soldByName() {
+    const m = new Map();
+    state.transactions.forEach((tx) => {
+      if (tx.refunded) return;
+      tx.lines.forEach((l) => m.set(l.name, (m.get(l.name) || 0) + l.qty));
+    });
+    return m;
+  }
+  /* best sellers first; ties go to curated favourites, then to catalogue order */
+  function frequentItems(n) {
+    const sold = soldByName();
+    return state.catalog
+      .map((it, i) => ({ it, i, s: sold.get(it.name) || 0, p: it.pop ? 1 : 0 }))
+      .sort((a, b) => b.s - a.s || b.p - a.p || a.i - b.i)
+      .slice(0, n)
+      .map((x) => x.it);
+  }
+  /* SKU list matches that are not in the shop yet (searchable, not listed) */
+  function skuSearchHits(q, n) {
+    const rows = window.SKU_DATA && window.SKU_DATA[state.mcc];
+    if (!rows) return [];
+    const inShop = new Set(state.catalog.map((i) => i.id));
+    const terms = q.split(/\s+/).filter(Boolean);
+    const out = [];
+    for (const r of rows) {
+      if (out.length >= n) break;
+      if (inShop.has(r.id)) continue;
+      const hay = (r.name + " " + (r.brand || "")).toLowerCase();
+      if (terms.every((t) => hay.includes(t))) {
+        out.push({ id: r.id, name: r.name, brand: r.brand || "", category: r.category, price: r.price, sku: true, veg: r.veg, skuSearch: true, color: null });
+      }
+    }
+    return out;
+  }
+  /* an item found by search joins the shop only after the owner enters how many are in stock */
+  let qtyItem = null, qtyThen = null, qtyReturn = null;
+  const inShop = (item) => state.skuPicks.some((x) => x.id === item.id) || state.catalog.some((c) => c.id === item.id);
+  function askOpeningQty(item, then) {
+    if (inShop(item)) { then(); return; }
+    qtyItem = item; qtyThen = then; qtyReturn = openSheetEl;
+    $("#qty-title").textContent = `Add ${item.name}`;
+    $("#qty-hint").textContent = `${item.name}${item.price ? " · " + fmt(item.price) : ""}. Enter how many you have now, 0 if none yet.`;
+    $("#qty-input").value = String(state.settings.openingStock ?? 15);
+    openSheetElFn($("#qty-sheet"));
+    setTimeout(() => $("#qty-input").select(), 60);
+  }
+  function finishQty(added) {
+    const then = qtyThen, ret = qtyReturn;
+    qtyItem = null; qtyThen = null; qtyReturn = null;
+    closeSheetEl();
+    if (ret && ret.id !== "qty-sheet") openSheetElFn(ret);
+    if (added && then) then();
+  }
+  $("#qty-confirm").addEventListener("click", () => {
+    const q = parseInt($("#qty-input").value, 10);
+    if (!(q >= 0)) { toast("Enter a quantity, 0 or more"); return; }
+    adoptSku(qtyItem, q);
+    finishQty(true);
+  });
+  $("#qty-cancel").addEventListener("click", () => finishQty(false));
+  $("#qty-untracked").addEventListener("click", () => { adoptSku(qtyItem, null); finishQty(true); });
+  /* a searched SKU becomes part of the shop once its quantity is entered */
+  function adoptSku(item, qty) {
+    if (!state.stock) state.stock = {};
+    const start = qty === undefined ? (state.settings.openingStock ?? 15) : qty;
+    if (!state.skuPicks.some((x) => x.id === item.id)) {
+      state.skuPicks.push({ id: item.id, name: item.name, brand: item.brand || "", category: item.category, price: item.price, sku: true, veg: item.veg });
+      state.stock[item.id] = start;
+    } else if (state.stock[item.id] == null) state.stock[item.id] = start;
+    syncCatalog();
+  }
+  /* register category chips: the shop's categories plus the SKU categories, which stay dormant until chosen */
+  var libCat = null;
+  var skuCatCache = {};
+  function skuCategoryNames(mcc) {
+    if (skuCatCache[mcc]) return skuCatCache[mcc];
+    const rows = window.SKU_DATA && window.SKU_DATA[mcc];
+    if (!rows) return [];
+    const set = new Set();
+    rows.forEach((r) => { if (r.category) set.add(r.category); });
+    return (skuCatCache[mcc] = [...set].sort());
+  }
+  function libCategories() {
+    const set = new Set(state.catalog.map((i) => i.category).filter(Boolean));
+    skuCategoryNames(state.mcc).forEach((c) => set.add(c));
+    return [...set].sort();
+  }
+  /* dormant SKUs of one category, not yet on the register */
+  function skuCategoryHits(cat, n) {
+    const rows = window.SKU_DATA && window.SKU_DATA[state.mcc];
+    if (!rows || !cat) return [];
+    const inShop = new Set(state.catalog.map((i) => i.id));
+    const out = [];
+    for (const r of rows) {
+      if (out.length >= n) break;
+      if (r.category !== cat || inShop.has(r.id)) continue;
+      out.push({ id: r.id, name: r.name, brand: r.brand || "", category: r.category, price: r.price, sku: true, veg: r.veg, skuSearch: true, color: null });
+    }
+    return out;
+  }
   function renderGrid() {
     grid.innerHTML = "";
     const listView = state.settings.libraryView === "list";
-    /* scan barcode action tile — always first, separate from search */
-    const scanTile = el("button", listView ? "lib-row tile-scan" : "tile tile-scan");
-    scanTile.setAttribute("aria-label", "Scan barcode with camera");
-    scanTile.innerHTML = listView
-      ? '<span class="lib-dot tile-scan-ico"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h2l1.6-2.4A1 1 0 0 1 8.4 5h7.2a1 1 0 0 1 .8.6L18 8h2a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1-1-1z"/><circle cx="12" cy="13" r="3.4"/></svg></span><span class="lib-info"><strong>Scan barcode</strong><small>Camera scan or type code</small></span><span class="lib-price"></span>'
-      : '<span class="tile-scan-ico"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h2l1.6-2.4A1 1 0 0 1 8.4 5h7.2a1 1 0 0 1 .8.6L18 8h2a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1-1-1z"/><circle cx="12" cy="13" r="3.4"/></svg></span><span class="tile-name">Scan barcode</span><span class="tile-price">camera · type</span>';
-    grid.appendChild(scanTile);
+    /* scan barcode action tile — only while barcode scanning is switched on
+       (setup / Settings); typing a code in the search bar still works */
+    $("#lib-cam").hidden = !barcodeOn();   /* scan lives in the search bar, not the grid */
     grid.classList.toggle("as-list", listView);
     const q = (($("#lib-scan") && $("#lib-scan").value) || "").trim().toLowerCase();
-    const items = state.catalog.filter((it) =>
-      !q || it.name.toLowerCase().includes(q) || (it.hi || "").includes(q) || (it.code || "").includes(q));
-    if ($("#lib-count")) $("#lib-count").textContent = q ? `${items.length} match${items.length === 1 ? "" : "es"}` : `${state.catalog.length} items`;
+    const FREQ = 60;   /* without a search, large catalogues show only the frequent items */
+    const matches = state.catalog.filter((it) =>
+      (!libCat || it.category === libCat) &&
+      (!q || it.name.toLowerCase().includes(q) || (it.hi || "").includes(q) || (it.code || "").includes(q)));
+    const frequent = !q && !libCat && state.catalog.length > FREQ;
+    /* a search also reaches the full SKU list; a chosen category shows its dormant SKUs; tapping adds it to the shop */
+    const extra = q ? (matches.length < 20 ? skuSearchHits(q, 30) : []) : (libCat ? skuCategoryHits(libCat, 60) : []);
+    const items = (frequent ? frequentItems(FREQ) : matches.slice(0, q ? 200 : FREQ * 10)).concat(extra);
+    if ($("#lib-count")) {
+      $("#lib-count").textContent = (q || libCat)
+        ? `${matches.length} in your shop${extra.length ? " · " + extra.length + " more in catalogue" : ""}`
+        : frequent ? `Top ${FREQ} of ${state.catalog.length} · search for the rest` : `${state.catalog.length} items`;
+    }
+    const catBox = $("#lib-cats");
+    if (catBox) {
+      const cats = libCategories();
+      if (libCat && !cats.includes(libCat)) libCat = null;
+      const sel = $("#lib-cat-sel");
+      catBox.hidden = !cats.length;
+      if (sel.options.length !== cats.length + 1) {
+        sel.innerHTML = "";
+        ["", ...cats].forEach((c) => {
+          const o = document.createElement("option");
+          o.value = c; o.textContent = c || "All categories";
+          sel.appendChild(o);
+        });
+        sel.onchange = () => { libCat = sel.value || null; renderGrid(); };
+      }
+      sel.value = libCat || "";
+    }
     items.forEach((item) => {
       const inStock = state.stock[item.id];
       const out = inStock === 0;
       const low = !out && inStock != null && inStock <= lowAt();
       const b = el("button", listView ? "lib-row" : "tile");
-      if (!listView) b.style.background = item.color;
+      if (!listView && item.color) b.style.boxShadow = `inset 0 4px 0 ${item.color}`;
       if (out) b.classList.add("is-out");
       b.setAttribute("aria-label", `Add ${item.name}, ${fmt(item.price)}`);
       if (listView) {
         let dot;
         if (item.photo) { dot = el("img", "lib-thumb"); dot.src = item.photo; dot.alt = ""; }
-        else { dot = el("span", "lib-dot"); dot.style.background = item.color; }
+        else { dot = el("span", "lib-dot"); if (item.color) dot.style.background = item.color; }
         const main = el("span", "lib-info");
-        main.append(el("strong", null, item.name), el("small", null, out ? "Out of stock" : low ? `Only ${inStock} left` : `${inStock} in stock`));
+        main.append(el("strong", null, item.name), el("small", null, (item.brand ? item.brand + " · " : "") + (out ? "Out of stock" : low ? `Only ${inStock} left` : inStock == null ? "Not tracked" : `${inStock} in stock`)));
         const qty = el("span", "tile-qty");
         qty.dataset.for = item.id;
         const pen = el("button", "lib-edit");
         pen.setAttribute("aria-label", `Edit ${item.name}`);
         pen.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.8 2.8 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg>';
         pen.addEventListener("click", (e) => { e.stopPropagation(); openItemSheet(item); });
-        b.append(dot, main, el("span", "lib-price", fmt(item.price)), qty, pen);
+        b.append(dot, main, el("span", "lib-price", item.price == null ? "Set price" : fmt(item.price)), qty, pen);
       } else {
         if (item.photo) {
           b.classList.add("tile-has-photo");
@@ -4741,8 +5219,11 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
           img.alt = "";
           b.appendChild(img);
         }
-        const name = el("span", "tile-name", item.name);
-        const price = el("span", "tile-price", fmt(item.price));
+        if (item.brand) b.appendChild(el("span", "tile-brand", item.brand));
+        const name = el("span", "tile-name");
+        if (item.veg !== undefined) name.append(el("span", "veg-dot " + (item.veg ? "veg" : "nonveg")));
+        name.append(item.name);
+        const price = el("span", "tile-price", item.price == null ? "Set price" : fmt(item.price));
         const qty = el("span", "tile-qty");
         qty.dataset.for = item.id;
         b.append(name, price, qty);
@@ -4765,8 +5246,12 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       ["pointerup", "pointerleave", "pointercancel"].forEach((ev) => b.addEventListener(ev, lpClear));
       b.addEventListener("click", () => {
         if (lpFired) { lpFired = false; return; }
-        if (state.stock[item.id] === 0) { toast(`${item.name} is out of stock — hold to edit or restock`); return; }
-        addToCart({ key: item.id, name: item.name, price: item.price });
+        const go = () => {
+          if (item.price == null) { openItemSheet(item); return; }
+          if (state.stock[item.id] === 0) { toast(`${item.name} is out of stock — hold to edit or restock`); return; }
+          addToCart({ key: item.id, name: item.name, price: item.price });
+        };
+        if (item.skuSearch) askOpeningQty(item, go); else go();
       });
       grid.appendChild(b);
     });
@@ -4774,9 +5259,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
     state.catalog.forEach((item) => {
       const badge = grid.querySelector(`[data-for="${item.id}"]`);
       if (!badge) return;
-      const line = state.cart.get(item.id);
-      badge.textContent = line ? line.qty : "";
-      badge.classList.toggle("show", !!line);
+      paintQtyBadge(badge, item);
     });
     syncLibView();
     if (!state.settings.seenEditTip) {
@@ -4791,6 +5274,36 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
     if (cur) cur.qty += 1;
     else state.cart.set(line.key, { ...line, qty: 1 });
     renderCart();
+  }
+  /* qty badge doubles as a stepper: − reduces/removes, + (or tapping the
+     tile) adds — an item can never be stuck in the cart with no way back */
+  function paintQtyBadge(badge, item) {
+    const line = state.cart.get(item.id);
+    badge.innerHTML = "";
+    if (!line) { badge.classList.remove("show"); return; }
+    badge.classList.add("show");
+    const dec = el("span", "tq-dec", "\u2212");
+    dec.setAttribute("role", "button");
+    dec.setAttribute("aria-label", `Remove one ${item.name}`);
+    dec.addEventListener("pointerdown", (e) => e.stopPropagation());
+    dec.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const cur = state.cart.get(item.id);
+      if (!cur) return;
+      if (cur.qty > 1) cur.qty -= 1;
+      else state.cart.delete(item.id);
+      renderCart();
+    });
+    const n = el("span", "tq-n", String(line.qty));
+    const inc = el("span", "tq-inc", "+");
+    inc.setAttribute("role", "button");
+    inc.setAttribute("aria-label", `Add one ${item.name}`);
+    inc.addEventListener("pointerdown", (e) => e.stopPropagation());
+    inc.addEventListener("click", (e) => {
+      e.stopPropagation();
+      addToCart({ key: item.id, name: item.name, price: item.price });
+    });
+    badge.append(dec, n, inc);
   }
 
   function syncAutoDisc() {
@@ -4810,16 +5323,14 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
     const grand = cartLines().length ? total : total + state.keypadCents;
     if ($("#keypad-amount") && document.activeElement !== $("#keypad-amount")) $("#keypad-amount").textContent = fmt(state.keypadCents);
     if (typeof renderKeypadLines === "function") renderKeypadLines();
-    $("#peek-count").textContent = n === 0 ? "No items" : `${n} item${n > 1 ? "s" : ""}`;
+    $("#peek-count").textContent = n === 0 ? "Bill is empty" : `Bill · ${n} item${n > 1 ? "s" : ""}`;
     const charge = $("#btn-charge");
     charge.disabled = grand === 0;
     charge.textContent = `Charge ${fmt(grand)}`;
     state.catalog.forEach((item) => {
       const badge = grid.querySelector(`[data-for="${item.id}"]`);
       if (!badge) return;   /* item hidden by the scan/search filter */
-      const line = state.cart.get(item.id);
-      badge.textContent = line ? line.qty : "";
-      badge.classList.toggle("show", !!line);
+      paintQtyBadge(badge, item);
     });
   }
 
@@ -4996,6 +5507,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
   const sheet = $("#sale-sheet");
   function openSheet() { renderSheet(); openSheetElFn(sheet); }
   $("#btn-sale-peek").addEventListener("click", openSheet);
+  $("#lib-cam").addEventListener("click", () => openScanner());
 
   function renderSheet() {
     const lines = $("#sheet-lines");
@@ -5462,9 +5974,9 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
     return [...seen.values()];
   }
 
-  function openLinkSheet(tx) {
+  function openLinkSheet(tx, presetLines) {
     linkCtx = { tx, qty: new Map() };
-    tx.lines.forEach((l) => {
+    (presetLines || tx.lines).forEach((l) => {
       const it = state.catalog.find((i) => i.name === l.name);
       if (it) linkCtx.qty.set(it.id, l.qty);
     });
@@ -5845,7 +6357,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       state.settings.gstin ? el("div", "rc-sub", "GSTIN " + state.settings.gstin) : null,
       el("div", "rc-sub", dateStr(tx.date) + " · " + timeStr(tx.date)),
       el("div", "rc-sub", "Counter 1 · " + tx.id),
-      el("div", "rc-sub", "MCC " + state.mcc + " · " + MCC_STORES[state.mcc].label),
+      el("div", "rc-sub", MCC_STORES[state.mcc].label),
     ].filter(Boolean).forEach((n) => head.appendChild(n));
     r.appendChild(head);
     r.appendChild(el("div", "rc-rule"));
@@ -6379,7 +6891,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
         (state.auth.mobile ? ` · +91 ${state.auth.mobile.slice(0, 5)} ${state.auth.mobile.slice(5)}` : "")),
       state.settings.address ? el("small", "inv-brand-tagline", state.settings.address) : null,
       state.settings.gstin ? el("small", "inv-brand-tagline", `GSTIN: ${state.settings.gstin}`) : null,
-      el("span", "inv-brand-tag", `${MCC_STORES[state.mcc].label} · MCC ${state.mcc}`),
+      el("span", "inv-brand-tag", MCC_STORES[state.mcc].label),
     ];
     brandNodes.filter(Boolean).forEach((n) => brand.appendChild(n));
     const head = el("div", "inv-detail-head");
@@ -6434,7 +6946,12 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
         persistState();
         toast(`Invoice ${inv.num} marked as paid`);
       });
-      actions.append(remind, pay);
+      const linkPay = el("button", "ghost-btn", "Send Link Pay");
+      linkPay.addEventListener("click", () => {
+        closeSheetEl();
+        openPayLink(inv.amount, `${inv.num} · ${inv.customerName}`, null, null, inv.id);
+      });
+      actions.append(remind, linkPay, pay);
     } else {
       const done = el("button", "charge-btn", "Done");
       done.addEventListener("click", closeSheetEl);
@@ -6684,6 +7201,9 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
     if (!keepItems) {
       state.myItemIds = defaultItemIds(mcc);
       state.customItems = [];
+      state.skuPicks = [];
+      state.skuCats = [];
+      state.svcIds = [];
     }
     syncCatalog();
     state.cart.clear();
@@ -6802,7 +7322,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       const logo = el("span", "soc-logo");
       logo.innerHTML = '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12c0-4 2.5-7 5.5-7 2.3 0 3.6 1.6 4.5 4 .9-2.4 2.2-4 4.5-4C20.5 5 23 8 23 12s-2.5 7-5.5 7c-2.3 0-3.6-1.6-4.5-4-.9 2.4-2.2 4-4.5 4C5.5 19 3 16 3 12Z"/></svg>';
       card.append(logo, el("strong", null, "Connect Meta"),
-        el("p", null, "Link your Facebook Page and Instagram to see followers, reach and engagement here — and run social campaigns from Grow."),
+        el("p", null, "Link your Facebook Page and Instagram to see followers, reach and engagement here — and run social campaigns from Marketing."),
         el("button", "charge-btn", "Connect Meta"));
       card.querySelector(".charge-btn").style.cssText = "width:100%;max-width:280px";
       card.querySelector(".charge-btn").addEventListener("click", openMetaSheet);
@@ -7125,8 +7645,8 @@ function renderSettings() {
       ? `+91 ${state.auth.mobile.slice(0, 5)} ${state.auth.mobile.slice(5)}`
       : "Not logged in";
     $("#set-name").value = state.bizName;
-    $("#set-biz-tag").textContent = "MCC " + state.mcc;
-    $("#set-type-label").textContent = `${MCC_STORES[state.mcc].label} · MCC ${state.mcc}`;
+    $("#set-biz-tag").textContent = "Code " + state.mcc;
+    $("#set-type-label").textContent = `${MCC_STORES[state.mcc].label} · Code ${state.mcc}`;
     $("#set-items-label").textContent = `${state.catalog.length} items · ${state.customItems.length} added by you`;
     document.querySelectorAll("#set-voice-lang .seg").forEach((s) =>
       s.classList.toggle("is-on", s.dataset.lang === state.settings.voiceLang));
@@ -7135,6 +7655,11 @@ function renderSettings() {
     swS.setAttribute("aria-checked", state.settings.soundbox);
     swA.classList.toggle("is-on", state.settings.autoRecon);
     swA.setAttribute("aria-checked", state.settings.autoRecon);
+    const swB = $("#sw-barcode");
+    if (swB) {
+      swB.classList.toggle("is-on", barcodeOn());
+      swB.setAttribute("aria-checked", String(barcodeOn()));
+    }
     // payment form factors (drive what payment recon shows)
     document.querySelectorAll("[data-setff]").forEach((b) => {
       const on = !!payFF()[b.dataset.setff];
@@ -7150,6 +7675,7 @@ function renderSettings() {
     document.querySelectorAll("#set-tax .seg").forEach((s) =>
       s.classList.toggle("is-on", Math.abs(parseFloat(s.dataset.tax) - taxRate()) < 0.001));
     $("#set-low-val").textContent = String(lowAt());
+    $("#set-open-val").textContent = String(state.settings.openingStock ?? 15);
     renderDiscSettings();
     // GST applicability + library view (GST depends on the Invoicing module)
     const invOn = modOn("invoice");
@@ -7253,6 +7779,8 @@ function renderSettings() {
   };
   $("#set-low-minus").addEventListener("click", () => { bump("lowStockAt", "#set-low-val", -1, 1, 50); renderStock(); renderGrid(); });
   $("#set-low-plus").addEventListener("click", () => { bump("lowStockAt", "#set-low-val", 1, 1, 50); renderStock(); renderGrid(); });
+  $("#set-open-minus").addEventListener("click", () => bump("openingStock", "#set-open-val", -1, 0, 500));
+  $("#set-open-plus").addEventListener("click", () => bump("openingStock", "#set-open-val", 1, 0, 500));
   /* customer discount module toggle + % stepper */
   $("#set-disc-toggle").addEventListener("click", () => {
     state.settings.discountOn = !discOn();
@@ -7292,6 +7820,13 @@ function renderSettings() {
   $("#sw-autorecon").addEventListener("click", () => {
     state.settings.autoRecon = !state.settings.autoRecon;
     renderSettings();
+    persistState();
+  });
+  /* barcode scanning — off removes the scan tile from the register entirely */
+  $("#sw-barcode").addEventListener("click", () => {
+    state.settings.barcode = !barcodeOn();
+    renderSettings();
+    renderGrid();
     persistState();
   });
   /* payment form factors — selection shapes payment recon (chips + arrivals) */
@@ -7457,6 +7992,9 @@ function renderSettings() {
       const remind = el("button", "ghost-btn", "Remind · WhatsApp");
       remind.addEventListener("click", () => { closeSheetEl(); openCampaignSheet("khata", c.id); });
       actions.insertBefore(remind, actions.firstChild);
+      const collect = el("button", "ghost-btn", `Send Link Pay · collect ${fmt(bal)}`);
+      collect.addEventListener("click", () => { closeSheetEl(); openPayLink(bal, `Khata · ${c.name}`, null, c.id); });
+      actions.insertBefore(collect, actions.firstChild);
     }
     const done = el("button", "ghost-btn", "Close");
     done.addEventListener("click", closeSheetEl);
@@ -7518,7 +8056,7 @@ function renderSettings() {
       tr0.addEventListener("focus", () => { if (!tr0.textContent.trim()) tr0.textContent = ""; });
     }
     btn.addEventListener("click", () => {
-      if (!SR) { toast("Voice not supported here — tap a sample phrase below"); return; }
+      if (!SR) { toast("Voice not supported on this device"); return; }
       btn.classList.add("listening");
       $(labelSel).textContent = state.settings.voiceLang === "hi-IN" ? "सुन रहे हैं…" : "Listening…";
       const rec = new SR();
@@ -7531,7 +8069,7 @@ function renderSettings() {
         if (e.results[e.results.length - 1].isFinal) onText(text);
       };
       rec.onend = () => { btn.classList.remove("listening"); $(labelSel).textContent = restLabel(); };
-      rec.onerror = () => { btn.classList.remove("listening"); $(labelSel).textContent = "Didn't catch that — try again or tap a sample"; };
+      rec.onerror = () => { btn.classList.remove("listening"); $(labelSel).textContent = "Didn't catch that — try again"; };
       try { rec.start(); } catch (_) { /* already started */ }
     });
   }
@@ -7539,14 +8077,8 @@ function renderSettings() {
     () => state.settings.voiceLang === "hi-IN" ? "बोलिए: नाम + आइटम या रकम" : "Tap and say: name + item or amount",
     addKhataFromPhrase);
   // sample phrases act as simulated voice for desktops without a mic
-  function voiceChips(box, phrases, handler) {
-    box.innerHTML = "";
-    phrases.forEach((p) => {
-      const c = el("button", "chip", `Try: “${p}”`);
-      c.addEventListener("click", () => handler(p));
-      box.appendChild(c);
-    });
-  }
+  /* voice sample chips removed: the mic and typing cover the same entry */
+  function voiceChips(box) { if (box) box.innerHTML = ""; }
   const lastWord = (name) => name.toLowerCase().split(/[^a-z]+/).filter(Boolean).pop();
   const hiMode = () => state.settings.voiceLang === "hi-IN";
   function renderKhataSamples() {
@@ -7562,21 +8094,21 @@ function renderSettings() {
   function stockCount(id) { return state.stock[id] ?? 0; }
   function seedStock() {
     state.stock = {};
-    state.catalog.forEach((it, i) => { state.stock[it.id] = STOCK_SEED[i % STOCK_SEED.length]; });
+    stockItems().forEach((it, i) => { state.stock[it.id] = it.sku ? null : STOCK_SEED[i % STOCK_SEED.length]; });
   }
   function renderStock() {
     const list = $("#stock-list");
     if (!list) return;
     list.innerHTML = "";
     let units = 0, low = 0, out = 0;
-    state.catalog.forEach((it) => {
+    stockItems().forEach((it) => {
       const q = stockCount(it.id);
       units += q;
       if (q === 0) out++; else if (q <= lowAt()) low++;
       const row = el("div", "stock-row");
       let sw;
       if (it.photo) { sw = el("img", "stock-thumb"); sw.src = it.photo; sw.alt = ""; }
-      else { sw = el("span", "stock-swatch"); sw.style.background = it.color; }
+      else { sw = el("span", "stock-swatch"); sw.style.background = it.color || "var(--brand-soft)"; }
       const main = el("div", "stock-main");
       const sub = q === 0 ? "out of stock" : q <= lowAt() ? `low · ${q} left` : `${q} in stock`;
       main.append(el("strong", null, it.name), el("small", null, `${fmt(it.price)} · ${sub}`));
@@ -7664,7 +8196,7 @@ function renderSettings() {
     return r;
   }
   function renderStockSamples() {
-    const I = state.catalog;
+    const I = stockItems();
     const last = I[I.length - 1];
     const phrases = hiMode()
       ? [`${last.hi || last.name} 20 पैकेट`, `${I[0].hi || I[0].name} ख़त्म`, `${I[Math.min(3, I.length - 1)].hi || I[Math.min(3, I.length - 1)].name} 15`]
@@ -7755,7 +8287,7 @@ function renderSettings() {
     toast(`Stock-in: ${r.qty}× ${r.item.name} @ ${fmt(r.rate)}${r.assumed ? " (rate assumed)" : ""}`);
   }
   function renderPurSamples() {
-    const I = state.catalog;
+    const I = stockItems();
     const rate = (i) => Math.max(1, Math.round(I[i].price * 0.75 / 100));
     const a = I[0], b = I[Math.min(2, I.length - 1)];
     const phrases = hiMode()
@@ -7781,9 +8313,9 @@ function renderSettings() {
     }
     state.purchases.slice(0, 20).forEach((p) => {
       const row = el("div", "pur-row");
-      const it = state.catalog.find((i) => i.id === p.itemId);
+      const it = stockItems().find((i) => i.id === p.itemId);
       const sw = el("span", "stock-swatch");
-      sw.style.background = it ? it.color : "var(--t-slate)";
+      sw.style.background = it && it.color ? it.color : "var(--brand-soft)";
       const main = el("div", "pur-main");
       const payLabel = p.payMode === "later" ? " · udhaar" : p.payMode === "now" ? ` · paid ${p.method || ""}` : p.payMode === "already" ? " · already paid" : "";
       main.append(el("strong", null, p.name),
@@ -7804,7 +8336,7 @@ function renderSettings() {
     const card = $("#reorder-card");
     if (!card) return;
     const lowAt = () => state.settings.lowStockAt || 5;
-    const lows = state.catalog.filter((i) => (state.stock[i.id] ?? 0) <= lowAt());
+    const lows = stockItems().filter((i) => (state.stock[i.id] ?? 0) <= lowAt());
     card.hidden = lows.length === 0;
     if (!lows.length) return;
     $("#reorder-sub").textContent = `${lows.length} item${lows.length > 1 ? "s" : ""} at/below low stock`;
@@ -7868,6 +8400,14 @@ function renderSettings() {
     const amt = $("#supp-amt");
     amt.value = (s.due / 100).toFixed(2);
     renderSuppChips(s.due);
+    // default rail with its note, reset any armed state
+    supLedgerMethod = "UPI";
+    const box = $("#supp-method");
+    if (box) box.querySelectorAll(".chip").forEach((x) => x.classList.toggle("pick", x.dataset.m === "UPI"));
+    $("#supp-rail-note").textContent = railNote("UPI");
+    const btn = $("#supp-pay");
+    btn.classList.remove("arm");
+    btn.textContent = "Record payment";
     openSheetElFn($("#supp-sheet"));
   }
   function renderSuppChips(due) {
@@ -7880,34 +8420,63 @@ function renderSettings() {
     });
   }
   /* shared: record a supplier payment (reduces due, logs entry, cash-out if Cash) */
-  function recordSupplierPayment(sup, cents, method) {
+  function recordSupplierPayment(sup, cents, method, ref) {
     sup.due = Math.max(0, (sup.due || 0) - cents);
     state.supPay.unshift({
       id: "sp-" + Date.now(), supplierId: sup.id, name: sup.name,
-      amt: cents, date: now(), method: method || "Cash",
+      amt: cents, date: now(), method: method || "Cash", ref: ref || undefined,
     });
     state.supEntries.unshift({ id: "se-s" + Date.now().toString(36), supplierId: sup.id, type: "paid", amount: cents, desc: "Payment · " + (method || "Cash"), date: now() });
     if ((method || "Cash") === "Cash" && typeof drawerCashOut === "function") drawerCashOut(cents, "Supplier payment — " + sup.name);
-    if (typeof auditLog === "function") auditLog("supplier", `Paid ${fmt(cents)} to ${sup.name} · ${method || "Cash"}`);
+    if (typeof auditLog === "function") auditLog("supplier", `Paid ${fmt(cents)} to ${sup.name} · ${method || "Cash"}${ref ? " · ref " + ref : ""}`);
     persistState();
     renderSuppliers();
     if (typeof renderSupplierLedger === "function") renderSupplierLedger();
   }
+  let supLedgerMethod = "UPI";
+  const supMethodBox = $("#supp-method");
+  if (supMethodBox) supMethodBox.addEventListener("click", (e) => {
+    const c = e.target.closest(".chip");
+    if (!c) return;
+    supLedgerMethod = c.dataset.m;
+    supMethodBox.querySelectorAll(".chip").forEach((x) => x.classList.toggle("pick", x === c));
+    $("#supp-rail-note").textContent = railNote(supLedgerMethod);
+  });
   $("#supp-pay").addEventListener("click", () => {
     if (!suppEditing) return;
     const payIn = parseFloat($("#supp-amt").value);
     const pay = Math.min(suppEditing.due, Math.max(0, Math.round((payIn || 0) * 100)));
     if (!pay) { toast("Enter an amount"); return; }
-    recordSupplierPayment(suppEditing, pay, "Cash");
+    const btn = $("#supp-pay"), rail = SUP_RAILS[supLedgerMethod];
+    if (!btn.classList.contains("arm")) {
+      btn.classList.add("arm");
+      btn.textContent = rail.confirm(pay);
+      setTimeout(() => { btn.classList.remove("arm"); btn.textContent = "Record payment"; }, 3000);
+      return;
+    }
+    btn.classList.remove("arm");
+    btn.textContent = "Record payment";
+    const ref = rail.ref ? rail.ref() : null;
+    recordSupplierPayment(suppEditing, pay, supLedgerMethod, ref);
     closeSheetEl();
-    toast(`Paid ${fmt(pay)} to ${suppEditing.name}`);
+    toast(`Paid ${fmt(pay)} to ${suppEditing.name} · ${supLedgerMethod}${ref ? " · ref " + ref : ""}`);
     renderSupplierLedger();
     if (supDetailFor && supDetailFor.id === suppEditing.id) openSupDetail(suppEditing);
   });
   $("#supp-cancel").addEventListener("click", closeSheetEl);
 
+  /* supplier payment rails — all three are functional:
+     UPI: instant push to the supplier's VPA · Netbanking: IMPS from the linked
+     HDFC account · Cash: out of today's drawer */
+  const SUP_RAILS = {
+    UPI:        { note: "Instant UPI transfer to the supplier's VPA · no charge", ref: () => "UPI" + String(Math.floor(1e10 + Math.random() * 9e10)), confirm: (p) => `Tap again — pay ${fmt(p)} via UPI` },
+    Netbanking: { note: "IMPS from HDFC ••4821 · instant · no charge", ref: () => "IMPS" + String(Math.floor(1e10 + Math.random() * 9e10)), confirm: (p) => `Tap again — transfer ${fmt(p)} by IMPS` },
+    Cash:       { note: "Taken out of today's cash drawer", ref: () => null, confirm: (p) => `Tap again — pay ${fmt(p)} in cash` },
+  };
+  function railNote(method) { return (SUP_RAILS[method] || SUP_RAILS.Cash).note; }
+
   /* ---------- supplier quick-pay (header "Pay" on the Suppliers screen) ---------- */
-  let supPayTarget = null, supPayMethod = "Cash";
+  let supPayTarget = null, supPayMethod = "UPI";
   function renderSupPayChips() {
     const box = $("#suppay-sup-chips");
     box.innerHTML = "";
@@ -7941,8 +8510,9 @@ function renderSettings() {
     });
   }
   $("#btn-sup-pay").addEventListener("click", () => {
-    supPayMethod = "Cash";
-    $("#suppay-f-method").querySelectorAll(".chip").forEach((x) => x.classList.toggle("pick", x.dataset.m === "Cash"));
+    supPayMethod = "UPI";
+    $("#suppay-f-method").querySelectorAll(".chip").forEach((x) => x.classList.toggle("pick", x.dataset.m === "UPI"));
+    $("#suppay-f-rail-note").textContent = railNote("UPI");
     supPayTarget = state.suppliers.find((s) => (s.due || 0) > 0) || state.suppliers[0] || null;
     $("#suppay-f-name").value = supPayTarget ? supPayTarget.name : "";
     $("#suppay-f-amt").value = supPayTarget ? (supPayTarget.due / 100).toFixed(2) : "";
@@ -7961,6 +8531,7 @@ function renderSettings() {
     if (!c) return;
     supPayMethod = c.dataset.m;
     $("#suppay-f-method").querySelectorAll(".chip").forEach((x) => x.classList.toggle("pick", x === c));
+    $("#suppay-f-rail-note").textContent = railNote(supPayMethod);
   });
   $("#suppay-f-pay").addEventListener("click", () => {
     const name = $("#suppay-f-name").value.trim();
@@ -7970,9 +8541,19 @@ function renderSettings() {
     const payIn = parseFloat($("#suppay-f-amt").value);
     const pay = Math.min(sup.due, Math.max(0, Math.round((payIn || 0) * 100)));
     if (!pay) { toast("Enter an amount"); return; }
-    recordSupplierPayment(sup, pay, supPayMethod);
+    const btn = $("#suppay-f-pay"), rail = SUP_RAILS[supPayMethod];
+    if (!btn.classList.contains("arm")) {
+      btn.classList.add("arm");
+      btn.textContent = rail.confirm(pay);
+      setTimeout(() => { btn.classList.remove("arm"); btn.textContent = "Record payment"; }, 3000);
+      return;
+    }
+    btn.classList.remove("arm");
+    btn.textContent = "Record payment";
+    const ref = rail.ref ? rail.ref() : null;
+    recordSupplierPayment(sup, pay, supPayMethod, ref);
     closeSheetEl();
-    toast(`Paid ${fmt(pay)} to ${sup.name} · ${supPayMethod}${sup.due > 0 ? " · " + fmt(sup.due) + " still due" : " · settled"}`);
+    toast(`Paid ${fmt(pay)} to ${sup.name} · ${supPayMethod}${ref ? " · ref " + ref : ""}${sup.due > 0 ? " · " + fmt(sup.due) + " still due" : " · settled"}`);
   });
   $("#suppay-f-cancel").addEventListener("click", closeSheetEl);
 
@@ -8229,6 +8810,8 @@ function renderSettings() {
           if (itemPhotoPick) state.itemEdits[src.id].photo = itemPhotoPick; else delete state.itemEdits[src.id].photo;
         }
       }
+      const pick = state.skuPicks.find((x) => x.id === editingItem.id);
+      if (pick) { pick.name = titleCase(name); pick.price = price; }
       state.stock[editingItem.id] = qty;
       syncCatalog();
       refreshStockUI();
@@ -9045,6 +9628,7 @@ function renderSettings() {
     ["linkpay", "Link Pay", "Link Pay"],
     ["allinone", "All-in-One", "All-in-One device"],
   ];
+  const barcodeOn = () => state.settings.barcode !== false;   // opt-out toggle — setup & Settings
   function payFF() { return state.settings.payFF || { soundbox: true, standee: true, dqr: false, edc: false, linkpay: false, allinone: false }; }
   function enabledFFs() { const f = payFF(); return FF_DEFS.filter(([k]) => f[k]); }
 
@@ -9103,7 +9687,13 @@ function renderSettings() {
       const actions = el("div", "recon-actions");
       p.guess.forEach((c) => {
         const chip = el("button", "chip pick", c.label);
-        chip.addEventListener("click", () => { matchStatic(p, c); toast(`Matched: ${c.label}`); });
+        chip.addEventListener("click", () => {
+          // open the tagging sheet seeded with this guess — the merchant can
+          // reduce qty, remove items or add more before saving, instead of a
+          // blind one-tap match that can never be corrected
+          const tx = matchStatic(p, null);
+          openLinkSheet(tx, c.lines);
+        });
         actions.appendChild(chip);
       });
       const other = el("button", "chip", p.guess.length ? "Something else" : "Pick items sold");
@@ -9306,17 +9896,37 @@ function renderSettings() {
   let campSel = new Set();
   let campTplId = "new";
   let campArm = false, campArmTimer = null, campLockCust = null;
+  let campAttachLink = false;
+  /* UPI deep-link for a customer's due — appended to khata reminders so the
+     payment is one tap away (Link Pay rail) */
+  function khataPayLink(c) {
+    const due = khataBalance(c.id);
+    return `upi://pay?pa=${encodeURIComponent(shopVpa())}&pn=${encodeURIComponent(state.bizName)}&am=${(due / 100).toFixed(2)}&cu=INR&tn=${encodeURIComponent("Khata payment — " + c.name)}`;
+  }
+  function campComposedMsg() {
+    const base = $("#camp-f-msg").value;
+    if (!campAttachLink || !campLockCust) return base;
+    const c = state.customers.find((x) => x.id === campLockCust);
+    return c && khataBalance(c.id) > 0 ? base + "\n\nPay now · UPI: " + khataPayLink(c) : base;
+  }
   function currentTpl() { return CAMPAIGN_TEMPLATES.find((t) => t.id === campTplId); }
   function campSample() {
     const sel = [...campSel][0] && state.customers.find((c) => c.id === [...campSel][0]);
     return sel || state.customers[0] || { name: "Ravi Kumar", visits: 4, lastSeenDays: 2 };
   }
   function updateCampPreview() {
-    const raw = $("#camp-f-msg").value;
+    const raw = campComposedMsg();
     const c = campSample();
     $("#camp-preview").textContent = raw.replaceAll("{first}", c.name.split(" ")[0]).replaceAll("{name}", c.name);
+    const stage = $("#camp-creative");
+    if (stage && currentTpl()) renderCreativeInto(stage, currentTpl(), c);
     $("#camp-sel-count").textContent = `${campSel.size} selected`;
   }
+  document.querySelectorAll("[data-campfmt]").forEach((b) => b.addEventListener("click", () => {
+    campFmt = b.dataset.campfmt;
+    document.querySelectorAll("[data-campfmt]").forEach((x) => x.classList.toggle("pick", x === b));
+    updateCampPreview();
+  }));
   function loadCampMsg() {
     const t = currentTpl();
     const msg = ((state.waTemplates && state.waTemplates[t.id]) || "").trim() || t.msg(campSample().name.split(" ")[0], campSample());
@@ -9366,6 +9976,15 @@ function renderSettings() {
     document.querySelectorAll("[data-caud]").forEach((b) => b.classList.toggle("pick", !cust && b.dataset.caud === "all"));
     $("#camp-aud-chips").style.display = cust ? "none" : "";
     $("#camp-sheet-title").textContent = cust ? `Remind ${cust.name}` : "Create campaign";
+    // a khata reminder can carry a Link Pay deep-link for the exact due amount
+    const lockDue = cust ? khataBalance(cust.id) : 0;
+    campAttachLink = !!(cust && lockDue > 0);
+    const linkRow = $("#camp-link-row"), linkChip = $("#camp-attach-link");
+    if (linkRow) linkRow.hidden = !(cust && lockDue > 0);
+    if (linkChip) {
+      linkChip.textContent = `Attach payment link · ${fmt(lockDue)}`;
+      linkChip.classList.toggle("pick", campAttachLink);
+    }
     loadCampMsg();
     const sendBtn = $("#camp-send");
     campArm = false;
@@ -9388,6 +10007,11 @@ function renderSettings() {
       renderCampContacts();
     }));
     $("#camp-cancel").addEventListener("click", closeSheetEl);
+    $("#camp-attach-link").addEventListener("click", () => {
+      campAttachLink = !campAttachLink;
+      $("#camp-attach-link").classList.toggle("pick", campAttachLink);
+      updateCampPreview();
+    });
     $("#camp-send").addEventListener("click", () => {
       const btn = $("#camp-send");
       if (!campArm) {
@@ -9402,16 +10026,195 @@ function renderSettings() {
       if (!campSel.size) { toast("Select at least one customer"); btn.textContent = "Send campaign (simulated)"; return; }
       const t = currentTpl();
       const count = campSel.size;
+      const linkNote = campAttachLink && campLockCust ? " · payment link attached" : "";
       state.campaigns.unshift({ id: "cmp-" + Date.now(), name: t ? t.name : "Custom campaign", audLabel: `Manual · ${count} selected`, count, date: now() });
-      auditLog("grow", `Campaign "${t ? t.name : "Custom campaign"}" sent to ${count} customers`);
+      auditLog("grow", `Campaign "${t ? t.name : "Custom campaign"}" sent to ${count} customers${linkNote}`);
       persistState();
       closeSheetEl();
       renderCampaigns();
-      toast(`${t ? t.name : "Campaign"} sent to ${count} customers`);
+      toast(`${t ? t.name : "Campaign"} sent to ${count} customer${count === 1 ? "" : "s"}${linkNote}`);
     });
   }
   const btnNewCampaign = $("#btn-new-campaign");
   if (btnNewCampaign) btnNewCampaign.addEventListener("click", () => openCampaignSheet("new"));
+  /* ---------- contextual illustrations: one scene per goal, drawn in SVG ---------- */
+  const ART = {
+    festive: '<svg viewBox="0 0 120 120" aria-hidden="true"><path d="M6 12 Q60 40 114 12" stroke="#fff" stroke-width="1.6" fill="none" opacity=".7"/><path d="M20 58 Q60 78 100 58 L92 72 Q60 92 28 72Z" fill="#fff" opacity=".92"/><ellipse cx="60" cy="58" rx="36" ry="7" fill="#fff" opacity=".55"/><path d="M60 24 Q70 42 60 56 Q50 42 60 24Z" fill="#ffd27a"/><path d="M60 34 Q64 44 60 52 Q56 44 60 34Z" fill="#ff8a3d"/><path d="M96 14l2.5 7 7 2.5-7 2.5-2.5 7-2.5-7-7-2.5 7-2.5z" fill="#fff"/><path d="M24 30l1.5 4 4 1.5-4 1.5-1.5 4-1.5-4-4-1.5 4-1.5z" fill="#ffd27a"/></svg>',
+    udhaar: '<svg viewBox="0 0 120 120" aria-hidden="true"><rect x="32" y="14" width="46" height="84" rx="8" fill="#fff" opacity=".96"/><rect x="38" y="26" width="34" height="50" rx="4" fill="currentColor" opacity=".22"/><circle cx="55" cy="46" r="11" fill="#22c55e"/><path d="M50 46l3.5 3.5 6.5-7.5" stroke="#fff" stroke-width="2.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/><rect x="42" y="82" width="26" height="4" rx="2" fill="currentColor" opacity=".3"/><rect x="42" y="90" width="18" height="4" rx="2" fill="currentColor" opacity=".3"/><circle cx="94" cy="80" r="19" fill="#ffd27a"/><circle cx="94" cy="80" r="14" fill="none" stroke="#d99a1e" stroke-width="2"/><text x="94" y="88" text-anchor="middle" font-size="19" font-weight="700" fill="#7a4d00">₹</text></svg>',
+    newarr: '<svg viewBox="0 0 120 120" aria-hidden="true"><path d="M30 44h48l-4 60H34z" fill="#fff" opacity=".95"/><path d="M44 44v-8a14 14 0 0 1 28 0v8" stroke="#fff" stroke-width="4" fill="none"/><rect x="40" y="58" width="36" height="8" rx="2" fill="currentColor" opacity=".25"/><rect x="82" y="70" width="24" height="22" rx="3" fill="#fff" opacity=".7"/><path d="M82 81h24" stroke="currentColor" stroke-width="2" opacity=".4"/><path d="M96 16l3 8 8 3-8 3-3 8-3-8-8-3 8-3z" fill="#ffd27a"/></svg>',
+    regulars: '<svg viewBox="0 0 120 120" aria-hidden="true"><rect x="14" y="36" width="86" height="56" rx="9" fill="#fff" opacity=".96"/><rect x="14" y="48" width="86" height="8" fill="currentColor" opacity=".18"/><circle cx="32" cy="70" r="8" fill="#22c55e"/><circle cx="54" cy="70" r="8" fill="#22c55e"/><circle cx="76" cy="70" r="8" fill="currentColor" opacity=".22"/><circle cx="90" cy="70" r="8" fill="currentColor" opacity=".22"/><path d="M96 14l3.5 7 7.5 1-5.5 5.2 1.4 7.6-6.9-3.7-6.9 3.7 1.4-7.6-5.5-5.2 7.5-1z" fill="#ffd27a"/></svg>',
+    miss: '<svg viewBox="0 0 120 120" aria-hidden="true"><path d="M14 50 L22 26 H98 L106 50 Z" fill="#fff" opacity=".96"/><path d="M14 50 q8 10 16 0 q8 10 16 0 q8 10 16 0 q8 10 16 0 q8 10 16 0 q8 10 16 0 q8 10 16 0" fill="#fff" opacity=".96"/><rect x="22" y="60" width="76" height="48" fill="#fff" opacity=".28"/><rect x="50" y="70" width="20" height="38" rx="2" fill="#fff" opacity=".92"/><circle cx="66" cy="90" r="1.8" fill="currentColor"/><path d="M60 14c-5-9-17-5-14 5 2.5 8 14 14 14 14s11.5-6 14-14c3-10-9-14-14-5z" fill="#ff8fab"/></svg>',
+  };
+  function artNode(key, cls) {
+    const n = el("span", cls || "art");
+    n.innerHTML = ART[key] || ART.festive;
+    return n;
+  }
+  function paintToolArt() {
+    document.querySelectorAll(".mk-tool-art").forEach((n) => { n.innerHTML = ART[n.dataset.art] || ""; });
+    const h = $("#mk-hero-art"); if (h) h.innerHTML = ART.miss;
+  }
+  paintToolArt();
+
+  /* ---------- AI studio: goal + format + language → copy and a short animated clip ---------- */
+  const STUDIO_FORMATS = {
+    status: { label: "WhatsApp status", cls: "phone", ratio: "9:16" },
+    ad:     { label: "WhatsApp ad",     cls: "square", ratio: "1:1" },
+    reel:   { label: "Instagram reel",  cls: "phone", ratio: "9:16" },
+    post:   { label: "Feed post",       cls: "post", ratio: "4:5" },
+  };
+  const STUDIO_GOALS = {
+    festive: { label: "Festive sale", glyph: "✺", en: ["Festive week is here", "Flat 10% off this weekend", "Shop now"], hinglish: ["Festive dhamaka shuru!", "Is weekend flat 10% off", "Abhi shop karo"], hi: ["त्योहार का धमाका", "इस वीकेंड 10% की छूट", "अभी खरीदें"] },
+    newarr:  { label: "New arrival", glyph: "✦", en: ["Just in at {shop}", "Fresh stock, limited", "Come grab yours"], hinglish: ["Naya stock aaya hai!", "Fresh stock, limited hai", "Aaj hi le jao"], hi: ["नया स्टॉक आ गया", "ताज़ा स्टॉक, सीमित मात्रा", "आज ही लें"] },
+    udhaar:  { label: "Khata reminder", glyph: "₹", en: ["A friendly khata reminder", "Pay in one tap via UPI", "Pay now"], hinglish: ["Khata ka ek reminder", "UPI se ek tap mein pay karo", "Abhi pay karo"], hi: ["खाते का एक छोटा सा याद दिलावा", "UPI से एक टैप में भुगतान", "अभी भुगतान करें"] },
+    regulars:{ label: "Regulars thanks", glyph: "★", en: ["Thank you, regular!", "Extra 5% off at the counter", "Show this to claim"], hinglish: ["Regular customer, thank you!", "Counter par extra 5% off", "Yeh dikhao aur claim karo"], hi: ["हमारे नियमित ग्राहक, धन्यवाद!", "काउंटर पर अतिरिक्त 5% छूट", "यह दिखाएं और छूट पाएं"] },
+    miss:    { label: "We miss you", glyph: "♥", en: ["We miss you!", "Come back this week", "Claim your gift"], hinglish: ["Aap bahut miss ho rahe ho!", "Is hafte wapas aao", "Gift claim karo"], hi: ["हमें आपकी याद आ रही है!", "इस हफ्ते वापस आइए", "अपना उपहार लें"] },
+  };
+  const STUDIO_LANGS = { en: "English", hinglish: "Hinglish", hi: "हिन्दी" };
+  let studio = { goal: "festive", fmt: "status", lang: "hinglish", out: null, fmtFrom: null };
+  let studioLib = [];
+  let creatorPick = { cat: "Local food & cooking", budget: "₹25,000", deliv: "3 status videos" };
+  function studioGenerate() {
+    const shop = state.bizName || MCC_DEFAULT_NAME[state.mcc];
+    const g = STUDIO_GOALS[studio.goal];
+    const [hook, offerLine, cta] = g[studio.lang].map((t) => t.replaceAll("{shop}", shop));
+    const offer = ($("#st-prompt").value || "").trim() || offerLine;
+    const tag = (shop || "shop").replace(/[^A-Za-z]/g, "");
+    const caption = `${hook} — ${offer}. ${shop}. ${cta}.`;
+    const wa = `${hook}\n${offer}\n${cta} · ${shop}` + (studio.fmt === "ad" ? "\nReply YES to order" : "");
+    return { glyph: g.glyph, hook, offer, cta, shop, caption, wa, tags: `#${tag} #${(MCC_STORES[state.mcc].label || "shop").replace(/[^A-Za-z]/g, "")} #Offer`, goal: studio.goal, fmt: studio.fmt };
+  }
+  function clipNode(out, fmtKey, size) {
+    const f = STUDIO_FORMATS[fmtKey] || STUDIO_FORMATS.status;
+    const clip = el("div", `clip clip-${f.cls}` + (size === "thumb" ? " clip-thumb" : ""));
+    clip.style.setProperty("--cr-a", MCC_ACCENT[state.mcc] || "var(--brand)");
+    clip.setAttribute("role", "img");
+    clip.setAttribute("aria-label", `${f.label} preview: ${out.hook}. ${out.offer}. ${out.cta}.`);
+    const bar = el("span", "clip-bar");
+    const s1 = el("div", "clip-scene s1"); s1.append(artNode(out.goal, "clip-art"), el("strong", "clip-hook", out.hook));
+    const s2 = el("div", "clip-scene s2"); s2.append(artNode(out.goal, "clip-art sm"), el("strong", "clip-offer", out.offer));
+    const s3 = el("div", "clip-scene s3");
+    s3.append(el("strong", "clip-cta", out.cta), el("span", "clip-shop", out.shop));
+    if (fmtKey === "ad") s3.append(el("span", "clip-wa", "WhatsApp · Chat now"));
+    clip.append(bar, s1, s2, s3);
+    return clip;
+  }
+  function renderStudioChips() {
+    const goals = $("#st-goals"), fmts = $("#st-fmts"), langs = $("#st-langs");
+    const chip = (label, on, fn) => { const b = el("button", "chip" + (on ? " pick" : ""), label); b.type = "button"; b.addEventListener("click", fn); return b; };
+    goals.innerHTML = ""; fmts.innerHTML = ""; langs.innerHTML = "";
+    Object.entries(STUDIO_GOALS).forEach(([k, g]) => goals.appendChild(chip(g.label, studio.goal === k, () => { studio.goal = k; renderStudioChips(); })));
+    Object.entries(STUDIO_FORMATS).forEach(([k, f]) => fmts.appendChild(chip(`${f.label} · ${f.ratio}`, studio.fmt === k, () => { studio.fmt = k; renderStudioChips(); })));
+    Object.entries(STUDIO_LANGS).forEach(([k, label]) => langs.appendChild(chip(label, studio.lang === k, () => { studio.lang = k; renderStudioChips(); })));
+  }
+  function renderStudioOut() {
+    const box = $("#st-out");
+    box.innerHTML = "";
+    if (!studio.out) return;
+    const o = studio.out;
+    box.appendChild(clipNode(o, o.fmt, "main"));
+    const cap = el("div", "st-block");
+    cap.append(el("small", null, "Caption"), el("p", null, o.caption + "\n" + o.tags));
+    const wa = el("div", "st-block");
+    wa.append(el("small", null, "WhatsApp message"), el("p", null, o.wa));
+    const row = el("div", "st-actions");
+    const copy = el("button", "ghost-btn sm", "Copy caption");
+    copy.addEventListener("click", () => {
+      const text = o.caption + "\n" + o.tags;
+      if (navigator.clipboard) navigator.clipboard.writeText(text).then(() => toast("Caption copied"), () => toast("Copy not available here"));
+      else toast("Copy not available here");
+    });
+    const save = el("button", "charge-btn", "Save to clip library");
+    save.addEventListener("click", () => {
+      studioLib.unshift({ ...o, id: Date.now() });
+      renderLib(); toast("Saved to clip library");
+    });
+    row.append(copy, save);
+    const note = el("p", "fine-print", "Copy and clip are generated on this device for the prototype. Real AI video rendering is not connected yet.");
+    box.append(cap, wa, row, note);
+  }
+  function openStudio(fmt) {
+    if (fmt && STUDIO_FORMATS[fmt]) studio.fmt = fmt;
+    studio.out = null;
+    renderStudioChips();
+    renderStudioOut();
+    openSheetElFn($("#studio-sheet"));
+  }
+  $("#st-gen").addEventListener("click", () => { studio.out = studioGenerate(); renderStudioOut(); $("#st-out").scrollIntoView({ block: "nearest", behavior: "smooth" }); });
+  $("#st-close").addEventListener("click", closeSheetEl);
+  document.querySelectorAll("[data-studio]").forEach((b) => b.addEventListener("click", () => openStudio(b.dataset.studio)));
+  $("#btn-ai-studio").addEventListener("click", () => openStudio("status"));
+  $("#btn-social-ai").addEventListener("click", () => openStudio("reel"));
+
+  /* creator & celebrity briefs: category and budget only, never a named person */
+  const CREATOR_CATS = ["Local food & cooking", "Fashion & beauty", "Fitness", "Regional comedy", "Tech & gadgets", "Celebrity (via talent agency)"];
+  const CREATOR_BUDGETS = ["₹5,000", "₹25,000", "₹1 lakh+"];
+  const CREATOR_DELIV = ["1 reel", "3 status videos", "WhatsApp ad video"];
+  function renderCreatorChips() {
+    const mk = (box, items, key) => {
+      box.innerHTML = "";
+      items.forEach((v) => {
+        const b = el("button", "chip" + (creatorPick[key] === v ? " pick" : ""), v);
+        b.type = "button";
+        b.addEventListener("click", () => { creatorPick[key] = v; renderCreatorChips(); });
+        box.appendChild(b);
+      });
+    };
+    mk($("#cr-cats"), CREATOR_CATS, "cat");
+    mk($("#cr-budget"), CREATOR_BUDGETS, "budget");
+    mk($("#cr-deliv"), CREATOR_DELIV, "deliv");
+  }
+  $("#btn-creator").addEventListener("click", () => { renderCreatorChips(); openSheetElFn($("#creator-sheet")); });
+  $("#cr-send").addEventListener("click", () => { toast(`Brief sent: ${creatorPick.cat} · ${creatorPick.budget} (simulated)`); closeSheetEl(); });
+  $("#cr-close").addEventListener("click", closeSheetEl);
+
+  function renderLib() {
+    const box = $("#studio-lib");
+    if (!box) return;
+    box.innerHTML = "";
+    if (!studioLib.length) { box.appendChild(el("p", "recon-empty", "Saved clips and captions appear here.")); return; }
+    studioLib.forEach((o) => {
+      const card = el("div", "mk-lib-item");
+      card.append(clipNode(o, o.fmt, "thumb"), el("small", null, `${STUDIO_FORMATS[o.fmt].label} · ${STUDIO_GOALS[o.goal].label}`));
+      box.appendChild(card);
+    });
+  }
+
+  /* ---------- creatives: each template renders a live visual ---------- */
+  let campFmt = "post";
+  function crCopy(tpl, cust) {
+    const first = cust ? cust.name.split(" ")[0] : "there";
+    const due = cust ? khataBalance(cust.id) : 0;
+    const C = {
+      khata: { glyph: "₹", kicker: "Udhaar reminder", title: due ? `${fmt(due)} pending` : "Clear your khata", offer: "Pay with UPI in one tap", cta: "Pay now" },
+      miss:  { glyph: "♥", kicker: `We miss you, ${first}`, title: "Come back this week", offer: `Free ${state.catalog[0].name} on us`, cta: "Show this to claim" },
+      new:   { glyph: "✦", kicker: "Just in", title: newestItemName(), offer: "Fresh stock, limited", cta: "Come grab yours" },
+      fest:  { glyph: "✺", kicker: "Festive week", title: "Flat 10% off", offer: "This weekend only", cta: "Shop now" },
+      disc:  { glyph: "★", kicker: "Regulars day", title: "+5% off today", offer: `For our regulars, ${first}`, cta: "Show at the counter" },
+    };
+    return C[tpl.id] || { glyph: "✦", kicker: tpl.name, title: tpl.name, offer: "", cta: "Send" };
+  }
+  function crNode(tpl, cust, size) {
+    const c = crCopy(tpl, cust);
+    const node = el("div", `cr cr-${size}`);
+    node.style.setProperty("--cr-a", MCC_ACCENT[state.mcc] || "var(--brand)");
+    const artKey = { khata: "udhaar", miss: "miss", new: "newarr", fest: "festive", disc: "regulars" }[tpl.id] || "festive";
+    node.append(
+      el("span", "cr-shop", state.bizName || MCC_DEFAULT_NAME[state.mcc]),
+      artNode(artKey, "cr-art"),
+      el("span", "cr-kicker", c.kicker),
+      el("strong", "cr-title", c.title),
+      el("span", "cr-offer", c.offer),
+      el("span", "cr-cta", c.cta + " →")
+    );
+    return node;
+  }
+  function renderCreativeInto(box, tpl, cust) {
+    box.innerHTML = "";
+    const node = crNode(tpl, cust, campFmt === "phone" ? "phone" : "post");
+    box.appendChild(node);
+  }
+
   function renderCampaigns() {
     const atRisk = state.customers.filter((c) => c.lastSeenDays >= 14).length;
     const due = khataTotal();
@@ -9426,6 +10229,11 @@ function renderSettings() {
       s.append(el("strong", null, v), el("span", null, l));
       stats.appendChild(s);
     });
+    const mk = $("#mk-root");
+    if (mk) mk.style.setProperty("--mk-a", MCC_ACCENT[state.mcc] || "var(--brand)");
+    const slipping = state.customers.filter((c) => c.lastSeenDays >= 14).length;
+    $("#mk-hero-kicker").textContent = slipping ? `${slipping} customer${slipping === 1 ? "" : "s"} slipping away` : "Everyone is coming back";
+    $("#mk-hero-title").textContent = slipping ? "Send a nudge before they forget you" : "Keep your regulars close";
     const weekSent = state.campaigns.filter((c) => now() - c.date < 7 * 86400000)
       .reduce((a, c) => a + c.count, 0);
     $("#grow-total").textContent = weekSent ? `${weekSent} nudges this week` : "";
@@ -9442,31 +10250,27 @@ function renderSettings() {
     }
     CAMPAIGN_TEMPLATES.forEach((tpl) => {
       const targets = state.customers.filter(tpl.aud);
-      const card = el("div", "camp-card");
-      const head = el("div", "camp-head");
-      head.append(el("strong", null, tpl.name), el("span", "camp-aud", `${targets.length} · ${tpl.audLabel}`));
-      card.appendChild(head);
-      const first = targets[0] ? targets[0].name.split(" ")[0] : "Namaste";
-      const bubble = el("div", "wa-bubble");
-      bubble.append(document.createTextNode(tplMsg(tpl, first, targets[0])), el("small", null, "WhatsApp preview · personalised per customer"));
-      card.appendChild(bubble);
-      const foot = el("div", "camp-foot");
-      foot.appendChild(el("span", "camp-channel", "● WhatsApp"));
-      const editBtn = el("button", "ghost-btn sm", state.waTemplates[tpl.id] ? "Edit template (saved)" : "Edit template");
-      editBtn.addEventListener("click", () => openCampaignSheet(tpl.id));
-      const btn = el("button", "charge-btn", "Create campaign");
+      const card = el("div", "mk-card");
+      const shot = crNode(tpl, targets[0], "post");
+      shot.addEventListener("click", () => openCampaignSheet(tpl.id));
+      const meta = el("div", "mk-card-meta");
+      meta.append(el("strong", null, tpl.name), el("small", null, `${targets.length} people \u00B7 ${tpl.audLabel}`));
+      const btn = el("button", "mk-card-btn", "Create");
       btn.disabled = !targets.length && !state.customers.length;
       btn.addEventListener("click", () => openCampaignSheet(tpl.id));
-      foot.append(editBtn, btn);
-      card.appendChild(foot);
+      meta.appendChild(btn);
+      card.append(shot, meta);
       tBox.appendChild(card);
     });
 
+    renderLib();
     const lBox = $("#campaign-list");
     lBox.innerHTML = "";
     if (!state.campaigns.length) lBox.appendChild(el("p", "recon-empty", "No campaigns sent yet."));
     state.campaigns.forEach((c) => {
       const row = el("div", "camp-sent");
+      const tpl = CAMPAIGN_TEMPLATES.find((t) => t.name === c.name);
+      if (tpl) row.appendChild(crNode(tpl, null, "thumb"));
       const main = el("div", "camp-sent-main");
       main.append(el("strong", null, c.name), el("small", null, `${c.audLabel} · WhatsApp · ${relTime(c.date)}`));
       row.append(main, el("span", "pill pill-paid", `Sent · ${c.count}`));
@@ -9625,39 +10429,64 @@ function renderSettings() {
   /* ---------- online orders ---------- */
   const ORDER_FLOW = ["new", "accepted", "ready", "out", "delivered"];
   const ORDER_LABEL = { new: "New", accepted: "Accepted", ready: "Ready", out: "Out for delivery", delivered: "Delivered", cancelled: "Cancelled" };
-  const ORDER_SOURCE = { whatsapp: "WhatsApp", catalogue: "Catalogue", wabiz: "WhatsApp Business", link: "Payment link" };
-  function createOrder({ source, customer, lines, note, phone, address, delivery }) {
+  const ORDER_SOURCE = { whatsapp: "WhatsApp Business", wabiz: "WhatsApp Business", link: "Payment link", swiggy: "Swiggy", zomato: "Zomato", website: "Website" };
+  /* aggregators deliver with their own riders: no partner or delivery fee to set */
+  const AGGREGATORS = ["swiggy", "zomato"];
+  /* customer contact that arrives with each channel's order (simulated here; from WhatsApp and the website checkout in production) */
+  const CHANNEL_CONTACT = {
+    wabiz: { phone: "+91 98765 43210", address: "Address from the WhatsApp chat" },
+    website: { phone: "+91 98111 22233", address: "Address from website checkout" },
+  };
+  const CHANNEL_CUSTOMER = { wabiz: "WhatsApp Business customer", swiggy: "Swiggy customer", zomato: "Zomato customer", website: "Website customer" };
+  let catPickChannel = "wabiz";
+  function createOrder({ source, customer, lines, note, phone, address, delivery, mapUrl }) {
     const t = totals(lines);
     const o = {
       id: "ord-" + Math.random().toString(36).slice(2, 8), source,
       customer: customer || "WhatsApp customer", lines,
-      phone: phone || "", address: address || "",
+      phone: phone || "", address: address || "", mapUrl: mapUrl || "",
       delivery: delivery || null,   /* {partner, feeCents, feeTiming: "pickup"|"delivery"} */
       sub: t.sub, disc: t.disc, tax: t.tax, total: t.total,
-      status: "new", pay: "unpaid", note: note || "", date: now(), storeId: curStoreId(),
+      status: "new", pay: "unpaid", note: note || "", date: now(), storeId: curStoreId(), mcc: state.mcc,
     };
     state.orders.unshift(o);
     persistState(); renderOrders();
     return o;
   }
+  /* what the customer pays for an order: items + GST − discount, plus any delivery fee collected with it */
+  function orderDue(o) {
+    const fee = o.delivery && o.delivery.feeTiming === "delivery" ? (o.delivery.feeCents || 0) : 0;
+    return o.total + fee;
+  }
+  /* Swiggy and Zomato are restaurant channels (MCC 5812); kirana and salon see only the shop's own channels */
+  function renderOrderChannels() {
+    const food = state.mcc === "5812";
+    document.querySelectorAll("#orders-channels [data-channel='swiggy'], #orders-channels [data-channel='zomato']").forEach((b) => { b.hidden = !food; });
+    return food;
+  }
   function renderOrders() {
     const list = $("#orders-list");
     if (!list) return;
-    const mine = (state.orders || []).filter((o) => visibleStoreIds().includes(o.storeId || "s1"));
+    const food = renderOrderChannels();
+    /* an order belongs to this business if it was taken for this business type; older orders are matched by their items */
+    const belongs = (o) => o.mcc ? o.mcc === state.mcc : (o.lines || []).every((l) => state.catalog.some((c) => c.name === l.name));
+    const mine = (state.orders || []).filter((o) => visibleStoreIds().includes(o.storeId || "s1") && belongs(o) && (food || !AGGREGATORS.includes(o.source)));
     const open = mine.filter((o) => !["delivered", "cancelled"].includes(o.status)).length;
     const todayD = mine.filter((o) => o.status === "delivered" && dateStr(o.date) === dateStr(now())).length;
-    const linkPaid = mine.filter((o) => o.pay === "paid").reduce((a, o) => a + o.total, 0);
+    const linkPaid = mine.filter((o) => o.pay === "paid" && o.payMethod !== "cash").reduce((a, o) => a + orderDue(o), 0);
     $("#orders-total").textContent = open ? `${open} open` : "";
     const stats = $("#orders-stats");
     stats.innerHTML = "";
-    [["Open", String(open)], ["Delivered today", String(todayD)], ["Collected via link", fmt(linkPaid)]].forEach(([k, v]) => {
+    [["Open", String(open)], ["Delivered today", String(todayD)], ["Paid via link", fmt(linkPaid)]].forEach(([k, v]) => {
       const t = el("div", "stat-tile");
       t.append(el("strong", null, v), el("span", null, k));
       stats.appendChild(t);
     });
     list.innerHTML = "";
     if (!mine.length) {
-      list.appendChild(el("p", "tx-empty", "No online orders yet.\nWhatsApp messages and catalogue picks become orders here."));
+      const empty = el("div", "order-empty");
+      empty.append(el("strong", null, "No online orders yet"), el("small", null, "WhatsApp orders and catalogue orders appear here. Share your shop link to start getting them."));
+      list.appendChild(empty);
       return;
     }
     mine.forEach((o) => {
@@ -9667,65 +10496,167 @@ function renderSettings() {
       const meta = el("div", "order-meta");
       meta.textContent = `${timeStr(o.date)} · ${o.lines.map((l) => `${l.qty}× ${l.name}`).join(", ")}`;
       const totalRow = el("div", "order-total");
-      totalRow.append(el("span", "order-status st-" + o.status, ORDER_LABEL[o.status] || o.status), el("strong", null, fmt(o.total)));
-      if (o.pay === "paid") totalRow.appendChild(el("span", "pill-paid", "Paid"));
+      totalRow.append(el("span", "order-status st-" + o.status, ORDER_LABEL[o.status] || o.status), el("strong", null, fmt(orderDue(o))));
+      if (o.pay === "paid") totalRow.appendChild(el("span", "pill-paid", o.payMethod === "cash" ? "Paid · cash" : "Paid"));
+      else if (o.pay === "cod") totalRow.appendChild(el("span", "pill-cod", "Cash on delivery"));
       else if (["out", "delivered"].includes(o.status)) totalRow.appendChild(el("span", "pill-overdue", "Unpaid"));
       const actions = el("div", "order-actions");
       const idx = ORDER_FLOW.indexOf(o.status);
-      if (idx >= 0 && idx < ORDER_FLOW.length - 1) {
-        const next = el("button", "chip", idx === 0 ? "Accept" : "Mark " + ORDER_LABEL[ORDER_FLOW[idx + 1]].toLowerCase());
+      const autoDelivery = o.status === "out" && partnerHasApi(o);
+      if (idx >= 0 && idx < ORDER_FLOW.length - 1 && !autoDelivery) {
+        const next = el("button", "primary-btn sm", idx === 0 ? "Accept order" : "Mark " + ORDER_LABEL[ORDER_FLOW[idx + 1]].toLowerCase());
         next.addEventListener("click", () => advanceOrder(o, ORDER_FLOW[idx + 1]));
         actions.appendChild(next);
       }
+      if (autoDelivery) {
+        const fb = el("button", "ghost-btn sm", "Mark delivered manually");
+        fb.addEventListener("click", () => advanceOrder(o, "delivered"));
+        actions.appendChild(fb);
+      }
       if (o.status === "new") {
-        const c = el("button", "chip", "Cancel");
+        const c = el("button", "ghost-btn sm", "Cancel order");
         c.addEventListener("click", () => { o.status = "cancelled"; persistState(); renderOrders(); });
         actions.appendChild(c);
       }
+      if (o.pay === "unpaid" && !["delivered", "cancelled"].includes(o.status)) {
+        const cod = el("button", "ghost-btn sm", "Cash on delivery");
+        cod.addEventListener("click", () => { o.pay = "cod"; persistState(); renderOrders(); toast("Set to cash on delivery"); });
+        actions.appendChild(cod);
+      }
+      if ((o.pay === "cod" && ["out", "delivered"].includes(o.status)) || (o.pay === "unpaid" && o.status === "delivered")) {
+        const cash = el("button", "primary-btn sm", "Cash collected");
+        cash.addEventListener("click", () => collectCash(o));
+        actions.appendChild(cash);
+      }
       if (o.pay === "unpaid" && ["accepted", "ready", "out"].includes(o.status)) {
-        const pl = el("button", "chip", "Send payment link");
-        pl.addEventListener("click", () => openPayLink(o.total, `Order · ${o.customer}`, o.id));
+        const pl = el("button", "ghost-btn sm", "Send payment link");
+        pl.addEventListener("click", () => openPayLink(orderDue(o), `Order · ${o.customer}`, o.id));
         actions.appendChild(pl);
       }
       row.append(head, meta, totalRow);
+      row.appendChild(el("div", "order-breakdown", `Items ${fmt(o.sub)}${o.disc ? " − discount " + fmt(o.disc) : ""} + GST ${fmt(o.tax)}${o.delivery && o.delivery.feeCents ? " + delivery " + fmt(o.delivery.feeCents) : ""}`));
       if (o.phone || o.address) {
         const cust = el("div", "order-cust");
         if (o.phone) cust.append(el("span", "order-cust-phone", "\u260E " + o.phone));
         if (o.address) cust.append(el("span", null, o.address));
+        if (o.mapUrl) { const map = el("a", "order-map", "Open pin on Google Maps"); map.href = o.mapUrl; map.target = "_blank"; map.rel = "noopener"; cust.append(map); }
         row.appendChild(cust);
       }
       if (o.delivery && o.delivery.partner) {
         const d = o.delivery;
         const dl = el("div", "order-delivery");
         dl.append(el("strong", null, d.partner),
-          el("span", null, (d.feeCents ? " · charge " + fmt(d.feeCents) : " · no charge") +
-            " · paid at " + (d.feeTiming === "pickup" ? "pickup" : "delivery")));
+          el("span", null, (d.feeCents ? " · " + fmt(d.feeCents) + " delivery" : " · free delivery") +
+            (d.feeCents ? (d.feeTiming === "pickup" ? ", paid at pickup" : ", collected with order") : "")));
         row.appendChild(dl);
       }
+      if (o.dispatch) row.appendChild(el("div", "order-delivery", `${o.dispatch.ref} · ${PARTNER_EVENT_LABEL[o.dispatch.last] || o.dispatch.last}`));
+      const tline = deliveryTimeLine(o);
+      if (tline) row.appendChild(el("div", "order-delivery order-time", tline));
       row.appendChild(actions);
       list.appendChild(row);
     });
   }
+  /* ---------- delivery partner dispatch + status feed ----------
+     Partners with an API (Rapido Parcel, Porter) get the dispatch and post status back.
+     Prototype: the feed is simulated with timers. In production each event arrives as a
+     webhook and calls onPartnerEvent() instead. Own delivery has no feed, so it is marked by hand. */
+  const PARTNER_API = { "Rapido Parcel": true, "Porter": true, "Own delivery": false };
+  const PARTNER_EVENT_STATUS = { assigned: "out", picked_up: "out", delivered: "delivered" };
+  const PARTNER_EVENT_LABEL = { assigned: "Rider assigned, waiting for pickup", picked_up: "Picked up, on the way", delivered: "Delivered" };
+  const partnerTimers = new Map();
+  const partnerHasApi = (o) => !!(o.delivery && PARTNER_API[o.delivery.partner]);
+  function dispatchToPartner(o) {
+    if (!o.delivery || !o.delivery.partner) o.delivery = Object.assign({ partner: "Rapido Parcel", feeCents: 0, feeTiming: "delivery" }, o.delivery || {});
+    if (!partnerHasApi(o)) return;
+    o.dispatch = { ref: "DL-" + Math.random().toString(36).slice(2, 7).toUpperCase(), last: "assigned", at: now() };
+    startPartnerFeed(o);
+  }
+  /* delivery time on the card: out-to-delivered once done, or when it went out */
+  function deliveryTimeLine(o) {
+    const clock = (d) => new Date(d).toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" });
+    const dur = (a, b) => { const sec = Math.max(0, Math.round((new Date(b) - new Date(a)) / 1000)); return sec < 60 ? `${sec} sec` : `${Math.round(sec / 60)} min`; };
+    if (o.deliveredAt) return `Time to deliver ${dur(o.outAt || o.date, o.deliveredAt)} · delivered ${clock(o.deliveredAt)}`;
+    if (o.status === "out" && o.outAt) return `Out for delivery since ${clock(o.outAt)} · ordered ${clock(o.date)}`;
+    return "";
+  }
+  function onPartnerEvent(orderId, ref, event) {
+    const o = (state.orders || []).find((x) => x.id === orderId);
+    if (!o || !o.dispatch || o.dispatch.ref !== ref || ["delivered", "cancelled"].includes(o.status)) return;
+    o.dispatch.last = event; o.dispatch.at = now();
+    if (PARTNER_EVENT_STATUS[event] === "delivered") {
+      advanceOrder(o, "delivered");
+      toast(`${o.delivery.partner} confirmed delivery · ${o.customer}`);
+      return;
+    }
+    persistState(); renderOrders();
+  }
+  /* demo feed: picked up after 6 s, delivered 10 s later */
+  function startPartnerFeed(o) {
+    const id = o.id, ref = o.dispatch.ref;
+    const steps = [["picked_up", 6000], ["delivered", 16000]];
+    clearTimeout(partnerTimers.get(id));
+    const run = (i) => {
+      if (i >= steps.length) { partnerTimers.delete(id); return; }
+      partnerTimers.set(id, setTimeout(() => { onPartnerEvent(id, ref, steps[i][0]); run(i + 1); }, steps[i][1] - (i ? steps[i - 1][1] : 0)));
+    };
+    run(0);
+  }
+  function orderTransaction(o) {
+    const cash = o.payMethod === "cash";
+    state.transactions.unshift({
+      id: "sq-" + Math.random().toString(36).slice(2, 8), lines: o.lines,
+      sub: o.sub, disc: o.disc || 0, tax: o.tax, total: o.total,
+      method: cash ? "cash" : "upi", upiRef: cash ? "" : String(Math.floor(1e11 + Math.random() * 9e11)),
+      ff: cash ? "Cash on delivery" : "Link Pay", source: "order", orderId: o.id,
+      customerName: o.customer, date: now(), refunded: false, storeId: o.storeId || curStoreId(),
+    });
+  }
+  function collectCash(o) {
+    o.pay = "paid"; o.payMethod = "cash";
+    if (o.status === "delivered") orderTransaction(o);
+    persistState(); renderOrders(); renderTransactions && renderTransactions();
+    toast(`Cash collected · ${fmt(orderDue(o))}`);
+  }
   function advanceOrder(o, stage) {
     o.status = stage;
     if (stage === "accepted") decrementStock(o.lines);
-    if (stage === "delivered" && o.pay === "paid") {
-      state.transactions.unshift({
-        id: "sq-" + Math.random().toString(36).slice(2, 8), lines: o.lines,
-        sub: o.sub, disc: o.disc || 0, tax: o.tax, total: o.total,
-        method: "upi", upiRef: String(Math.floor(1e11 + Math.random() * 9e11)),
-        ff: "Link Pay", source: "order", orderId: o.id,
-        customerName: o.customer, date: now(), refunded: false, storeId: o.storeId || curStoreId(),
-      });
-    }
+    if (stage === "out") { o.outAt = now(); dispatchToPartner(o); }
+    if (stage === "delivered") o.deliveredAt = now();
+    if (stage === "delivered" || stage === "cancelled") { clearTimeout(partnerTimers.get(o.id)); partnerTimers.delete(o.id); }
+    if (stage === "delivered" && o.pay === "paid") orderTransaction(o);
     persistState(); renderOrders();
     if (stage === "delivered") toast("Order delivered");
   }
 
   /* ---------- payment link ---------- */
   let paylinkCtx = null;
-  function openPayLink(amountCents, note, orderId) {
-    paylinkCtx = orderId ? { orderId } : null;
+  /* unpaid orders of this shop, for the order picker on the payment link sheet */
+  function fillPayOrders(selectedId) {
+    const sel = $("#paylink-order");
+    if (!sel) return;
+    const open = (state.orders || []).filter((o) => visibleStoreIds().includes(o.storeId || "s1") && o.pay !== "paid" && o.status !== "cancelled");
+    sel.innerHTML = "";
+    sel.appendChild(el("option", null, open.length ? "Pick an unpaid order…" : "No unpaid orders"));
+    sel.firstChild.value = "";
+    open.forEach((o) => {
+      const opt = el("option", null, `${o.customer} · ${fmt(orderDue(o))} · ${ORDER_LABEL[o.status] || o.status}`);
+      opt.value = o.id;
+      sel.appendChild(opt);
+    });
+    sel.value = selectedId && open.some((o) => o.id === selectedId) ? selectedId : "";
+  }
+  $("#paylink-order").addEventListener("change", (e) => {
+    const o = (state.orders || []).find((x) => x.id === e.target.value);
+    if (!o) return;
+    paylinkCtx = { orderId: o.id };
+    $("#paylink-amt").value = (orderDue(o) / 100).toFixed(2);
+    $("#paylink-note").value = `Order · ${o.customer}`;
+    renderPayLink();
+  });
+  function openPayLink(amountCents, note, orderId, khataCustId, invoiceId) {
+    paylinkCtx = khataCustId ? { khataCustId } : orderId ? { orderId } : invoiceId ? { invoiceId } : null;
+    fillPayOrders(orderId);
     $("#paylink-amt").value = amountCents ? String(Math.round(amountCents / 100)) : "";
     $("#paylink-note").value = note || "";
     renderPayLink();
@@ -9742,8 +10673,8 @@ function renderSettings() {
     $("#paylink-url").textContent = amt > 0 ? payload : "";
   }
   $("#btn-paylink").addEventListener("click", () => openPayLink(0, "", null));
-  $("#btn-order-wa").addEventListener("click", openWaOrder);
-  $("#btn-order-catalogue").addEventListener("click", openCatPick);
+  $("#btn-order-catalogue").addEventListener("click", () => { catPickChannel = "wabiz"; openCatPick(); });
+  document.querySelectorAll("[data-channel]").forEach((b) => b.addEventListener("click", () => { catPickChannel = b.dataset.channel; openCatPick(); }));
   $("#paylink-amt").addEventListener("input", renderPayLink);
   $("#paylink-note").addEventListener("input", renderPayLink);
   $("#paylink-share").addEventListener("click", () => {
@@ -9765,23 +10696,60 @@ function renderSettings() {
       const o = state.orders.find((x) => x.id === paylinkCtx.orderId);
       if (o) o.pay = "paid";
     }
+    if (paylinkCtx && paylinkCtx.invoiceId) {
+      const inv = state.invoices.find((x) => x.id === paylinkCtx.invoiceId);
+      if (inv && inv.status !== "paid") { inv.status = "paid"; inv.dueText = "paid " + dateStr(now()); }
+      renderInvoices();
+    }
+    if (paylinkCtx && paylinkCtx.khataCustId) {
+      // Link Pay opened from a khata reminder settles the customer's udhaar
+      const cust = state.customers.find((x) => x.id === paylinkCtx.khataCustId);
+      if (cust) {
+        const bal = khataBalance(cust.id);
+        const settleAmt = Math.min(amt, bal);
+        if (settleAmt > 0) {
+          state.khata.push({ id: "kh-" + Date.now(), custId: cust.id, desc: "Settled · Link Pay", amount: settleAmt, type: "paid", date: now() });
+          renderKhata();
+          if (typeof renderCampaigns === "function") renderCampaigns();
+        }
+      }
+    }
     persistState(); renderOrders(); renderTransactions();
     closeSheetEl();
-    toast(`Recorded ₹${(amt / 100).toFixed(0)} · Link Pay`);
+    toast(paylinkCtx && paylinkCtx.khataCustId ? "Khata settled · Link Pay" : `Recorded ₹${(amt / 100).toFixed(0)} · Link Pay`);
   });
   $("#paylink-close").addEventListener("click", closeSheetEl);
 
   /* ---------- whatsapp message -> order ---------- */
-  let waDraftLines = null;
+  let waPin = null;
+  const WA_SENDER = "+91 98765 43210";
+  const WA_PIN = { lat: 18.5514, lng: 73.9395 };
+  const waPinUrl = (p) => `https://www.google.com/maps?q=${p.lat},${p.lng}`;
   function waBubble(dir, text) { return el("div", "wa-bubble wa-" + dir, text); }
+  /* sample customer message built from this shop's own items, with the delivery address in it */
+  function waSampleText() {
+    const pick = state.catalog.filter((i) => i.price > 0 && !i.skuSearch).slice(0, 2);
+    const items = !pick.length ? "2 items" : pick[1]
+      ? `2 ${pick[0].name.toLowerCase()}, 1 ${pick[1].name.toLowerCase()}`
+      : `2 ${pick[0].name.toLowerCase()}`;
+    return `${items}. Address: Flat 4B, Sunrise Society, near Kharadi bypass, Pune 411014`;
+  }
   function openWaOrder() {
     const chat = $("#wa-chat");
+    const sample = waSampleText();
     chat.innerHTML = "";
-    chat.appendChild(waBubble("in", "Namaste! 2 cutting chai, 1 samosa — ghar pe bhej dena, paisa UPI kar dunga"));
-    $("#wa-input").value = "2 cutting chai 1 samosa";
+    const msg = waBubble("in", `Namaste! ${sample} — ghar pe bhej dena, paisa UPI kar dunga`);
+    msg.appendChild(el("small", null, `from ${WA_SENDER}`));
+    chat.appendChild(msg);
+    const pin = waBubble("in", "Location pinned on Google Maps");
+    const pinLink = el("a", null, " · open pin");
+    pinLink.href = waPinUrl(WA_PIN); pinLink.target = "_blank"; pinLink.rel = "noopener";
+    pin.appendChild(pinLink);
+    chat.appendChild(pin);
+    waPin = WA_PIN;
+    $("#wa-input").value = sample;
     $("#wa-draft").hidden = true;
-    $("#wa-actions").hidden = true;
-    waDraftLines = null;
+    chat.scrollTop = chat.scrollHeight;
     openSheetElFn($("#waorder-sheet"));
   }
   function parseOrderText(text) {
@@ -9798,38 +10766,30 @@ function renderSettings() {
     });
     return lines;
   }
+  /* Convert: the message must carry the items, a detailed address and the location pin.
+     Phone comes from the sender; the order is created already accepted. */
   $("#wa-convert").addEventListener("click", () => {
     const text = $("#wa-input").value.trim();
     if (!text) { toast("Type the customer's message first"); return; }
     const chat = $("#wa-chat");
     chat.appendChild(waBubble("in", text));
-    $("#wa-input").value = "2 cutting chai 1 samosa";
     chat.scrollTop = chat.scrollHeight;
-    const lines = parseOrderText(text);
     const draft = $("#wa-draft");
-    draft.hidden = false;
-    draft.innerHTML = "";
-    if (!lines.length) {
-      draft.appendChild(el("p", "set-hint", "Couldn't match items — try “2 cutting chai 1 samosa”"));
-      $("#wa-actions").hidden = true;
-      waDraftLines = null;
-      return;
-    }
-    waDraftLines = lines;
-    lines.forEach((l) => {
-      const row = el("div", "keypad-line");
-      row.append(el("span", "keypad-line-name", `${l.qty}× ${l.name}`), el("span", "keypad-line-amt", fmt(l.price * l.qty)));
-      draft.appendChild(row);
+    const missing = (msg) => { draft.hidden = false; draft.innerHTML = ""; draft.appendChild(el("p", "set-hint", msg)); };
+    const lines = parseOrderText(text.split(/address\s*[:\-]/i)[0]);
+    const m = text.match(/address\s*[:\-]\s*(.+)$/i);
+    const addr = m ? m[1].trim() : "";
+    if (!lines.length) { missing("Couldn't match these items. Type the item names as they appear on your register."); return; }
+    if (addr.length < 15) { missing("Ask the customer for the full delivery address: flat or house, street, landmark and area."); return; }
+    if (!waPin) { missing("Ask the customer to share their location pin on WhatsApp."); return; }
+    draft.hidden = true;
+    const o = createOrder({
+      source: "whatsapp", customer: WA_SENDER, lines,
+      phone: WA_SENDER, address: addr, mapUrl: waPinUrl(waPin), note: "WhatsApp chat order",
     });
-    const tot = el("div", "order-total");
-    tot.append(el("span", null, ""), el("strong", null, fmt(totals(lines).total)));
-    draft.appendChild(tot);
-    $("#wa-actions").hidden = false;
-  });
-  $("#wa-confirm").addEventListener("click", () => {
-    if (!waDraftLines) return;
+    advanceOrder(o, "accepted");
     closeSheetEl();
-    openFulfil({ source: "whatsapp", lines: waDraftLines, presetName: "WhatsApp customer", note: "WhatsApp chat order" });
+    toast(`Order accepted · ${fmt(orderDue(o))} · pinned on Google Maps`);
   });
   $("#waorder-cancel").addEventListener("click", closeSheetEl);
 
@@ -9848,6 +10808,7 @@ function renderSettings() {
     fulfilPartner = "Rapido Parcel"; fulfilFeeWhen = "delivery";
     $("#fulfil-partner").querySelectorAll(".chip").forEach((c) => c.classList.toggle("pick", c.dataset.p === fulfilPartner));
     $("#fulfil-fee-when").querySelectorAll(".chip").forEach((c) => c.classList.toggle("pick", c.dataset.w === fulfilFeeWhen));
+    $("#fulfil-delivery-block").hidden = AGGREGATORS.includes(ctx.source);
     $("#fulfil-name").value = ctx.presetName && !/customer$/i.test(ctx.presetName) ? ctx.presetName : "";
     $("#fulfil-phone").value = ""; $("#fulfil-addr").value = ""; $("#fulfil-fee").value = "";
     renderFulfilSummary();
@@ -9877,7 +10838,9 @@ function renderSettings() {
     createOrder({
       source: fulfilCtx.source, customer: name, lines: fulfilCtx.lines,
       phone, address: addr,
-      delivery: { partner: fulfilPartner, feeCents: fee, feeTiming: fulfilFeeWhen },
+      delivery: AGGREGATORS.includes(fulfilCtx.source)
+        ? { partner: ORDER_SOURCE[fulfilCtx.source], feeCents: 0, feeTiming: "delivery" }
+        : { partner: fulfilPartner, feeCents: fee, feeTiming: fulfilFeeWhen },
       note: fulfilCtx.note || "",
     });
     closeSheetEl();
@@ -9909,31 +10872,90 @@ function renderSettings() {
   $("#walink-close").addEventListener("click", closeSheetEl);
 
   /* ---------- whatsapp catalogue pick -> order ---------- */
+  /* the picker shows the whole catalogue: shop items plus every SKU in the chosen category or search.
+     Search and category narrow it; "Show more" pages through the rest. */
   const catPicks = new Map();
-  function openCatPick() {
-    catPicks.clear();
+  const catPickItems = new Map();
+  let catPickLimit = 60;
+  function catPickSource() {
+    const q = ($("#catpick-q").value || "").trim().toLowerCase();
+    const cat = $("#catpick-cat").value || "";
+    const terms = q.split(/\s+/).filter(Boolean);
+    const hay = (it) => (it.name + " " + (it.brand || "")).toLowerCase();
+    const shop = state.catalog.filter((it) => !it.skuSearch && (!cat || it.category === cat) && terms.every((t) => hay(it).includes(t)));
+    const shopIds = new Set(shop.map((i) => i.id));
+    const dormant = cat
+      ? skuCategoryHits(cat, 3000).filter((it) => terms.every((t) => hay(it).includes(t)))
+      : skuSearchHits(q, 3000);
+    return [...shop, ...dormant.filter((d) => !shopIds.has(d.id))];
+  }
+  function renderCatPick() {
+    const all = catPickSource();
     const grid = $("#catpick-grid");
     grid.innerHTML = "";
-    state.catalog.slice(0, 12).forEach((item) => {
-      const tile = el("button", "catpick-tile");
-      tile.append(el("span", "catpick-name", item.name), el("span", "catpick-price", fmt(item.price)));
-      tile.addEventListener("click", () => {
-        const q = (catPicks.get(item.id) || 0) + 1;
-        catPicks.set(item.id, q);
-        tile.classList.add("is-on");
-        const old = tile.querySelector(".catpick-qty");
-        if (old) old.remove();
-        tile.appendChild(el("span", "catpick-qty", String(q)));
-        renderCatPickTotal();
-      });
+    all.slice(0, catPickLimit).forEach((item) => {
+      catPickItems.set(item.id, item);
+      const tile = el("button", "catpick-tile" + (item.price ? "" : " is-unpriced"));
+      tile.append(el("span", "catpick-name", item.name), el("span", "catpick-price", item.price ? fmt(item.price) : "Set price first"));
+      tile.setAttribute("aria-label", `${item.name}, ${item.price ? fmt(item.price) : "no price yet"}`);
+      tile.addEventListener("click", () => catPickTap(tile, item));
       grid.appendChild(tile);
+      paintCatTile(tile, item);
     });
+    $("#catpick-count").textContent = `${all.length.toLocaleString("en-IN")} item${all.length === 1 ? "" : "s"}${all.length >= 3000 ? " (refine to see more)" : ""}`;
+    $("#catpick-more").hidden = all.length <= catPickLimit;
+  }
+  function catPickTap(tile, item) {
+    if (!item.price) { toast(`Set a price for ${item.name} first`); return; }
+    const add = () => {
+      catPicks.set(item.id, (catPicks.get(item.id) || 0) + 1);
+      paintCatTile(tile, item);
+    };
+    if (item.skuSearch) askOpeningQty(item, add); else add();   // a dormant SKU joins the shop once its stock is entered
+  }
+  function openCatPick() {
+    $("#catpick-sheet .sheet-head span").textContent = catPickChannel === "wabiz" ? "Catalogue pick · customer selection" : `${ORDER_SOURCE[catPickChannel]} order · pick items`;
+    catPicks.clear();
+    catPickLimit = 60;
+    const sel = $("#catpick-cat");
+    sel.innerHTML = "";
+    ["", ...libCategories()].forEach((c) => {
+      const o = document.createElement("option");
+      o.value = c; o.textContent = c || "All categories";
+      sel.appendChild(o);
+    });
+    $("#catpick-q").value = "";
+    renderCatPick();
     renderCatPickTotal();
     openSheetElFn($("#catpick-sheet"));
   }
+  $("#catpick-q").addEventListener("input", () => { catPickLimit = 60; renderCatPick(); });
+  $("#catpick-cat").addEventListener("change", () => { catPickLimit = 60; renderCatPick(); });
+  $("#catpick-more").addEventListener("click", () => { catPickLimit += 60; renderCatPick(); });
+  /* tap the tile to add, tap − to reduce or remove — never add-only */
+  function paintCatTile(tile, item) {
+    const q = catPicks.get(item.id) || 0;
+    tile.classList.toggle("is-on", q > 0);
+    tile.querySelectorAll(".catpick-qty, .catpick-dec").forEach((n) => n.remove());
+    if (q > 0) {
+      tile.appendChild(el("span", "catpick-qty", String(q)));
+      const dec = el("span", "catpick-dec", "\u2212");
+      dec.setAttribute("role", "button");
+      dec.setAttribute("aria-label", `Remove one ${item.name}`);
+      dec.addEventListener("click", (e) => {
+        e.stopPropagation();
+        const cur = catPicks.get(item.id) || 0;
+        if (cur > 1) catPicks.set(item.id, cur - 1);
+        else catPicks.delete(item.id);
+        paintCatTile(tile, item);
+      });
+      tile.appendChild(dec);
+    }
+    renderCatPickTotal();
+  }
   function catPickLines() {
     return [...catPicks.entries()]
-      .map(([id, q]) => { const it = state.catalog.find((c) => c.id === id); return it ? { name: it.name, price: it.price, qty: q } : null; })
+      .map(([id, q]) => { const it = catPickItems.get(id) || state.catalog.find((c) => c.id === id); return it ? { name: it.name, price: it.price, qty: q } : null; })
       .filter(Boolean);
   }
   function renderCatPickTotal() {
@@ -9945,8 +10967,20 @@ function renderSettings() {
   $("#catpick-create").addEventListener("click", () => {
     const lines = catPickLines();
     if (!lines.length) { toast("Pick at least one item"); return; }
+    /* WhatsApp Business and website orders arrive with the customer's number and address, so they go straight in as accepted */
+    if (!AGGREGATORS.includes(catPickChannel)) {
+      const contact = CHANNEL_CONTACT[catPickChannel] || CHANNEL_CONTACT.website;
+      const o = createOrder({
+        source: catPickChannel, customer: contact.phone, lines,
+        phone: contact.phone, address: contact.address, note: `${ORDER_SOURCE[catPickChannel]} order`,
+      });
+      advanceOrder(o, "accepted");
+      closeSheetEl();
+      toast(`Order accepted · ${ORDER_SOURCE[catPickChannel]} · ${fmt(orderDue(o))}`);
+      return;
+    }
     closeSheetEl();
-    openFulfil({ source: "wabiz", lines, presetName: "WhatsApp Business customer", note: "WhatsApp Business catalogue order" });
+    openFulfil({ source: catPickChannel, lines, presetName: CHANNEL_CUSTOMER[catPickChannel], note: `${ORDER_SOURCE[catPickChannel]} order` });
   });
   $("#catpick-close").addEventListener("click", closeSheetEl);
 
@@ -10000,19 +11034,20 @@ function renderSettings() {
 
     const I = state.catalog;
     const ci = (i) => Math.min(i, I.length - 1);
+    const seenText = (n) => n === 0 ? "Today" : n === 1 ? "Yesterday" : `${n} days ago`;
     const it = (i, qty) => ({ name: I[ci(i)].name, price: I[ci(i)].price, qty });
     const amt = (i, q) => Math.round(I[ci(i)].price * q * (1 + effTax()));
     const pair = (a, b) => Math.round((I[ci(a)].price + I[ci(b)].price) * (1 + effTax()));
     const lastIdx = I.length - 1;
 
     state.customers.push(
-      { id: "c1", name: "Maya Kapoor",  hi: "माया",  initials: "MK", color: "var(--t-terra)", visits: 18, spent: 224000, lastSeenDays: 0,  lastVisit: "Today",       since: "Mar 2024", email: "maya.k@example.com",   vpa: "maya.k@okhdfc",   recent: [I[0].name, I[ci(3)].name] },
-      { id: "c2", name: "Arjun Mehta",  hi: "अर्जुन", initials: "AM", color: "var(--t-slate)", visits: 9,  spent: 98400,  lastSeenDays: 1,  lastVisit: "Yesterday",   since: "Jan 2025", email: "arjun.m@example.com",  vpa: "arjun.m@okicici", recent: [I[ci(1)].name, I[ci(4)].name] },
-      { id: "c3", name: "Priya Shah",   hi: "प्रिया", initials: "PS", color: "var(--t-plum)",  visits: 6,  spent: 64200,  lastSeenDays: 4,  lastVisit: "Mon",         since: "Jun 2025", email: "priya.s@example.com",  vpa: null,              recent: [I[ci(2)].name], creditLimit: 200000 },
-      { id: "c4", name: "Vikram Nair",  hi: "विक्रम", initials: "VN", color: "var(--t-pine)",  visits: 31, spent: 418000, lastSeenDays: 2,  lastVisit: "Fri",         since: "Nov 2023", email: "vikram.n@example.com", vpa: "vikram.n@okaxis", recent: [I[0].name, I[ci(6)].name] },
-      { id: "c5", name: "Sana Qureshi", hi: "सना",   initials: "SQ", color: "var(--t-ochre)", visits: 3,  spent: 27600,  lastSeenDays: 12, lastVisit: "12 days ago", since: "Feb 2026", email: "sana.q@example.com",   vpa: null,              recent: [I[lastIdx].name] },
-      { id: "c6", name: "Rohan Iyer",   hi: "रोहन",  initials: "RI", color: "var(--t-umber)", visits: 1,  spent: 9900,   lastSeenDays: 21, lastVisit: "3 wks ago",   since: "Oct 2026", email: "rohan.i@example.com",  vpa: null,              recent: [I[ci(3)].name] },
-      { id: "c7", name: "Meera Pillai", hi: "मीरा",  initials: "MP", color: "var(--t-sage)",  visits: 5,  spent: 41200,  lastSeenDays: 24, lastVisit: "24 days ago", since: "Aug 2025", email: "meera.p@example.com",  vpa: null,              recent: [I[ci(5)].name] },
+      { id: "c1", name: "Maya Kapoor",  hi: "माया",  initials: "MK", color: "var(--t-terra)", visits: 18, spent: 224000, lastSeenDays: 0,  lastVisit: seenText(0),       since: "Mar 2024", email: "maya.k@example.com",   vpa: "maya.k@okhdfc",   recent: [I[0].name, I[ci(3)].name] },
+      { id: "c2", name: "Arjun Mehta",  hi: "अर्जुन", initials: "AM", color: "var(--t-slate)", visits: 9,  spent: 98400,  lastSeenDays: 1,  lastVisit: seenText(1),   since: "Jan 2025", email: "arjun.m@example.com",  vpa: "arjun.m@okicici", recent: [I[ci(1)].name, I[ci(4)].name] },
+      { id: "c3", name: "Priya Shah",   hi: "प्रिया", initials: "PS", color: "var(--t-plum)",  visits: 6,  spent: 64200,  lastSeenDays: 4,  lastVisit: seenText(4),         since: "Jun 2025", email: "priya.s@example.com",  vpa: null,              recent: [I[ci(2)].name], creditLimit: 200000 },
+      { id: "c4", name: "Vikram Nair",  hi: "विक्रम", initials: "VN", color: "var(--t-pine)",  visits: 31, spent: 418000, lastSeenDays: 2,  lastVisit: seenText(2),         since: "Nov 2023", email: "vikram.n@example.com", vpa: "vikram.n@okaxis", recent: [I[0].name, I[ci(6)].name] },
+      { id: "c5", name: "Sana Qureshi", hi: "सना",   initials: "SQ", color: "var(--t-ochre)", visits: 3,  spent: 27600,  lastSeenDays: 12, lastVisit: seenText(12), since: "Feb 2026", email: "sana.q@example.com",   vpa: null,              recent: [I[lastIdx].name] },
+      { id: "c6", name: "Rohan Iyer",   hi: "रोहन",  initials: "RI", color: "var(--t-umber)", visits: 1,  spent: 9900,   lastSeenDays: 21, lastVisit: seenText(21),   since: "Oct 2026", email: "rohan.i@example.com",  vpa: null,              recent: [I[ci(3)].name] },
+      { id: "c7", name: "Meera Pillai", hi: "मीरा",  initials: "MP", color: "var(--t-sage)",  visits: 5,  spent: 41200,  lastSeenDays: 24, lastVisit: seenText(24), since: "Aug 2025", email: "meera.p@example.com",  vpa: null,              recent: [I[ci(5)].name] },
     );
     state.customers.forEach((c) => { if (c.vpa) state.payers[c.vpa] = c.id; });
 
@@ -10085,9 +11120,9 @@ function renderSettings() {
     const dAgo = (n) => new Date(Date.now() - n * 86400000);
     const mAgo = (n) => new Date(Date.now() - n * 60000);
     state.invoices.push(
-      { id: "inv-a", num: "INV-0013", customerId: "c3", customerName: "Priya Shah",  desc: "Bulk order — office ×50", amount: 430000, status: "overdue", created: dAgo(21), dueText: dateStr(dAgo(3)) },
-      { id: "inv-b", num: "INV-0012", customerId: "c2", customerName: "Arjun Mehta", desc: "Wholesale supply",       amount: 600000, status: "unpaid",  created: dAgo(4),  dueText: dateStr(new Date(Date.now() + 3 * 86400000)) },
-      { id: "inv-c", num: "INV-0011", customerId: "c1", customerName: "Maya Kapoor", desc: "Gift vouchers ×10",      amount: 240000, status: "paid",    created: dAgo(12), dueText: "paid " + dateStr(dAgo(6)) },
+      { id: "inv-a", num: "INV-0013", customerId: "c3", customerName: "Priya Shah",  desc: `${I[ci(2)].name} ×50`, amount: amt(2, 50), status: "overdue", created: dAgo(21), dueText: dateStr(dAgo(3)) },
+      { id: "inv-b", num: "INV-0012", customerId: "c2", customerName: "Arjun Mehta", desc: `${I[ci(1)].name} ×20`, amount: amt(1, 20), status: "unpaid",  created: dAgo(4),  dueText: dateStr(new Date(Date.now() + 3 * 86400000)) },
+      { id: "inv-c", num: "INV-0011", customerId: "c1", customerName: "Maya Kapoor", desc: `${I[ci(0)].name} ×10`, amount: amt(0, 10), status: "paid",    created: dAgo(12), dueText: "paid " + dateStr(dAgo(6)) },
     );
 
     // khata seeds — credit (udhaar) history per customer
@@ -10096,7 +11131,7 @@ function renderSettings() {
       { id: "kh-2", custId: "c7", desc: `2× ${I[ci(2)].name}`, amount: amt(2, 2), type: "credit", date: dAgo(24) },
       { id: "kh-3", custId: "c5", desc: "Udhaar",              amount: 15000,     type: "credit", date: dAgo(12) },
       { id: "kh-4", custId: "c5", desc: "Settled (UPI)",       amount: 15000,     type: "paid",   date: dAgo(5)  },
-      { id: "kh-5", custId: "c3", desc: `Bulk order — ${I[ci(2)].name} ×10`, amount: 170000, type: "credit", date: dAgo(2) },
+      { id: "kh-5", custId: "c3", desc: `Bulk order — ${I[ci(2)].name} ×10`, amount: amt(2, 10), type: "credit", date: dAgo(2) },
     );
 
     // static-QR payments — soundbox heard them, recon engine works out the items
@@ -10135,9 +11170,10 @@ function renderSettings() {
     state.supEntries.unshift({ id: "se-seed-pay1", supplierId: supA.id, type: "paid", amount: 15000, desc: "Paid via UPI", date: mAgo(700) });
     supA.due = Math.max(0, supA.due - 15000);
     // one older purchase already settled
+    const SI = stockItems();
     const settledPo = {
-      id: "po-seed-old", itemId: I[ci(3)].id, name: I[ci(3)].name,
-      qty: 20, rate: Math.round(I[ci(3)].price * 0.75), date: mAgo(6000), source: "typed",
+      id: "po-seed-old", itemId: SI[Math.min(3, SI.length - 1)].id, name: SI[Math.min(3, SI.length - 1)].name,
+      qty: 20, rate: Math.round(SI[Math.min(3, SI.length - 1)].price * 0.75), date: mAgo(6000), source: "typed",
       supplier: supB.name, payLater: false, payMode: "already",
     };
     settledPo.total = settledPo.qty * settledPo.rate;
@@ -10165,15 +11201,15 @@ function renderSettings() {
     // cash drawer — day already started with a float
     state.drawer = { day: new Date().toDateString(), float: 50000, entries: [
       { type: "in", amt: 20000, note: "Change money from owner", date: mAgo(300) },
-      { type: "out", amt: 12000, note: "Milk run — morning", date: mAgo(120) },
+      { type: "out", amt: 12000, note: "Petty expense — morning", date: mAgo(120) },
     ], z: null };
 
     // team + a believable activity trail
     state.staff.push({ id: "st-seed-ravi", name: "Ravi", pin: "1234", role: "cashier" });
     state.audit.push(
       { ts: mAgo(120), who: "Owner", cat: "drawer", what: "Day started with float ₹500.00" },
-      { ts: mAgo(118), who: "Ravi", cat: "sale", what: "2 items · ₹63.00 · cash" },
-      { ts: mAgo(60), who: "Owner", cat: "stock", what: "Set Ice Cream Cup stock to 4" },
+      { ts: mAgo(118), who: "Ravi", cat: "sale", what: `2 items · ${fmt(totals([it(0, 1), it(2, 1)]).total)} · cash` },
+      { ts: mAgo(60), who: "Owner", cat: "stock", what: `Set ${I[ci(3)].name} stock to 4` },
     );
 
     // settlement — yesterday's UPI due + history
@@ -10189,7 +11225,7 @@ function renderSettings() {
       const wl = [it(0, 4), it(2, 2)];
       const wt = totals(wl);
       state.orders.unshift({
-        id: "ord-wabizdemo", source: "wabiz",
+        id: "ord-wabizdemo", source: "wabiz", mcc: state.mcc,
         customer: "Priya Nair", phone: "98110 22334",
         address: "22/B Rose Apartments, MG Road, Pune 411001",
         delivery: { partner: "Rapido Parcel", feeCents: 4000, feeTiming: "delivery" },
@@ -10218,6 +11254,7 @@ function renderSettings() {
     renderPurchases();
     renderSupplierLedger();
     renderRecon();
+    (state.orders || []).forEach((o) => { if (o.status === "out" && o.dispatch && partnerHasApi(o) && !partnerTimers.has(o.id)) startPartnerFeed(o); });
     renderOrders();
     renderCampaigns();
     renderReports();
@@ -10240,7 +11277,7 @@ function renderSettings() {
 
   /* ---------- onboarding (first-run shop setup: 3 taps) ---------- */
   const onboard = $("#onboard");
-  let obStep = 1, obBiz = null;
+  let obStep = 1, obBiz = null, obSkipped = false;
 
   /* step 2: full MCC coverage — search, A-Z index, load more */
   const BIZ_PAGE = 12;
@@ -10364,12 +11401,12 @@ function renderSettings() {
       if (mcc === hint) top.appendChild(el("span", "biz-suggested", "Suggested for “" + ($("#ob-name").value || "").trim() + "”"));
       const items = el("div", "biz-items");
       s.items.slice(0, 3).forEach((i) => items.appendChild(el("span", null, i.name)));
-      card.append(top, items, el("small", null, "MCC " + mcc));
+      card.append(top, items);
       card.addEventListener("click", () => {
         obBiz = mcc;
         applyBusiness(mcc);      // stages this type's catalog + popular items
         applyPackDefaults(mcc);  // N=1: segment pack reshapes modules + language
-        obGo(3);                 // tap a type → straight to item picker
+        obGo(obStep + 1);        // next step in the flow (SKU step where one exists) → straight to item picker
       });
       box.appendChild(card);
     });
@@ -10394,7 +11431,7 @@ function renderSettings() {
     const banner = $("#ob-reg-banner");
     if (state.regMcc && state.regMcc === state.mcc && state.auth.mobile) {
       banner.hidden = false;
-      banner.textContent = `MCC ${state.regMcc} (${MCC_STORES[state.regMcc].label}) auto-selected — matched to your ${state.regVia || "QR code"} registration from submitted documents. Change it anytime.`;
+      banner.textContent = `${MCC_STORES[state.regMcc].label} auto-selected — matched to your ${state.regVia || "QR code"} registration from submitted documents. Change it anytime.`;
     } else banner.hidden = true;
   }
 
@@ -10414,7 +11451,7 @@ function renderSettings() {
         syncCatalog();
         renderObItems();
       });
-      const priceBtn = el("button", "pick-price", fmt(it.price));
+      const priceBtn = el("button", "pick-price", it.price == null ? "Set price" : fmt(it.price));
       priceBtn.type = "button";
       priceBtn.title = "Set your selling price";
       priceBtn.addEventListener("click", () => startPriceEdit(chip, it, priceBtn));
@@ -10444,7 +11481,16 @@ function renderSettings() {
     });
   }
 
+  function renderObBarcode() {
+    document.querySelectorAll("[data-obbar]").forEach((b) => {
+      const on = barcodeOn();
+      b.classList.toggle("is-on", on);
+      b.setAttribute("aria-checked", String(on));
+    });
+  }
+
   function renderObModules() {
+    renderObBarcode();
     document.querySelectorAll("[data-obmod]").forEach((b) => {
       const on = modOn(b.dataset.obmod);
       b.classList.toggle("is-on", on);
@@ -10460,7 +11506,7 @@ function renderSettings() {
     input.className = "pick-price-input";
     input.type = "text";
     input.inputMode = "decimal";
-    input.value = (it.price / 100).toString();
+    input.value = it.price == null ? "" : (it.price / 100).toString();
     chip.replaceChild(input, priceBtn);
     input.focus();
     input.select();
@@ -10495,17 +11541,390 @@ function renderSettings() {
     voiceChips($("#ob-samples"), phrases, (p) => { addStockFromPhrase(p, "#ob-transcript"); renderObItems(); });
   }
 
-  function obGo(n) {
-    obStep = n;
-    document.querySelectorAll(".ostep").forEach((s) => s.classList.toggle("is-on", +s.dataset.ostep === n));
-    document.querySelectorAll("#onboard-dots span").forEach((d, i) => d.classList.toggle("is-on", i < n));
-    $("#ob-back").hidden = n === 1;
+  /* ---------- Kirana SKU step (MCC 5411 only) ---------- */
+  /* MCCs that have a standard SKU list in data/catalogue/<mcc>.js */
+  const SKU_MCCS = new Set(["5411", "5499", "5977", "5999", "5719", "5912", "5441", "5431", "5451", "5462", "5995", "5422", "5193", "5812"]);
+  let skuMode = "list", skuShown = 50, skuTimer = null;
+  let skuRows = null, skuRowsMcc = null;
+  const skuCache = new Map();
+
+  /* data/catalogue/<mcc>.js defines window.SKU_DATA[mcc]. Loaded with a script tag so it
+     works when the page is opened straight from disk (fetch() is blocked for file://). */
+  /* packed file: category and cuisine are lookup tables, each row is [n, name, cat, cuisine, veg, paise] */
+  function unpackSku(p) {
+    return p.r.map((a) => ({ id: "sw-" + a[0], name: a[1], brand: "", category: p.c[a[2]], veg: a[4] === 1, price: a[5] }));
+  }
+  function loadSkuCatalogue(mcc) {
+    if (!skuCache.has(mcc)) {
+      const p = new Promise((resolve, reject) => {
+        const ready = () => {
+          const pack = window.SKU_PACK && window.SKU_PACK[mcc];
+          const rows = pack ? unpackSku(pack) : (window.SKU_DATA && window.SKU_DATA[mcc]);
+          if (pack) { window.SKU_DATA = window.SKU_DATA || {}; window.SKU_DATA[mcc] = rows; }
+          if (!Array.isArray(rows)) return reject(new Error("no data for " + mcc));
+          resolve(rows.map((x) => ({ ...x, _s: (x.name + " " + (x.brand || "")).toLowerCase() })));
+        };
+        if ((window.SKU_DATA && window.SKU_DATA[mcc]) || (window.SKU_PACK && window.SKU_PACK[mcc])) return ready();
+        const s = document.createElement("script");
+        s.src = "data/catalogue/" + mcc + ".js";
+        s.onload = ready;
+        s.onerror = () => reject(new Error("could not load " + s.src));
+        document.head.appendChild(s);
+      }).catch((err) => { skuCache.delete(mcc); throw err; });
+      skuCache.set(mcc, p);
+    }
+    return skuCache.get(mcc);
+  }
+
+  /* items of the ticked categories, read from the loaded file. Only the category
+     names are saved with the shop, so 27k items never go into localStorage. */
+  function skuCatItems() {
+    const rows = window.SKU_DATA && window.SKU_DATA[state.mcc];
+    if (!rows || !state.skuCats || !state.skuCats.length) return [];
+    const want = new Set(state.skuCats);
+    return rows.filter((r) => want.has(r.category))
+      .map((r) => ({ id: r.id, name: r.name, brand: r.brand || "", category: r.category, price: r.price, sku: true, veg: r.veg }));
+  }
+  const SKU_LIMIT = 5000;  /* above this the register and onboarding get slow; use search for the rest */
+  function skuCountFor(cats) {
+    const rows = window.SKU_DATA && window.SKU_DATA[state.mcc];
+    if (!rows) return 0;
+    const want = new Set(cats);
+    let n = 0;
+    for (const r of rows) if (want.has(r.category)) n++;
+    return n;
+  }
+  function skuLimitMsg() {
+    return `Limit is ${SKU_LIMIT.toLocaleString("en-IN")} items per shop. Remove a category or use search for single items.`;
+  }
+  function hashKey(s) { let h = 0; for (const ch of s) h = (h * 31 + ch.charCodeAt(0)) >>> 0; return h.toString(36); }
+  function skuPickedIds() {
+    const ids = new Set(state.skuPicks.map((i) => i.id));
+    if (skuRows && skuRowsMcc === obBiz && state.skuCats.length) {
+      const want = new Set(state.skuCats);
+      skuRows.forEach((r) => { if (want.has(r.category)) ids.add(r.id); });
+    }
+    return ids;
+  }
+  /* restaurant menu: the owner types the price of each dish picked here */
+  function paintMenuPrices() {
+    const box = $("#sku-prices");
+    if (!box) return;
+    box.innerHTML = "";
+    box.hidden = !(obBiz === "5812" && state.skuPicks.length);
+    if (box.hidden) return;
+    box.appendChild(el("p", "svc-cat", "Set prices (₹)"));
+    state.skuPicks.forEach((it) => {
+      const row = el("div", "sku-cat-row");
+      const inp = document.createElement("input");
+      inp.type = "text"; inp.inputMode = "decimal"; inp.placeholder = "₹ price";
+      inp.value = it.price == null ? "" : String(it.price / 100);
+      inp.style.cssText = "width:96px;height:auto;flex:none;border:1px solid var(--line);border-radius:8px;padding:6px 8px;font:inherit;text-align:right;accent-color:initial";
+      inp.addEventListener("change", () => {
+        const v = parseFloat(inp.value.replace(/[₹,\s]/g, ""));
+        it.price = v > 0 ? Math.round(v * 100) : null;
+        inp.value = it.price == null ? "" : String(it.price / 100);
+        syncCatalog();
+      });
+      row.append(el("span", null, it.name), inp);
+      box.appendChild(row);
+    });
+  }
+  function skuPickedLabel() {
+    paintMenuPrices();
+    const n = skuPickedIds().size;
+    const nc = state.skuCats.length;
+    $("#sku-picked").textContent = obBiz === "5812" ? `${n.toLocaleString("en-IN")} dish${n === 1 ? "" : "es"} selected` : `${n.toLocaleString("en-IN")} ${n === 1 ? "item" : "items"} selected`
+      + (nc ? ` · ${nc} categor${nc === 1 ? "y" : "ies"} ticked` : "");
+  }
+  function toggleCategory(cat, on) {
+    const has = state.skuCats.includes(cat);
+    if (on && !has) state.skuCats.push(cat);
+    if (!on && has) state.skuCats = state.skuCats.filter((c) => c !== cat);
+    syncCatalog();
+    renderCatRows();
+    skuPickedLabel();
+    paintSkuGrid();
+  }
+  /* select all: adds categories in order while the SKU limit allows, and says which were skipped */
+  function selectAllCats(on) {
+    if (!on) {
+      state.skuCats = [];
+    } else {
+      const cats = [...new Set(skuRows.map((r) => r.category))].sort();
+      let added = 0;
+      cats.forEach((cat) => {
+        if (state.skuCats.includes(cat)) return;
+        state.skuCats.push(cat); added++;
+      });
+      toast(`Selected ${added} categor${added === 1 ? "y" : "ies"}: ${skuCountFor(state.skuCats).toLocaleString("en-IN")} items`);
+    }
+    syncCatalog(); renderCatRows(); paintSkuGrid(); skuPickedLabel();
+  }
+  function renderCatRows() {
+    const box = $("#sku-cats");
+    if (!box || !skuRows || skuRowsMcc !== obBiz) return;
+    box.innerHTML = "";
+    const counts = new Map();
+    skuRows.forEach((r) => counts.set(r.category, (counts.get(r.category) || 0) + 1));
+    const cats = [...counts.keys()].sort();
+    const all = el("label", "sku-cat-row");
+    const allCb = document.createElement("input");
+    allCb.type = "checkbox";
+    allCb.checked = cats.length > 0 && cats.every((c) => state.skuCats.includes(c));
+    allCb.addEventListener("change", () => selectAllCats(state.skuCats.length === 0));
+    all.append(allCb, el("span", null, state.skuCats.length ? "Clear categories" : "Select all categories"), el("span", "n", cats.length + " categories"));
+    box.appendChild(all);
+    cats.forEach((cat) => {
+      const label = el("label", "sku-cat-row");
+      const cb = document.createElement("input");
+      cb.type = "checkbox";
+      cb.checked = state.skuCats.includes(cat);
+      cb.addEventListener("change", () => toggleCategory(cat, cb.checked));
+      label.append(cb, el("span", null, cat), el("span", "n", counts.get(cat).toLocaleString("en-IN")));
+      box.appendChild(label);
+    });
+  }
+  function toggleSku(r) {
+    const i = state.skuPicks.findIndex((x) => x.id === r.id);
+    if (i >= 0) state.skuPicks.splice(i, 1);
+    else {
+      state.skuPicks.push({ id: r.id, name: r.name, brand: r.brand || "", category: r.category, price: r.price, sku: true, veg: r.veg });
+      if (!state.stock) state.stock = {};
+      if (!(r.id in state.stock)) state.stock[r.id] = null;
+    }
+    syncCatalog();
+    paintSkuGrid();
+    skuPickedLabel();
+  }
+  /* search only: never lists the whole catalogue */
+  function paintSkuGrid() {
+    const grid = $("#sku-grid");
+    if (!grid || !skuRows || skuRowsMcc !== obBiz) return;
+    const terms = ($("#sku-search").value || "").trim().toLowerCase().split(/\s+/).filter(Boolean);
+    const more = $("#sku-more");
+    grid.innerHTML = "";
+    if (!terms.length) {
+      more.hidden = true;
+      $("#sku-status").textContent = `Type an item name to search ${skuRows.length.toLocaleString("en-IN")} items`;
+      return;
+    }
+    const picked = skuPickedIds();
+    const hits = skuRows.filter((r) => terms.every((t) => r._s.includes(t)));
+    hits.slice(0, skuShown).forEach((r) => {
+      const on = picked.has(r.id);
+      const chip = el("button", "sku-chip" + (on ? " is-on" : ""));
+      if (r.veg !== undefined) chip.append(el("span", "veg-dot " + (r.veg ? "veg" : "nonveg")));
+      chip.append((on ? "✓ " : "") + (r.brand ? r.brand + " · " : "") + r.name + (r.price == null ? "" : " · " + fmt(r.price)));
+      chip.type = "button";
+      chip.addEventListener("click", () => toggleSku(r));
+      grid.appendChild(chip);
+    });
+    if (!hits.length) grid.appendChild(el("p", "tx-empty", "No match. Try another word or tick a category."));
+    more.hidden = hits.length <= skuShown;
+    more.textContent = `Show more · ${hits.length - skuShown} more`;
+    $("#sku-status").textContent = `${hits.length.toLocaleString("en-IN")} match${hits.length === 1 ? "" : "es"}`;
+  }
+  /* restaurants see "menu" and "dishes" instead of SKU wording */
+  function skuCopy() {
+    const menu = obBiz === "5812";
+    const set = (sel, text) => { const n = document.querySelector(sel); if (n) n.textContent = text; };
+    set('[data-ostep="sku"] .ob-kicker', menu ? "Your menu" : "Starter list");
+    set('[data-ostep="sku"] .ob-title', menu ? "Load your menu." : "Load your items.");
+    const search = document.querySelector("#sku-search");
+    if (search) {
+      search.placeholder = menu ? "e.g. paneer, biryani, dosa" : "e.g. atta, biscuit, surf";
+      const lbl = search.closest("label") && search.closest("label").querySelector("span");
+      if (lbl) lbl.textContent = menu ? "Search menu" : "Search items";
+    }
+  }
+  function renderSkuStep() {
+    skuCopy();
+    const mcc = obBiz;
+    document.querySelectorAll("[data-skumode]").forEach((b) => b.classList.toggle("pick", b.dataset.skumode === skuMode));
+    $("#sku-list-panel").hidden = skuMode !== "list";
+    $("#sku-csv-panel").hidden = skuMode !== "csv";
+    skuPickedLabel();
+    if (skuMode !== "list") return;
+    if (skuRowsMcc !== mcc) { skuRows = null; skuRowsMcc = null; $("#sku-cats").innerHTML = ""; $("#sku-grid").innerHTML = ""; }
+    $("#sku-status").textContent = "Loading categories…";
+    $("#sku-more").hidden = true;
+    loadSkuCatalogue(mcc).then((rows) => {
+      if (skuMode !== "list" || obBiz !== mcc) return;
+      skuRows = rows; skuRowsMcc = mcc;
+      renderCatRows();
+      paintSkuGrid();
+    }).catch(() => {
+      $("#sku-status").textContent = "Standard list unavailable. Upload a CSV or add items manually.";
+      $("#sku-more").hidden = true;
+      $("#sku-grid").innerHTML = "";
+      $("#sku-cats").innerHTML = "";
+    });
+  }
+  /* Salon services: MCC 7230 only. Ticked services become register items. */
+  const SALON_SERVICES = [
+    { cat: "Haircuts & Styling", name: "Basic Haircut (Trimming)", mins: 30, price: 350, gender: "Female" },
+    { cat: "Haircuts & Styling", name: "Classic Men's Haircut", mins: 25, price: 200, gender: "Male" },
+    { cat: "Haircuts & Styling", name: "Advanced Styling (Layer/Step/Bob)", mins: 45, price: 800, gender: "Female" },
+    { cat: "Haircuts & Styling", name: "Kid's Haircut", mins: 20, price: 150, gender: "Unisex" },
+    { cat: "Haircuts & Styling", name: "Beard Trim & Styling", mins: 20, price: 150, gender: "Male" },
+    { cat: "Hair Treatments", name: "Deep Conditioning Hair Spa", mins: 60, price: 1200, gender: "Unisex" },
+    { cat: "Hair Treatments", name: "Keratin Treatment", mins: 120, price: 4500, gender: "Female" },
+    { cat: "Hair Treatments", name: "Hair Smoothening / Straightening", mins: 180, price: 5000, gender: "Female" },
+    { cat: "Hair Coloring", name: "Root Touch-up", mins: 45, price: 700, gender: "Unisex" },
+    { cat: "Hair Coloring", name: "Global Hair Color", mins: 90, price: 2500, gender: "Female" },
+    { cat: "Hair Coloring", name: "Highlights / Balayage", mins: 120, price: 3500, gender: "Female" },
+    { cat: "Facial & Skincare", name: "Basic Cleanup", mins: 30, price: 500, gender: "Unisex" },
+    { cat: "Facial & Skincare", name: "De-Tan Pack", mins: 25, price: 300, gender: "Unisex" },
+    { cat: "Facial & Skincare", name: "Gold / Diamond Facial", mins: 60, price: 1800, gender: "Female" },
+    { cat: "Grooming & Waxing", name: "Threading (Eyebrows & Upper Lip)", mins: 15, price: 80, gender: "Female" },
+    { cat: "Grooming & Waxing", name: "Full Arms & Full Legs Waxing (Rica)", mins: 45, price: 900, gender: "Female" },
+    { cat: "Grooming & Waxing", name: "Shaving (Classic Foam)", mins: 15, price: 100, gender: "Male" },
+    { cat: "Nail & Hands Care", name: "Classic Manicure", mins: 30, price: 400, gender: "Unisex" },
+    { cat: "Nail & Hands Care", name: "Classic Pedicure", mins: 45, price: 500, gender: "Unisex" },
+    { cat: "Nail & Hands Care", name: "Gel Nail Extensions", mins: 90, price: 1500, gender: "Female" },
+  ];
+  function svcItems() {
+    if (state.mcc !== "7230" || !state.svcIds) return [];
+    return SALON_SERVICES
+      .map((s, n) => ({ id: "svc-" + n, name: s.name, brand: "", category: s.cat, price: s.price * 100, sku: true, mins: s.mins, gender: s.gender }))
+      .filter((i) => state.svcIds.includes(i.id));
+  }
+  function svcPickedLabel() {
+    const n = state.svcIds.length;
+    $("#svc-picked").textContent = `${n} service${n === 1 ? "" : "s"} selected`;
+  }
+  function toggleSvc(id, on) {
+    const has = state.svcIds.includes(id);
+    if (on && !has) state.svcIds.push(id);
+    if (!on && has) state.svcIds = state.svcIds.filter((x) => x !== id);
+    syncCatalog();
+    svcPickedLabel();
+  }
+  function renderSvcStep() {
+    const box = $("#svc-list");
+    box.innerHTML = "";
+    const all = el("label", "sku-cat-row");
+    const allCb = document.createElement("input");
+    allCb.type = "checkbox";
+    allCb.checked = SALON_SERVICES.every((_, n) => state.svcIds.includes("svc-" + n));
+    allCb.addEventListener("change", () => {
+      state.svcIds = allCb.checked ? SALON_SERVICES.map((_, n) => "svc-" + n) : [];
+      syncCatalog(); renderSvcStep();
+    });
+    all.append(allCb, el("span", null, "Select all services"), el("span", "n", `${SALON_SERVICES.length} services`));
+    box.appendChild(all);
+    let cat = null;
+    SALON_SERVICES.forEach((s, n) => {
+      if (s.cat !== cat) { cat = s.cat; box.appendChild(el("p", "svc-cat", cat)); }
+      const id = "svc-" + n;
+      const label = el("label", "sku-cat-row");
+      const cb = document.createElement("input");
+      cb.type = "checkbox";
+      cb.checked = state.svcIds.includes(id);
+      cb.addEventListener("change", () => toggleSvc(id, cb.checked));
+      label.append(cb, el("span", null, s.name), el("span", "n", `${s.mins} min · ${s.gender} · ₹${s.price.toLocaleString("en-IN")}`));
+      box.appendChild(label);
+    });
+    svcPickedLabel();
+  }
+  function parseCsv(text) {
+    const rows = []; let row = [], field = "", q = false;
+    for (let i = 0; i < text.length; i++) {
+      const c = text[i];
+      if (q) {
+        if (c === '"') { if (text[i + 1] === '"') { field += '"'; i++; } else q = false; }
+        else field += c;
+      } else if (c === '"') q = true;
+      else if (c === ",") { row.push(field); field = ""; }
+      else if (c === "\n" || c === "\r") {
+        if (c === "\r" && text[i + 1] === "\n") i++;
+        row.push(field); rows.push(row); row = []; field = "";
+      } else field += c;
+    }
+    if (field.length || row.length) { row.push(field); rows.push(row); }
+    return rows.filter((r) => r.some((x) => x.trim() !== ""));
+  }
+  function importSkuCsv(file) {
+    const out = $("#sku-csv-status");
+    if (!/\.csv$/i.test(file.name)) { out.textContent = "Please choose a .csv file. In Excel, use Save As → CSV first."; return; }
+    if (file.size > 5 * 1024 * 1024) { out.textContent = "File is over 5 MB. Remove unused rows and try again."; return; }
+    const reader = new FileReader();
+    reader.onload = () => {
+      const rows = parseCsv(String(reader.result).replace(/^﻿/, ""));
+      if (rows.length < 2) { out.textContent = "The file has no item rows."; return; }
+      const head = rows[0].map((h) => h.trim().toLowerCase());
+      const iName = head.includes("product") ? head.indexOf("product") : head.indexOf("name");
+      const iPrice = head.includes("sale_price") ? head.indexOf("sale_price") : head.indexOf("price");
+      const iBrand = head.indexOf("brand");
+      if (iName < 0 || iPrice < 0) { out.textContent = "CSV needs a product (or name) column and a sale_price (or price) column."; return; }
+      const picked = skuPickedIds();
+      if (!state.stock) state.stock = {};
+      let room = Infinity;
+      let added = 0, skipped = 0, capped = 0;
+      rows.slice(1).forEach((r) => {
+        const name = (r[iName] || "").replace(/\s+/g, " ").trim().slice(0, 60);
+        const rupees = Number(String(r[iPrice] || "").trim());
+        if (!name || !isFinite(rupees) || rupees <= 0) { skipped++; return; }
+        const brand = iBrand >= 0 ? (r[iBrand] || "").replace(/\s+/g, " ").trim() : "";
+        const id = "csv-" + hashKey((name + "|" + brand).toLowerCase());
+        if (picked.has(id)) { skipped++; return; }
+        if (room <= 0) { capped++; return; }
+        room--;
+        picked.add(id);
+        state.skuPicks.push({ id, name, brand, category: "Imported", price: Math.round(rupees * 100), sku: true });
+        if (!(id in state.stock)) state.stock[id] = null;
+        added++;
+      });
+      syncCatalog();
+      out.textContent = `${added} imported · ${skipped} skipped` + (capped ? ` · ${capped} not added (limit ${SKU_LIMIT.toLocaleString("en-IN")})` : "");
+      skuPickedLabel();
+    };
+    reader.readAsText(file);
+  }
+  document.querySelectorAll("[data-skumode]").forEach((b) => b.addEventListener("click", () => {
+    skuMode = b.dataset.skumode;
+    renderSkuStep();
+  }));
+  $("#sku-search").addEventListener("input", () => {
+    clearTimeout(skuTimer);
+    skuTimer = setTimeout(() => { skuShown = 50; paintSkuGrid(); }, 120);
+  });
+  $("#sku-more").addEventListener("click", () => { skuShown += 50; paintSkuGrid(); });
+  $("#sku-file").addEventListener("change", (e) => {
+    const f = e.target.files && e.target.files[0];
+    if (f) importSkuCsv(f);
+  });
+
+  /* step order: the SKU step appears only for MCCs that have a SKU list.
+     obGo takes a 1-based position in that order. */
+  function obFlow() {
+    if (obBiz === "7230") return ["1", "2", "svc", "3", "4", "5"];
+    return SKU_MCCS.has(obBiz) ? ["1", "2", "sku", "3", "4", "5"] : ["1", "2", "3", "4", "5"];
+  }
+  function obGo(pos) {
+    const flow = obFlow();
+    pos = Math.max(1, Math.min(pos, flow.length));
+    obStep = pos;
+    const id = flow[pos - 1];
+    document.querySelectorAll(".ostep").forEach((s) => s.classList.toggle("is-on", s.dataset.ostep === id));
+    const dots = $("#onboard-dots");
+    dots.innerHTML = "";
+    flow.forEach((_, i) => {
+      const d = document.createElement("span");
+      if (i < pos) d.className = "is-on";
+      dots.appendChild(d);
+    });
+    $("#ob-back").hidden = pos === 1;
     const next = $("#ob-next");
-    if (n === 2) renderBizGrid();   /* name typed in step 1 re-ranks the list */
-    if (n === 3) { renderObItems(); renderObSamples(); }
-    else if (n === 4) { renderObFF(); next.textContent = "Continue"; }
-    else if (n === 5) { renderObModules(); renderObHeadless(); next.textContent = "Open my shop"; next.disabled = false; }
-    else { next.textContent = "Continue"; next.disabled = n === 2 && !obBiz; }
+    next.textContent = "Continue";
+    next.disabled = false;
+    if (id === "2") { renderBizGrid(); next.disabled = !obBiz; }
+    else if (id === "sku") { renderSkuStep(); }
+    else if (id === "svc") { renderSvcStep(); }
+    else if (id === "3") { renderObItems(); renderObSamples(); }
+    else if (id === "4") { renderObFF(); }
+    else if (id === "5") { renderObModules(); renderObHeadless(); next.textContent = "Open my shop"; }
   }
 
   function openOnboarding(step = 1) {
@@ -10537,6 +11956,7 @@ function renderSettings() {
     if (owner) state.ownerName = owner;
     syncCatalog();
     ensureSeeded();
+    if (!obSkipped) state.transactions = [];   /* real shop: no invented sales */
     renderIdentity();
     if (state.auth.mobile) {
       persistProfile();
@@ -10548,18 +11968,21 @@ function renderSettings() {
     renderPackLabels();
     goRoot("register");
     const tag = packFor(state.mcc).tagline;
-    toast(tag ? `${state.bizName} is open — ${tag}` : `Welcome to ${state.bizName}`);
+    toast(`${state.bizName} is open`);
   }
 
   $("#ob-next").addEventListener("click", () => {
-    if (obStep === 1) { obGo(2); return; }
-    if (obStep === 2) { if (obBiz) obGo(3); return; }
-    if (obStep === 3) { obGo(4); return; }
-    if (obStep === 4) { obGo(5); return; }
-    finishOnboarding();       // tap 5: shop opens
+    const flow = obFlow();
+    if (obStep < flow.length) {
+      if (flow[obStep - 1] === "2" && !obBiz) return;
+      obGo(obStep + 1);
+      return;
+    }
+    finishOnboarding();       // last step: shop opens
   });
   $("#ob-back").addEventListener("click", () => obGo(Math.max(1, obStep - 1)));
   $("#ob-skip").addEventListener("click", () => {
+    obSkipped = true;
     obBiz = "5814";
     if (state.mcc !== "5814") applyBusiness("5814");
     applyPackDefaults("5814");
@@ -10605,6 +12028,14 @@ function renderSettings() {
       if (!modOn("invoice") && gstOn()) state.settings.gstApplies = false;
       renderObModules();
       applyModules();
+    });
+  });
+  /* barcode scanning toggle during setup — same state as Settings */
+  document.querySelectorAll("[data-obbar]").forEach((b) => {
+    b.addEventListener("click", () => {
+      state.settings.barcode = !barcodeOn();
+      renderObBarcode();
+      persistState();
     });
   });
 
@@ -10691,7 +12122,7 @@ function renderSettings() {
         const q = state.stock[item.id] ?? 0;
         return hlPush("bot", `${item.name}: ${q} in stock${q <= lowAt() ? " \u26A0\uFE0F low \u2014 time to buy" : " \u2014 looking fine"}.`);
       }
-      const lows = state.catalog.filter((i) => (state.stock[i.id] ?? 0) <= lowAt());
+      const lows = stockItems().filter((i) => (state.stock[i.id] ?? 0) <= lowAt());
       return hlPush("bot", lows.length ? `Low stock: ${lows.map((i) => `${i.name} (${state.stock[i.id] ?? 0})`).join(", ")}.` : "Everything is well stocked.");
     }
     const r = parseStockPhrase(text);
@@ -10752,7 +12183,7 @@ function renderSettings() {
   $("#assist-close").addEventListener("click", closeSheetEl);
   $("#assist-send").addEventListener("click", assistSubmit);
   wireMic("#assist-mic", "#assist-status", "#assist-input",
-    () => (state.settings.voiceLang === "hi-IN" ? "बोलिए \u2014 आइटम + मात्रा" : "Speak \u2014 item + quantity, or tap a sample"),
+    () => (state.settings.voiceLang === "hi-IN" ? "बोलिए \u2014 आइटम + मात्रा" : "Speak \u2014 item + quantity"),
     (t) => { if (assistInput) assistInput.textContent = ""; headlessExec(t); });
 
   /* keep the chat input above the mobile keyboard while the sheet is open */
