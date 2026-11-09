@@ -2063,14 +2063,7 @@ button.sheet-empty:active{transform:scale(.98)}
             </div>
             <div class="soundbox-bars" id="soundbox-bars" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
           </div>
-          <div class="ff-chips" id="ff-chips" role="group" aria-label="Filter by form factor">
-            <button class="chip is-on" data-ff="all">All</button>
-            <button class="chip" data-ff="QR">QR</button>
-            <button class="chip" data-ff="SoundBox">SoundBox</button>
-            <button class="chip" data-ff="EDC">EDC</button>
-            <button class="chip" data-ff="DQR">DQR</button>
-            <button class="chip" data-ff="Link Pay">Link Pay</button>
-          </div>
+          <div class="ff-chips" id="ff-chips" role="group" aria-label="Filter by form factor" hidden></div>
           <div class="recon-scroll">
             <div class="cust-section-title" id="recon-review-title">Needs review</div>
             <div class="recon-list" id="recon-pending"></div>
@@ -2259,6 +2252,31 @@ button.sheet-empty:active{transform:scale(.98)}
               <div class="set-row">
                 <div class="set-row-main"><strong>Auto-recon</strong><small>Auto-match when one combo fits the amount</small></div>
                 <button class="switch is-on" id="sw-autorecon" role="switch" aria-checked="true"><span></span></button>
+              </div>
+              <div class="set-divider">Payment form factors <small class="set-hint-inline">only these show in payment recon</small></div>
+              <div class="set-row">
+                <div class="set-row-main"><strong>Soundbox · audio QR</strong><small>static counter QR with voice alerts · rental device</small></div>
+                <button class="switch is-on" data-setff="soundbox" role="switch" aria-checked="true"><span></span></button>
+              </div>
+              <div class="set-row">
+                <div class="set-row-main"><strong>Static QR standee</strong><small>printed counter QR — customer enters the amount</small></div>
+                <button class="switch is-on" data-setff="standee" role="switch" aria-checked="true"><span></span></button>
+              </div>
+              <div class="set-row">
+                <div class="set-row-main"><strong>Dynamic QR (DQR)</strong><small>amount-encoded QR per sale · payments auto-match the bill</small></div>
+                <button class="switch" data-setff="dqr" role="switch" aria-checked="false"><span></span></button>
+              </div>
+              <div class="set-row">
+                <div class="set-row-main"><strong>Card machine (EDC)</strong><small>debit · credit · RuPay POS · contactless under ₹5,000 needs no PIN</small></div>
+                <button class="switch" data-setff="edc" role="switch" aria-checked="false"><span></span></button>
+              </div>
+              <div class="set-row">
+                <div class="set-row-main"><strong>Link Pay</strong><small>UPI payment links on WhatsApp / SMS · amount fixed in the link</small></div>
+                <button class="switch" data-setff="linkpay" role="switch" aria-checked="false"><span></span></button>
+              </div>
+              <div class="set-row">
+                <div class="set-row-main"><strong>All-in-One device</strong><small>all form factors in one device — sound box, static QR, card swipe &amp; DQR screen · DQR &amp; card auto-match</small></div>
+                <button class="switch" data-setff="allinone" role="switch" aria-checked="false"><span></span></button>
               </div>
               </div>
             </div>
@@ -3212,7 +3230,7 @@ button.sheet-empty:active{transform:scale(.98)}
 
       <!-- first-run onboarding -->
       <div class="onboard" id="onboard" hidden>
-        <div class="onboard-dots" id="onboard-dots"><span class="is-on"></span><span></span><span></span><span></span></div>
+        <div class="onboard-dots" id="onboard-dots"><span class="is-on"></span><span></span><span></span><span></span><span></span></div>
         <div class="onboard-body">
           <section class="ostep is-on" data-ostep="1">
             <p class="ob-kicker">Welcome</p>
@@ -3262,6 +3280,37 @@ button.sheet-empty:active{transform:scale(.98)}
             <div class="voice-samples" id="ob-samples"></div>
           </section>
           <section class="ostep" data-ostep="4">
+            <p class="ob-kicker">Payments</p>
+            <h1 class="ob-title">How will customers pay?</h1>
+            <p class="ob-sub">Pick the form factors you actually take at the counter. Only these appear in payment recon — a static QR payment needs your nod to tag, while a card machine settles itself.</p>
+            <div class="set-table" id="obff-table">
+              <div class="set-row">
+                <div class="set-row-main"><strong>Soundbox · audio QR</strong><small>static counter QR with voice alerts · rental device · payments land decoupled, tagged in recon</small></div>
+                <button class="switch is-on" data-obff="soundbox" role="switch" aria-checked="true"><span></span></button>
+              </div>
+              <div class="set-row">
+                <div class="set-row-main"><strong>Static QR standee</strong><small>printed counter QR — customer enters the amount · payments land decoupled, tagged in recon</small></div>
+                <button class="switch is-on" data-obff="standee" role="switch" aria-checked="true"><span></span></button>
+              </div>
+              <div class="set-row">
+                <div class="set-row-main"><strong>Dynamic QR (DQR)</strong><small>amount-encoded QR generated per sale in the app — payments auto-match the bill, no manual recon</small></div>
+                <button class="switch" data-obff="dqr" role="switch" aria-checked="false"><span></span></button>
+              </div>
+              <div class="set-row">
+                <div class="set-row-main"><strong>Card machine (EDC)</strong><small>debit · credit · RuPay POS — contactless under ₹5,000 needs no PIN · auto-matched on settlement</small></div>
+                <button class="switch" data-obff="edc" role="switch" aria-checked="false"><span></span></button>
+              </div>
+              <div class="set-row">
+                <div class="set-row-main"><strong>Link Pay</strong><small>UPI payment links shared on WhatsApp / SMS — amount is fixed in the link · payments auto-match, no manual recon</small></div>
+                <button class="switch" data-obff="linkpay" role="switch" aria-checked="false"><span></span></button>
+              </div>
+              <div class="set-row">
+                <div class="set-row-main"><strong>All-in-One device</strong><small>every form factor in one device — sound box, static QR, card swipe &amp; dynamic QR screen · QR payments announced, DQR &amp; card auto-match</small></div>
+                <button class="switch" data-obff="allinone" role="switch" aria-checked="false"><span></span></button>
+              </div>
+            </div>
+          </section>
+          <section class="ostep" data-ostep="5">
             <p class="ob-kicker">Toolkit</p>
             <h1 class="ob-title">What should DukaanOS run?</h1>
             <p class="ob-sub">Switch features on or off — your menus and screens shape themselves. Everything stays changeable later in Settings.</p>
@@ -4289,6 +4338,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
     trend: [],
     settings: {
       voiceLang: "en-IN", soundbox: true, autoRecon: true, gstApplies: true, libraryView: "tile",
+      payFF: { soundbox: true, standee: true, dqr: false, edc: false, linkpay: false, allinone: false },   // counter/remote payment form factors (drive payment recon)
     modules: { invoice: true, khata: true, customers: true, stock: true, social: true },
       headless: { item: true, stock: true, inventory: true, invoice: true },
     social: null, socialStats: null, socialCampaigns: [],
@@ -4457,6 +4507,8 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
     state.customers = d.customers || [];
     state.khata = d.khata || [];
     state.staticPayments = d.staticPayments || [];
+    // pre-rename saves: ff "DQR" meant the printed standee — DQR is now the dynamic QR
+    state.staticPayments.forEach((p) => { if (p.ff === "DQR") p.ff = "Standee"; });
     state.purchases = d.purchases || [];
     state.suppliers = d.suppliers || [];
     state.supEntries = d.supEntries || [];
@@ -4490,6 +4542,14 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       Object.assign(state.settings, d.settings);
       state.settings.modules = mods;
       state.settings.headless = hl;
+      // form-factor selection is per-merchant; backfill keys missing from older saves
+      const pfSave = d.settings.payFF || {};
+      state.settings.payFF = { soundbox: true, standee: true, dqr: false, edc: false, linkpay: false, allinone: false, ...pfSave };
+      if (!("standee" in pfSave) && "dqr" in pfSave) {
+        // pre-rename saves used dqr for the printed standee; DQR now means dynamic QR
+        state.settings.payFF.standee = pfSave.dqr;
+        state.settings.payFF.dqr = false;
+      }
     }
     state.attachedCustomer = null;
     state.seededFor = state.auth.mobile;
@@ -7075,6 +7135,12 @@ function renderSettings() {
     swS.setAttribute("aria-checked", state.settings.soundbox);
     swA.classList.toggle("is-on", state.settings.autoRecon);
     swA.setAttribute("aria-checked", state.settings.autoRecon);
+    // payment form factors (drive what payment recon shows)
+    document.querySelectorAll("[data-setff]").forEach((b) => {
+      const on = !!payFF()[b.dataset.setff];
+      b.classList.toggle("is-on", on);
+      b.setAttribute("aria-checked", String(on));
+    });
     // owner customisation
     $("#set-tagline").value = state.settings.tagline || "";
     $("#set-address").value = state.settings.address || "";
@@ -7228,6 +7294,15 @@ function renderSettings() {
     renderSettings();
     persistState();
   });
+  /* payment form factors — selection shapes payment recon (chips + arrivals) */
+  document.querySelectorAll("[data-setff]").forEach((b) => b.addEventListener("click", () => {
+    const k = b.dataset.setff;
+    state.settings.payFF = { ...payFF(), [k]: !payFF()[k] };
+    renderSettings();
+    renderRecon();
+    if (current === "recon") { stopSoundbox(); startSoundbox(); }
+    persistState();
+  }));
   $("#sw-gst").addEventListener("click", () => {
     if (!modOn("invoice")) { toast("Turn on Invoicing below to apply GST"); return; }
     state.settings.gstApplies = !gstOn();
@@ -8954,9 +9029,59 @@ function renderSettings() {
   });
 
   function ffBadge(p) { return el("span", "ff-badge", p.ff || "SoundBox"); }
+
+  /* payment form factors — selected at onboarding / in Settings.
+     Rails nuance: a STATIC QR (soundbox or printed standee) carries no amount,
+     so the UPI-push payment lands decoupled from the bill and queues in recon.
+     A DYNAMIC QR encodes the billed amount at generation time, a payment link
+     fixes the amount in the URL, and a card machine authorises at the terminal
+     — all three settle for the exact amount, so they auto-match with no
+     manual review. */
+  const FF_DEFS = [
+    ["soundbox", "SoundBox", "Soundbox"],
+    ["standee", "Standee", "Static QR standee"],
+    ["dqr", "DQR", "Dynamic QR"],
+    ["edc", "EDC", "Card machine"],
+    ["linkpay", "Link Pay", "Link Pay"],
+    ["allinone", "All-in-One", "All-in-One device"],
+  ];
+  function payFF() { return state.settings.payFF || { soundbox: true, standee: true, dqr: false, edc: false, linkpay: false, allinone: false }; }
+  function enabledFFs() { const f = payFF(); return FF_DEFS.filter(([k]) => f[k]); }
+
+  function renderFfChips() {
+    const box = $("#ff-chips");
+    box.innerHTML = "";
+    const enabled = enabledFFs();
+    if (!enabled.length) { box.hidden = true; return; }
+    box.hidden = false;
+    if (!["all", ...enabled.map(([, v]) => v)].includes(state.reconFF)) state.reconFF = "all";
+    [["all", "All"], ...enabled.map(([, v, label]) => [v, label])].forEach(([v, label]) => {
+      const b = el("button", "chip" + ((state.reconFF || "all") === v ? " is-on" : ""), label);
+      b.addEventListener("click", () => { state.reconFF = v; renderRecon(); });
+      box.appendChild(b);
+    });
+  }
+
   function renderRecon() {
+    renderFfChips();
+    // listening banner while anything ambient is in use: a static QR or an
+    // all-in-one device announcing payments (DQR / links / cards are generated
+    // or authorised in-app — nothing to listen for)
+    const f = payFF();
+    const sb = $("#soundbox");
+    sb.hidden = !(f.soundbox || f.standee || f.allinone);
+    sb.querySelector(".soundbox-label").textContent =
+      f.soundbox ? "Soundbox · static counter QR"
+      : f.allinone ? "All-in-One device · soundbox + DQR screen"
+      : "Static QR standee · counter QR";
     const ffSel = state.reconFF || "all";
-    const ffOk = (p) => ffSel === "all" || (p.ff || "SoundBox") === ffSel;
+    const enabledVals = new Set(enabledFFs().map(([, v]) => v));
+    // a payment whose form factor is not selected must not show in recon
+    const ffOk = (p) => {
+      const ff = p.ff || "SoundBox";
+      if (!enabledVals.has(ff)) return false;
+      return ffSel === "all" || ff === ffSel;
+    };
     const inScope = (p) => visibleStoreIds().includes(p.storeId || "s1");
     const pending = state.staticPayments.filter((p) => p.status === "pending" && ffOk(p) && inScope(p));
     const matched = state.staticPayments.filter((p) => p.status !== "pending" && ffOk(p) && inScope(p));
@@ -9029,35 +9154,116 @@ function renderSettings() {
     const pair = (a, b) => Math.round((I[a].price + I[b].price) * (1 + effTax()));
     return [amt(0, 1), amt(4, 1), amt(0, 2), amt(2, 1), pair(0, I.length - 1), amt(3, 1), 5000];
   }
+  /* amount-exact arrival: dynamic QR, payment link and card machine all know
+     the billed amount at the source, so the payment lands pre-matched — item
+     combo (if the amount fits the catalog) is booked and stock decremented
+     without any manual recon step */
+  function arriveExact(amount, kind, ff) {
+    const ffVal = ff || kind.ff;   // an all-in-one device runs the DQR/card rails under its own badge
+    const cands = comboCandidates(amount);
+    const cand = cands.length === 1 ? cands[0] : (cands[0] || null);
+    const tx = {
+      id: "sq-" + Math.random().toString(36).slice(2, 8),
+      method: kind.method, source: kind.source, ff: ffVal,
+      storeId: curStoreId(), date: now(), refunded: false,
+    };
+    if (kind.cardLabel) tx.cardLabel = kind.cardLabel;
+    if (kind.vpa) tx.payerVpa = kind.vpa;
+    if (cand) {
+      const t = totals(cand.lines);
+      tx.lines = cand.lines; tx.sub = t.sub; tx.tax = t.tax; tx.total = t.total;
+    } else {
+      tx.lines = []; tx.sub = amount; tx.tax = 0; tx.total = amount; tx.needsLink = true;
+    }
+    state.transactions.unshift(tx);
+    decrementStock(tx.lines);
+    state.staticPayments.unshift({
+      id: "sp-" + Date.now(), amount, date: now(), vpa: kind.vpa || null,
+      status: "matched", matchedLabel: cand ? cand.label : kind.fallbackLabel,
+      guess: [], auto: true, ff: ffVal, storeId: curStoreId(),
+    });
+    const box = $("#soundbox");
+    if (box && !box.hidden) {
+      box.classList.add("live");
+      $("#soundbox-msg").textContent = `${fmt(amount)} ${kind.announce}`;
+      setTimeout(() => box.classList.remove("live"), 3000);
+    }
+    renderRecon();
+    persistState();
+  }
+
+  const ARRIVE_KINDS = {
+    edc:     { ff: "EDC",     method: "card", source: "edc",    cardLabel: "Visa •••• 4242", fallbackLabel: "Card sale · Visa •••• 4242", announce: "· card approved · Visa •••• 4242" },
+    dqr:     { ff: "DQR",     method: "upi",  source: "dqr",    vpa: true, fallbackLabel: "DQR sale · amount matched", announce: "received · dynamic QR · amount matched" },
+    linkpay: { ff: "Link Pay", method: "upi", source: "paylink", vpa: true, fallbackLabel: "Link Pay · amount matched", announce: "received · payment link · amount matched" },
+  };
+
+  /* static-QR arrival (soundbox / standee / all-in-one announce): amount not
+     encoded, so the payment queues in recon until the merchant tags it */
+  function pushStaticArrival(amount, ff) {
+    const pay = {
+      id: "sp-" + Date.now(), amount, date: now(), vpa: pickPayerVpa(),
+      status: "pending", guess: comboCandidates(amount), auto: false,
+      ff, storeId: curStoreId(),
+    };
+    // announce on the soundbox
+    const box = $("#soundbox");
+    if (box && !box.hidden) {
+      box.classList.add("live");
+      $("#soundbox-msg").textContent = `${fmt(amount)} received · UPI`;
+      setTimeout(() => box.classList.remove("live"), 3000);
+    }
+    // auto-recon when there is exactly one plausible combo (if enabled in Settings)
+    if (pay.guess.length === 1 && state.settings.autoRecon) {
+      pay.auto = true;
+      state.staticPayments.unshift(pay);
+      setTimeout(() => { if (pay.status === "pending") matchStatic(pay, pay.guess[0]); }, 1600);
+    } else {
+      state.staticPayments.unshift(pay);
+    }
+    renderRecon();
+    persistState();
+  }
+
   function startSoundbox() {
     stopSoundbox();
     if (!state.settings.soundbox) return;
+    const f = payFF();
+    const staticFFs = [];
+    if (f.soundbox) staticFFs.push("SoundBox");
+    if (f.standee) staticFFs.push("Standee");
+    // weighted arrival pool: static QR payments are the ambient counter flow;
+    // amount-exact form factors (DQR / link / card) settle themselves;
+    // an all-in-one device runs all three rails under its own badge
+    const kinds = [];
+    if (staticFFs.length) kinds.push(["static", 3]);
+    if (f.dqr) kinds.push(["dqr", 2]);
+    if (f.linkpay) kinds.push(["linkpay", 1]);
+    if (f.edc) kinds.push(["edc", 1]);
+    if (f.allinone) kinds.push(["allinone", 3]);
+    if (!kinds.length) return;  // no payment form factors selected — nothing to listen for
+    const totalW = kinds.reduce((a, [, w]) => a + w, 0);
     let ticks = 0;
     soundboxTimer = setInterval(() => {
       if (current !== "recon" || ticks >= 3) { stopSoundbox(); return; }
       ticks += 1;
       const pool = arrivalAmounts();
       const amount = pool[Math.floor(Math.random() * pool.length)];
-      const pay = {
-        id: "sp-" + Date.now(), amount, date: now(), vpa: pickPayerVpa(),
-        status: "pending", guess: comboCandidates(amount), auto: false,
-        ff: Math.random() < 0.65 ? "SoundBox" : "DQR", storeId: curStoreId(),
-      };
-      // announce on the soundbox
-      const box = $("#soundbox");
-      box.classList.add("live");
-      $("#soundbox-msg").textContent = `${fmt(amount)} received · UPI`;
-      setTimeout(() => box.classList.remove("live"), 3000);
-      // auto-recon when there is exactly one plausible combo (if enabled in Settings)
-      if (pay.guess.length === 1 && state.settings.autoRecon) {
-        pay.auto = true;
-        state.staticPayments.unshift(pay);
-        setTimeout(() => { if (pay.status === "pending") matchStatic(pay, pay.guess[0]); }, 1600);
-      } else {
-        state.staticPayments.unshift(pay);
+      let roll = Math.random() * totalW, kind = kinds[0][0];
+      for (const [k, w] of kinds) { roll -= w; if (roll <= 0) { kind = k; break; } }
+      if (kind === "static") { pushStaticArrival(amount, staticFFs[Math.floor(Math.random() * staticFFs.length)]); return; }
+      // all-in-one device: half its payments are static-QR announces (decoupled,
+      // need tagging), the rest amount-exact via its own DQR screen or card reader
+      if (kind === "allinone") {
+        const r = Math.random();
+        if (r < 0.5) { pushStaticArrival(amount, "All-in-One"); return; }
+        const sub = r < 0.75 ? ARRIVE_KINDS.dqr : ARRIVE_KINDS.edc;
+        arriveExact(amount, sub.vpa ? { ...sub, vpa: pickPayerVpa() } : sub, "All-in-One");
+        return;
       }
-      renderRecon();
-      persistState();
+      // amount-exact form factors never queue for review — they settle themselves
+      const def = ARRIVE_KINDS[kind];
+      arriveExact(amount, def.vpa ? { ...def, vpa: pickPayerVpa() } : def);
     }, 9000);
   }
   function stopSoundbox() {
@@ -9284,14 +9490,7 @@ function renderSettings() {
     setTimeout(() => { drawer.hidden = true; drawerBackdrop.hidden = true; }, 300);
   }
 
-  /* ---------- recon form-factor filter ---------- */
-  document.querySelectorAll("#ff-chips .chip").forEach((c) =>
-    c.addEventListener("click", () => {
-      document.querySelectorAll("#ff-chips .chip").forEach((x) => x.classList.toggle("is-on", x === c));
-      state.reconFF = c.dataset.ff;
-      renderRecon();
-    })
-  );
+  /* ---------- recon form-factor filter (chips are built dynamically in renderFfChips) ---------- */
   const reconSettleLink = $("#recon-link-settle");
   if (reconSettleLink) reconSettleLink.addEventListener("click", () => goRoot("settle"));
 
@@ -10237,6 +10436,14 @@ function renderSettings() {
     next.disabled = n < 2;
   }
 
+  function renderObFF() {
+    document.querySelectorAll("[data-obff]").forEach((b) => {
+      const on = !!payFF()[b.dataset.obff];
+      b.classList.toggle("is-on", on);
+      b.setAttribute("aria-checked", String(on));
+    });
+  }
+
   function renderObModules() {
     document.querySelectorAll("[data-obmod]").forEach((b) => {
       const on = modOn(b.dataset.obmod);
@@ -10296,7 +10503,8 @@ function renderSettings() {
     const next = $("#ob-next");
     if (n === 2) renderBizGrid();   /* name typed in step 1 re-ranks the list */
     if (n === 3) { renderObItems(); renderObSamples(); }
-    else if (n === 4) { renderObModules(); renderObHeadless(); next.textContent = "Open my shop"; next.disabled = false; }
+    else if (n === 4) { renderObFF(); next.textContent = "Continue"; }
+    else if (n === 5) { renderObModules(); renderObHeadless(); next.textContent = "Open my shop"; next.disabled = false; }
     else { next.textContent = "Continue"; next.disabled = n === 2 && !obBiz; }
   }
 
@@ -10347,7 +10555,8 @@ function renderSettings() {
     if (obStep === 1) { obGo(2); return; }
     if (obStep === 2) { if (obBiz) obGo(3); return; }
     if (obStep === 3) { obGo(4); return; }
-    finishOnboarding();       // tap 4: shop opens
+    if (obStep === 4) { obGo(5); return; }
+    finishOnboarding();       // tap 5: shop opens
   });
   $("#ob-back").addEventListener("click", () => obGo(Math.max(1, obStep - 1)));
   $("#ob-skip").addEventListener("click", () => {
@@ -10375,6 +10584,16 @@ function renderSettings() {
       const k = b.dataset.obhl;
       state.settings.headless[k] = !hlOn(k);
       renderObHeadless();
+    });
+  });
+
+  /* payment form-factor toggles during setup — same state as Settings */
+  document.querySelectorAll("[data-obff]").forEach((b) => {
+    b.addEventListener("click", () => {
+      const k = b.dataset.obff;
+      state.settings.payFF = { ...payFF(), [k]: !payFF()[k] };
+      renderObFF();
+      persistState();
     });
   });
 
