@@ -5,24 +5,24 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <title>Square POS — Interactive Demo</title>
 <meta name="description" content="A hands-on interactive simulation of the Square point-of-sale app: ring up sales, take payments, then explore the dashboard, invoices and customer loyalty tools owners use daily." />
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400..800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
 <style>
 /* ============ Square POS Demo — design tokens ============ */
 :root{
-  --paper:#f2efeb;          /* warm off-white stage */
-  --ink:#0b0b0b;            /* near-black */
-  --ink-60:rgba(11,11,11,.62);
-  --ink-38:rgba(11,11,11,.38);
-  --line:rgba(11,11,11,.09);
+  --paper:#e9eff7;          /* Bajaj light stage */
+  --ink:#0d2242;            /* deep navy text */
+  --ink-60:rgba(13,34,66,.62);
+  --ink-38:rgba(13,34,66,.38);
+  --line:rgba(13,34,66,.10);
   --surface:#ffffff;
-  --field:#f6f4f1;
-  --green:#1f9d55;
-  --green-soft:rgba(31,157,85,.12);
-  --red:#c2402f;
-  --t-sage:#97a98c; --t-terra:#c96f4a; --t-clay:#b08968; --t-ochre:#d3a24a;
-  --t-slate:#7f8f8d; --t-plum:#92708f; --t-umber:#8a6f57; --t-pine:#5f7d6e;
+  --field:#edf4fc;
+  --brand:#0057b8;          /* Bajaj blue */
+  --brand-deep:#003c71;
+  --brand-soft:rgba(0,87,184,.10);
+  --green:#0f8a5f;
+  --green-soft:rgba(15,138,95,.12);
+  --red:#c83737;
+  --t-sage:#8fa9c6; --t-terra:#c9885f; --t-clay:#b9997a; --t-ochre:#d3ac58;
+  --t-slate:#8496ab; --t-plum:#9b86ab; --t-umber:#96826c; --t-pine:#6e938a;
   --r-tile:14px;
   --ease:cubic-bezier(.22,.8,.3,1);
   --font:"Inter",-apple-system,"Segoe UI",sans-serif;
@@ -38,7 +38,7 @@ body{
 }
 button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 button:disabled{cursor:not-allowed;opacity:.4}
-:focus-visible{outline:2px solid var(--ink);outline-offset:2px;border-radius:6px}
+:focus-visible{outline:2px solid var(--brand);outline-offset:2px;border-radius:6px}
 
 /* ============ Stage / phone frame ============ */
 .stage{min-height:100dvh;display:flex;align-items:center;justify-content:center;gap:64px;padding:0}
@@ -86,7 +86,7 @@ button:disabled{cursor:not-allowed;opacity:.4}
 .icon-btn:hover{background:var(--field)}
 .icon-btn:active{transform:scale(.94)}
 .avatar{
-  width:34px;height:34px;border-radius:10px;background:var(--ink);color:#fff;
+  width:34px;height:34px;border-radius:10px;background:var(--brand);color:#fff;
   display:inline-flex;align-items:center;justify-content:center;
   font-size:12px;font-weight:650;letter-spacing:.02em;
 }
@@ -152,8 +152,8 @@ button:disabled{cursor:not-allowed;opacity:.4}
   display:flex;align-items:center;justify-content:center;
   transition:background .15s var(--ease),transform .12s var(--ease);
 }
-.pad-key:hover{background:#eceae5}
-.pad-key:active{transform:scale(.94);background:#e4e1db}
+.pad-key:hover{background:#e2e9f3}
+.pad-key:active{transform:scale(.94);background:#d9e2ee}
 
 /* ============ Charge bar ============ */
 .chargebar-wrap{
@@ -170,7 +170,7 @@ button:disabled{cursor:not-allowed;opacity:.4}
 .peek-chev{transition:transform .25s var(--ease)}
 .charge-btn{
   width:100%;min-height:54px;border-radius:14px;
-  background:var(--ink);color:#fff;font-weight:650;font-size:16.5px;letter-spacing:-.01em;
+  background:var(--brand);color:#fff;font-weight:650;font-size:16.5px;letter-spacing:-.01em;
   transition:transform .15s var(--ease),background .2s var(--ease);
 }
 .charge-btn:not(:disabled):hover{background:#2a2a2a}
@@ -185,7 +185,7 @@ button:disabled{cursor:not-allowed;opacity:.4}
 .ghost-btn:active{transform:scale(.98)}
 .danger-btn{
   width:100%;min-height:52px;border-radius:14px;font-weight:650;font-size:15.5px;
-  color:var(--red);background:rgba(194,64,47,.08);
+  color:var(--red);background:rgba(200,55,55,.08);
   transition:background .2s var(--ease),transform .15s var(--ease);
 }
 .danger-btn:hover{background:rgba(194,64,47,.15)}
@@ -262,7 +262,7 @@ button:disabled{cursor:not-allowed;opacity:.4}
   font-family:var(--mono);font-size:14px;font-weight:500;min-height:44px;
   transition:background .15s var(--ease),transform .12s var(--ease);
 }
-.chip:hover{background:#eceae5}
+.chip:hover{background:#e2e9f3}
 .chip:active{transform:scale(.94)}
 .cash-footer{padding:8px 16px calc(12px + env(safe-area-inset-bottom))}
 
@@ -315,7 +315,7 @@ button:disabled{cursor:not-allowed;opacity:.4}
   flex:1;min-height:52px;padding:0 16px;border:1.5px solid var(--line);border-radius:14px;
   font:inherit;font-size:15px;background:var(--surface);color:var(--ink);
 }
-.receipt-send input:focus-visible{outline-offset:0;border-color:var(--ink)}
+.receipt-send input:focus-visible{outline-offset:0;border-color:var(--brand)}
 .receipt-actions .ghost-btn{flex:0 0 auto}
 
 /* ============ Transactions ============ */
@@ -406,7 +406,7 @@ button:disabled{cursor:not-allowed;opacity:.4}
 
 .toast{
   position:absolute;left:50%;bottom:96px;transform:translateX(-50%) translateY(16px);
-  background:var(--ink);color:#fff;padding:11px 18px;border-radius:999px;
+  background:var(--brand);color:#fff;padding:11px 18px;border-radius:999px;
   font-size:13.5px;font-weight:600;opacity:0;pointer-events:none;z-index:40;
   transition:opacity .25s var(--ease),transform .25s var(--ease);
   white-space:nowrap;max-width:88%;
@@ -433,14 +433,14 @@ button:disabled{cursor:not-allowed;opacity:.4}
 .dash-card{border:1.5px solid var(--line);border-radius:16px;padding:16px}
 .dash-card-title{font-weight:650;font-size:14.5px;margin-bottom:12px}
 .dash-chart{width:100%;height:110px;display:block}
-.dash-chart rect{fill:var(--ink);opacity:.85;rx:3;transition:height .4s var(--ease),y .4s var(--ease)}
+.dash-chart rect{fill:var(--brand);opacity:.9;rx:3;transition:height .4s var(--ease),y .4s var(--ease)}
 .dash-chart rect.dim{opacity:.22}
 .dash-chart-axis{display:flex;justify-content:space-between;font-family:var(--mono);font-size:11px;color:var(--ink-38);margin-top:6px}
 .top-item{display:flex;align-items:center;gap:12px;padding:8px 0}
 .top-item+.top-item{border-top:1px solid var(--line)}
 .top-rank{font-family:var(--mono);font-size:12px;color:var(--ink-38);width:18px}
 .top-name{flex:1;font-weight:600;font-size:14px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.top-bar{height:5px;border-radius:999px;background:var(--ink);opacity:.85;min-width:4px}
+.top-bar{height:5px;border-radius:999px;background:var(--brand);opacity:.9;min-width:4px}
 .top-val{font-family:var(--mono);font-size:13px;color:var(--ink-60);flex:0 0 auto}
 .dash-links{display:grid;gap:10px}
 .dash-link{
@@ -461,9 +461,9 @@ button:disabled{cursor:not-allowed;opacity:.4}
 }
 .pill-paid{background:var(--green-soft);color:var(--green)}
 .pill-unpaid{background:rgba(211,162,74,.18);color:#8a6414}
-.pill-overdue{background:rgba(194,64,47,.12);color:var(--red)}
+.pill-overdue{background:rgba(200,55,55,.12);color:var(--red)}
 .filter-chips{display:flex;gap:8px;padding:12px 16px 4px;flex-wrap:wrap}
-.chip.is-on{background:var(--ink);color:#fff}
+.chip.is-on{background:var(--brand);color:#fff}
 
 /* ============ Forms ============ */
 .form-scroll{flex:1;overflow-y:auto;padding:18px 16px;display:grid;gap:16px;align-content:start}
@@ -473,7 +473,7 @@ button:disabled{cursor:not-allowed;opacity:.4}
   min-height:52px;padding:0 16px;border:1.5px solid var(--line);border-radius:14px;
   font:inherit;font-size:15.5px;background:var(--surface);color:var(--ink);width:100%;
 }
-.field-input:focus-visible{outline-offset:0;border-color:var(--ink)}
+.field-input:focus-visible{outline-offset:0;border-color:var(--brand)}
 select.field-input{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%230b0b0b' stroke-width='2.4' stroke-linecap='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 16px center}
 .field-error{color:var(--red);font-size:13.5px;font-weight:550}
 .ghost-sm{min-height:40px;padding:0 16px;font-size:14px;border-radius:11px}
@@ -596,7 +596,7 @@ select.field-input{appearance:none;background-image:url("data:image/svg+xml,%3Cs
   border:1.5px dashed rgba(11,11,11,.22);border-radius:16px;background:var(--field);
 }
 .mic-btn{
-  width:56px;height:56px;border-radius:50%;background:var(--ink);color:#fff;flex:0 0 auto;
+  width:56px;height:56px;border-radius:50%;background:var(--brand);color:#fff;flex:0 0 auto;
   display:flex;align-items:center;justify-content:center;
   transition:transform .15s var(--ease),background .2s var(--ease);
 }
@@ -621,7 +621,7 @@ select.field-input{appearance:none;background-image:url("data:image/svg+xml,%3Cs
 /* ============ Soundbox / recon ============ */
 .soundbox{
   display:flex;align-items:center;gap:12px;margin:14px 16px 8px;padding:14px 16px;
-  border-radius:16px;background:var(--ink);color:#fff;
+  border-radius:16px;background:var(--brand);color:#fff;
 }
 .soundbox-icon{
   width:44px;height:44px;border-radius:12px;background:rgba(255,255,255,.12);
@@ -652,7 +652,7 @@ select.field-input{appearance:none;background-image:url("data:image/svg+xml,%3Cs
 .recon-guess .auto{color:var(--green);font-weight:650}
 .recon-actions{display:flex;gap:8px;flex-wrap:wrap}
 .recon-actions .chip{min-height:38px;font-size:13px;padding:6px 12px}
-.recon-actions .chip.pick{background:var(--ink);color:#fff}
+.recon-actions .chip.pick{background:var(--brand);color:#fff}
 .recon-empty{color:var(--ink-38);font-size:13.5px;padding:10px 2px 16px}
 
 /* ============ Campaigns ============ */
@@ -866,7 +866,7 @@ button.pick-price:hover{background:var(--field)}
 
 /* settlement card */
 .settle-card{
-  background:var(--ink);color:#fff;border-radius:18px;padding:16px;margin-bottom:14px;
+  background:var(--brand);color:#fff;border-radius:18px;padding:16px;margin-bottom:14px;
 }
 .settle-main{display:flex;align-items:center;gap:12px}
 .settle-info{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:1px}
@@ -1026,7 +1026,7 @@ button.pick-price:hover{background:var(--field)}
 .paymix-label{width:44px;font-size:12.5px;color:var(--ink-60);flex:none}
 .paymix-track{flex:1;height:8px;border-radius:99px;background:var(--field);overflow:hidden}
 .paymix-fill{display:block;height:100%;border-radius:99px}
-.paymix-upi{background:#4f46e5}
+.paymix-upi{background:#0057b8}
 .paymix-cash{background:#30a46c}
 .paymix-card{background:#f5a524}
 .paymix-invoice{background:#8b5cf6}
@@ -1159,7 +1159,7 @@ button.pick-price:hover{background:var(--field)}
 .stock-thumb{width:34px;height:34px;border-radius:9px;flex:none;object-fit:cover}
 
 .meta-brand{display:flex;align-items:center;gap:12px;padding:12px;background:var(--field);border-radius:14px;margin-bottom:14px}
-.meta-brand svg{color:#4f46e5}
+.meta-brand svg{color:#0057b8}
 .meta-brand strong{display:block;font-size:14.5px}
 .meta-brand small{color:var(--ink-60);font-size:12px}
 .meta-pages{display:flex;flex-direction:column;gap:8px;margin-bottom:14px}
@@ -1172,7 +1172,7 @@ button.pick-price:hover{background:var(--field)}
 .meta-perms ul{margin:4px 0 0;padding-left:18px;font-size:12.5px;color:var(--ink-60);line-height:1.7}
 
 .soc-connect-card{display:flex;flex-direction:column;align-items:center;text-align:center;gap:8px;padding:28px 20px;margin:14px;background:var(--surface);border:1.5px solid var(--line);border-radius:18px}
-.soc-connect-card .soc-logo{width:52px;height:52px;border-radius:16px;background:var(--field);display:flex;align-items:center;justify-content:center;color:#4f46e5;margin-bottom:4px}
+.soc-connect-card .soc-logo{width:52px;height:52px;border-radius:16px;background:var(--field);display:flex;align-items:center;justify-content:center;color:#0057b8;margin-bottom:4px}
 .soc-connect-card strong{font-size:16px}
 .soc-connect-card p{font-size:13px;color:var(--ink-60);line-height:1.5;margin:0 0 8px}
 .soc-pages{display:flex;gap:8px;margin:14px}
@@ -1212,7 +1212,7 @@ button.pick-price:hover{background:var(--field)}
 .set-table .set-row:last-child { border-bottom: none; }
 .set-table .set-row-main strong { display: block; font-size: 15px; font-weight: 600; }
 .set-table .set-row-main small { display: block; margin-top: 2px; font-size: 12px; color: var(--muted); line-height: 1.35; }
-.set-divider { padding: 14px 14px 6px; font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); background: var(--bg, #f6f7f9); border-bottom: 1px solid var(--line); }
+.set-divider { padding: 14px 14px 6px; font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); background: var(--bg, #f3f7fc); border-bottom: 1px solid var(--line); }
 .set-divider:first-child { padding-top: 10px; }
 
 /* ---- social campaign builder ---- */
@@ -1235,7 +1235,7 @@ button.pick-price:hover{background:var(--field)}
 .assist-log{display:flex;flex-direction:column;gap:8px;overflow-y:auto;min-height:120px;max-height:38vh;padding:6px 2px;flex:1;-webkit-mask-image:linear-gradient(to bottom,transparent 0,#000 16px);mask-image:linear-gradient(to bottom,transparent 0,#000 16px)}
 .assist-bubble{max-width:82%;padding:10px 13px;border-radius:16px;font-size:14px;line-height:1.45;white-space:pre-wrap;word-break:break-word}
 .assist-bubble.bot{align-self:flex-start;background:var(--field);border-bottom-left-radius:4px}
-.assist-bubble.user{align-self:flex-end;background:var(--ink);color:#fff;border-bottom-right-radius:4px}
+.assist-bubble.user{align-self:flex-end;background:var(--brand);color:#fff;border-bottom-right-radius:4px}
 .assist-chips{display:flex;flex-wrap:wrap;gap:6px;padding:8px 0}
 .assist-chips .chip{font-size:12px;padding:7px 11px;border-radius:99px;border:1px solid var(--line);background:var(--surface);color:var(--ink);font-weight:600}
 .assist-inputrow{display:flex;align-items:center;gap:8px;padding-top:6px}
@@ -1250,7 +1250,7 @@ button.pick-price:hover{background:var(--field)}
 .disc-label{font-size:12.5px;font-weight:600;color:var(--ink-60);white-space:nowrap}
 .disc-chips{display:flex;gap:6px;flex-wrap:wrap;flex:1;align-items:center}
 .disc-chips .chip{font-size:12px;padding:6px 10px;border-radius:99px;border:1px solid var(--line);background:var(--surface);color:var(--ink);font-weight:600}
-.disc-chips .chip.is-on{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.disc-chips .chip.is-on{background:var(--brand);color:var(--paper);border-color:var(--ink)}
 .disc-custom{width:86px;border:1.5px solid var(--line);border-radius:99px;background:var(--field);padding:6px 10px;font-size:12px;outline:none}
 .disc-custom:focus{border-color:var(--ink)}
 
@@ -1270,7 +1270,7 @@ button.pick-price:hover{background:var(--field)}
 .sup-main small{font-size:11.5px;color:var(--ink-60)}
 .sup-right{display:flex;align-items:center;gap:8px;flex:0 0 auto}
 .sup-due{font-size:12px;font-weight:650;color:var(--ink-60)}
-.sup-due.is-due{color:var(--rose,#c2402f)}
+.sup-due.is-due{color:var(--rose,#c83737)}
 .sup-right .chip{font-size:12px;padding:6px 12px;border-radius:99px;border:1.5px solid var(--ink);background:var(--ink);color:var(--paper);font-weight:650}
 .reorder-card{border:1px solid var(--line);border-radius:16px;background:var(--field);padding:13px;margin-bottom:12px}
 .reorder-head{display:flex;align-items:baseline;justify-content:space-between;gap:10px}
@@ -1298,7 +1298,7 @@ button.pick-price:hover{background:var(--field)}
 .exp-main small{font-size:11px;color:var(--ink-60)}
 .exp-amt{font-size:12.5px;font-weight:650;color:var(--ink)}
 .dash-exp-total{margin-top:6px;font-size:11.5px;color:var(--ink-60);text-align:right}
-.stat-tile.is-neg strong{color:var(--rose,#c2402f)}
+.stat-tile.is-neg strong{color:var(--rose,#c83737)}
 
 /* ---------- cash drawer ---------- */
 .drawer-status{font-size:11px;font-weight:650;color:var(--ink-60)}
@@ -1312,7 +1312,7 @@ button.pick-price:hover{background:var(--field)}
 .drawer-actions .ghost-btn{flex:1;font-size:12px;padding:9px 4px}
 .z-diff{margin:4px 0 10px;font-size:12.5px;font-weight:600;color:var(--ink-60);text-align:center;padding:8px;border-radius:10px;background:var(--field)}
 .z-diff.is-ok{color:#1d7a3d;background:rgba(29,122,61,.08)}
-.z-diff.is-bad{color:var(--rose,#c2402f);background:rgba(194,64,47,.08)}
+.z-diff.is-bad{color:var(--rose,#c83737);background:rgba(200,55,55,.08)}
 
 /* ---------- staff + audit ---------- */
 #appbar-avatar{cursor:pointer}
@@ -1328,7 +1328,7 @@ button.pick-price:hover{background:var(--field)}
 .staff-pin-row{display:flex;gap:10px;justify-content:center;padding:14px 0 18px}
 .staff-pin-row input{width:52px;height:60px;text-align:center;font-size:24px;font-weight:700;border:1.5px solid var(--line);border-radius:14px;background:var(--field);color:var(--ink);outline:none}
 .staff-pin-row input:focus{border-color:var(--ink)}
-.staff-pin-row input.is-err{border-color:var(--rose,#c2402f);animation:pinshake .3s}
+.staff-pin-row input.is-err{border-color:var(--rose,#c83737);animation:pinshake .3s}
 @keyframes pinshake{25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
 .audit-row{display:flex;flex-direction:column;gap:1px;padding:7px 0;border-top:1px dashed var(--line)}
 .audit-row:first-child{border-top:none}
@@ -1338,7 +1338,7 @@ button.pick-price:hover{background:var(--field)}
 /* ---------- quick wins: offline banner, wa preview, credit warn ---------- */
 .offline-banner{position:sticky;top:0;z-index:60;background:#8a5a00;color:#fff;font-size:12px;font-weight:600;text-align:center;padding:7px 12px}
 .wa-preview{white-space:pre-wrap;word-break:break-word;font-family:inherit;font-size:13px;line-height:1.5;background:var(--field);border:1px solid var(--line);border-radius:12px;padding:12px;margin:4px 0 12px}
-.cust-tag.is-warn{color:var(--rose,#c2402f);border-color:rgba(194,64,47,.4);background:rgba(194,64,47,.07);font-weight:650}
+.cust-tag.is-warn{color:var(--rose,#c83737);border-color:rgba(194,64,47,.4);background:rgba(194,64,47,.07);font-weight:650}
 #appbar-avatar{cursor:pointer;user-select:none;-webkit-user-select:none}
 
 /* dashboard period picker */
@@ -1347,7 +1347,7 @@ button.pick-price:hover{background:var(--field)}
 .dash-period .chip{flex:0 0 auto}
 .dash-custom{display:flex;align-items:center;gap:8px;padding:8px 16px 0;font-size:12.5px;color:var(--ink-60)}
 .dash-custom input{flex:1;min-width:0;border:1px solid var(--line);border-radius:10px;padding:7px 9px;font:inherit;font-size:13px;background:var(--surface);color:var(--ink)}
-.dash-period .chip.pick{background:var(--ink);color:#fff}
+.dash-period .chip.pick{background:var(--brand);color:#fff}
 
 /* campaign composer */
 .cust-section-title{display:flex;align-items:center;justify-content:space-between;gap:8px}
@@ -1362,6 +1362,90 @@ button.pick-price:hover{background:var(--field)}
 #camp-sel-count{font-weight:500;color:var(--ink-60);font-size:12px}
 #camp-sheet .wa-bubble{margin:4px 0 12px;white-space:pre-wrap}
 .camp-foot .ghost-btn.sm{padding:4px 10px;font-size:12px}
+
+/* ================= WAVE-2: stores / recon / orders / paylink / whatsapp ================= */
+.store-pill{display:flex;align-items:center;gap:5px;max-width:130px;height:30px;padding:0 10px;margin-left:8px;
+  border-radius:999px;border:1px solid var(--line);background:var(--field);color:var(--brand-deep);
+  font:inherit;font-size:12px;font-weight:650;cursor:pointer;transition:background .2s var(--ease)}
+.store-pill:hover{background:var(--brand-soft)}
+.store-pill.is-fixed{opacity:.85;cursor:default}
+.store-pill span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.appbar-title{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+.keypad-lines{display:none;flex-direction:column;gap:4px;padding:8px 14px 0}
+.keypad-line{display:flex;justify-content:space-between;align-items:center;gap:10px;
+  padding:7px 12px;border-radius:10px;background:var(--brand-soft);cursor:pointer}
+.keypad-line-name{font-size:13.5px;font-weight:600;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.keypad-line-amt{font-family:var(--mono);font-size:12.5px;color:var(--brand-deep);white-space:nowrap}
+.keypad-quick{display:flex;gap:6px;overflow-x:auto;padding:10px 14px 2px;align-items:center;-webkit-overflow-scrolling:touch}
+.keypad-quick-label{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-38);white-space:nowrap}
+.keypad-quick .chip{white-space:nowrap;flex:0 0 auto}
+
+.ff-chips{display:flex;gap:6px;overflow-x:auto;padding:10px 16px 2px;-webkit-overflow-scrolling:touch}
+.ff-chips .chip{white-space:nowrap;flex:0 0 auto;font-size:12px}
+.ff-badge{flex:0 0 auto;align-self:center;font-size:10px;font-weight:700;letter-spacing:.04em;
+  padding:3px 8px;border-radius:999px;background:var(--brand-soft);color:var(--brand-deep)}
+
+.orders-actions{display:flex;gap:8px;padding:10px 16px 0;flex-wrap:wrap}
+.orders-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:12px 16px 0}
+.order-card{margin:10px 16px 0;padding:12px 14px;border:1px solid var(--line);border-radius:14px;background:var(--surface)}
+.order-head{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.order-head strong{font-size:14.5px;color:var(--ink)}
+.order-src{flex:0 0 auto;font-size:10.5px;font-weight:700;letter-spacing:.05em;padding:3px 8px;border-radius:999px;background:var(--field);color:var(--ink-60)}
+.order-meta{margin-top:4px;font-size:12.5px;color:var(--ink-60);line-height:1.4}
+.order-total{display:flex;align-items:center;gap:8px;margin-top:8px}
+.order-total strong{margin-left:auto;font-family:var(--mono);font-size:14px;color:var(--ink)}
+.order-status{font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:999px;letter-spacing:.03em}
+.order-status.st-new{background:rgba(211,138,6,.14);color:#946200}
+.order-status.st-accepted,.order-status.st-ready{background:var(--brand-soft);color:var(--brand-deep)}
+.order-status.st-out{background:rgba(99,84,194,.13);color:#4b3fa0}
+.order-status.st-delivered{background:var(--green-soft);color:var(--green)}
+.order-status.st-cancelled{background:var(--field);color:var(--ink-38)}
+.order-actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+
+.mail-card{margin:12px 16px 0;padding:14px;border:1px dashed var(--line);border-radius:14px;background:var(--surface)}
+.mail-card-head{display:flex;gap:10px;align-items:flex-start;color:var(--brand)}
+.mail-card-main{flex:1;display:flex;flex-direction:column;gap:2px}
+.mail-card-main strong{font-size:13.5px;color:var(--ink)}
+.mail-card-main small{font-size:12px;color:var(--ink-60);line-height:1.4}
+.mail-card .charge-btn{margin-top:10px;width:100%}
+#mail-inbox{margin-top:10px;display:flex;flex-direction:column;gap:8px}
+.mail-row{display:flex;flex-direction:column;gap:2px;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:var(--field)}
+.mail-row strong{font-size:13px;color:var(--ink)}
+.mail-row small{font-size:11.5px;color:var(--ink-60)}
+.mail-row .ghost-btn{align-self:flex-end;margin-top:6px}
+.settle-pill{align-self:flex-start;margin-top:6px;font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:999px}
+.settle-pill.st-matched{background:var(--green-soft);color:var(--green)}
+.settle-pill.st-duplicate{background:rgba(211,138,6,.14);color:#946200}
+.settle-pill.st-short{background:rgba(200,55,55,.1);color:var(--red)}
+.settle-pill.st-unmatched{background:var(--field);color:var(--ink-38)}
+
+.paylink-amount-row{display:grid;grid-template-columns:1fr 1.4fr;gap:10px}
+.paylink-qr{display:grid;place-items:center;min-height:120px;margin-top:10px}
+.paylink-qr img,.paylink-qr canvas{border-radius:12px}
+.paylink-url{font-family:var(--mono);font-size:10.5px;color:var(--ink-38);word-break:break-all;margin-top:8px;line-height:1.5}
+
+.wa-chat{display:flex;flex-direction:column;gap:8px;padding:12px 16px;max-height:32vh;overflow-y:auto;
+  background:#e7e0d8;background:var(--field);margin:8px 16px 0;border-radius:14px}
+.wa-bubble{max-width:82%;padding:8px 12px;border-radius:12px;font-size:13.5px;line-height:1.45;box-shadow:0 1px 1px rgba(0,0,0,.06)}
+.wa-in{align-self:flex-start;background:#dcf8c6;border-top-left-radius:3px}
+.wa-out{align-self:flex-end;background:#fff;border-top-right-radius:3px}
+.wa-compose{display:flex;gap:8px;padding:10px 16px 0}
+.wa-compose input{flex:1;border:1px solid var(--line);border-radius:999px;padding:10px 16px;font:inherit;font-size:14px;background:var(--surface);color:var(--ink)}
+.wa-send{flex:0 0 auto;padding:0 16px;border-radius:999px;font-size:13.5px}
+.wa-draft{margin:10px 16px 0;padding:10px 12px;border:1px dashed var(--line);border-radius:12px;display:flex;flex-direction:column;gap:4px}
+.wa-sheet-actions{display:flex;flex-direction:column;gap:8px;padding:12px 16px 0}
+
+.catpick-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
+.catpick-tile{position:relative;display:flex;flex-direction:column;gap:2px;align-items:flex-start;padding:10px;border-radius:12px;
+  border:1.5px solid var(--line);background:var(--surface);cursor:pointer;font:inherit;text-align:left;transition:border-color .15s var(--ease)}
+.catpick-tile.is-on{border-color:var(--brand);background:var(--brand-soft)}
+.catpick-name{font-size:12.5px;font-weight:650;color:var(--ink)}
+.catpick-price{font-family:var(--mono);font-size:11.5px;color:var(--ink-60)}
+.catpick-qty{position:absolute;top:-7px;right:-7px;min-width:20px;height:20px;border-radius:999px;background:var(--brand);color:#fff;
+  font-size:11px;font-weight:700;display:grid;place-items:center;padding:0 5px}
+.catpick-total{margin-top:12px;font-size:13.5px;font-weight:650;color:var(--ink);text-align:center}
+select.field-input{appearance:auto}
 
 </style>
 </head>
@@ -1405,6 +1489,10 @@ button.pick-price:hover{background:var(--field)}
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="14" y2="17"/></svg>
         </button>
         <div class="appbar-title" id="appbar-title">Cutting Chai Co.</div>
+        <button class="store-pill" id="store-pill" hidden>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9l1.5-5h15L21 9M3 9v11a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1V9M3 9h18M9 21v-7h6v7"/></svg>
+          <span id="store-pill-label">All stores</span>
+        </button>
         <button class="icon-btn" id="btn-assist" aria-label="Open voice & chat assistant">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21M8.5 21h7"/></svg>
         </button>
@@ -1418,7 +1506,7 @@ button.pick-price:hover{background:var(--field)}
         <!-- REGISTER -->
         <section class="screen is-active" id="screen-register" data-screen="register">
           <div class="tabs" role="tablist">
-            <button class="tab is-on" role="tab" aria-selected="true" data-tab="library">Library</button>
+            <button class="tab is-on" role="tab" aria-selected="true" data-tab="library" data-lex="libraryTab">Library</button>
             <button class="tab" role="tab" aria-selected="false" data-tab="keypad">Keypad</button>
           </div>
 
@@ -1442,6 +1530,8 @@ button.pick-price:hover{background:var(--field)}
           </div>
 
           <div class="tabpane" id="pane-keypad">
+            <div class="keypad-lines" id="keypad-lines"></div>
+            <div class="keypad-quick" id="keypad-quick"></div>
             <div class="keypad-amount" id="keypad-amount">₹0.00</div>
             <div class="numpad" id="keypad-pad"></div>
           </div>
@@ -1477,7 +1567,7 @@ button.pick-price:hover{background:var(--field)}
           </div>
           <div class="dash-scroll">
             <div class="dash-hero">
-              <span class="dash-hero-label">Gross sales</span>
+              <span class="dash-hero-label" data-lex="grossLabel">Gross sales</span>
               <div class="dash-hero-amount" id="dash-gross">₹0.00</div>
               <span class="dash-hero-delta" id="dash-delta"></span>
             </div>
@@ -1813,8 +1903,9 @@ button.pick-price:hover{background:var(--field)}
         <!-- KHATA (CREDIT BOOK) -->
         <section class="screen" id="screen-khata" data-screen="khata">
           <div class="flow-head">
-            <span class="flow-head-title">Khata · udhaar book</span>
+            <span class="flow-head-title" data-lex="khataTitle">Khata · udhaar book</span>
             <span class="tx-total" id="khata-total"></span>
+            <button class="ghost-btn ghost-sm" id="btn-khata-add-cust">+ Customer</button>
           </div>
           <div class="voice-card">
             <button class="mic-btn" id="btn-mic" aria-label="Record credit by voice">
@@ -1907,7 +1998,33 @@ button.pick-price:hover{background:var(--field)}
             </div>
             <div class="soundbox-bars" id="soundbox-bars" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
           </div>
+          <div class="ff-chips" id="ff-chips" role="group" aria-label="Filter by form factor">
+            <button class="chip is-on" data-ff="all">All</button>
+            <button class="chip" data-ff="QR">QR</button>
+            <button class="chip" data-ff="SoundBox">SoundBox</button>
+            <button class="chip" data-ff="EDC">EDC</button>
+            <button class="chip" data-ff="DQR">DQR</button>
+            <button class="chip" data-ff="Link Pay">Link Pay</button>
+          </div>
           <div class="recon-scroll">
+            <div class="cust-section-title" id="recon-review-title">Needs review</div>
+            <div class="recon-list" id="recon-pending"></div>
+            <div class="cust-section-title">Matched</div>
+            <div class="recon-list" id="recon-matched"></div>
+            <button class="dash-link" id="recon-link-settle" style="margin-top:10px">
+              <span class="dash-link-main"><strong>Settlement recon</strong><small>T+1 payouts · mail import</small></span>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 6l6 6-6 6"/></svg>
+            </button>
+          </div>
+        </section>
+
+        <!-- SETTLEMENT RECON (T+1 PAYOUTS) -->
+        <section class="screen" id="screen-settle" data-screen="settle">
+          <div class="flow-head">
+            <span class="flow-head-title">Settlement recon</span>
+            <span class="tx-total" id="settle-head-total"></span>
+          </div>
+          <div class="dash-scroll">
             <div class="settle-card" id="settle-card">
               <div class="settle-main">
                 <div class="settle-info">
@@ -1919,15 +2036,41 @@ button.pick-price:hover{background:var(--field)}
               </div>
               <div class="settle-today" id="settle-today"></div>
             </div>
+
+            <div class="mail-card" id="mail-card">
+              <div class="mail-card-head">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>
+                <div class="mail-card-main">
+                  <strong id="mail-card-title">Connect Gmail to read settlement files</strong>
+                  <small id="mail-card-sub">HDFC · PhonePe · Paytm payout e-mails with CSV/PDF attachments</small>
+                </div>
+              </div>
+              <button class="charge-btn" id="btn-mail-connect">Connect Gmail</button>
+              <div id="mail-inbox" hidden></div>
+            </div>
+
+            <div class="cust-section-title">Settlement statement (imported)</div>
+            <div class="recon-list" id="settle-stmt"></div>
             <div id="settle-history-wrap">
               <div class="cust-section-title">Past settlements</div>
               <div class="recon-list" id="settle-list"></div>
             </div>
-            <div class="cust-section-title" id="recon-review-title">Needs review</div>
-            <div class="recon-list" id="recon-pending"></div>
-            <div class="cust-section-title">Matched today</div>
-            <div class="recon-list" id="recon-matched"></div>
           </div>
+        </section>
+
+        <!-- ONLINE ORDERS -->
+        <section class="screen" id="screen-orders" data-screen="orders">
+          <div class="flow-head">
+            <span class="flow-head-title">Online orders</span>
+            <span class="tx-total" id="orders-total"></span>
+          </div>
+          <div class="orders-actions">
+            <button class="ghost-btn ghost-sm" id="btn-order-wa">+ WhatsApp order</button>
+            <button class="ghost-btn ghost-sm" id="btn-order-catalogue">+ Catalogue pick</button>
+            <button class="ghost-btn ghost-sm" id="btn-paylink">Payment link</button>
+          </div>
+          <div class="orders-stats" id="orders-stats"></div>
+          <div class="tx-list" id="orders-list"></div>
         </section>
 
         <!-- GROW (CAMPAIGNS) -->
@@ -2089,6 +2232,22 @@ button.pick-price:hover{background:var(--field)}
                   <button class="step-btn" id="set-pts-plus" aria-label="Raise reward threshold">+</button>
                 </div>
               </div>
+            </div>
+            <div class="set-card" id="set-stores-card">
+              <div class="set-card-title">Stores</div>
+              <div class="set-row">
+                <div class="set-row-main"><strong>Branches</strong><small id="set-stores-count">—</small></div>
+                <button class="ghost-btn sm" id="btn-store-add">+ Add</button>
+              </div>
+              <div id="set-stores-list"></div>
+              <div id="store-add-form" hidden>
+                <label class="ob-field">
+                  <span>Store name</span>
+                  <input id="store-f-name" type="text" maxlength="24" autocomplete="off" placeholder="e.g. MG Road · Counter 2">
+                </label>
+                <button class="charge-btn" id="store-f-save">Add store</button>
+              </div>
+              <small class="set-hint">Owner sees every store; staff sign in to the store they're assigned to.</small>
             </div>
             <div class="set-card">
               <div class="set-card-title">Staff &amp; activity</div>
@@ -2434,6 +2593,10 @@ button.pick-price:hover{background:var(--field)}
                 <span class="ob-field"><span>Role</span></span>
               </div>
               <div class="voice-samples form-chips" id="staff-f-roles"></div>
+              <label class="ob-field">
+                <span>Store</span>
+                <select id="staff-f-store" class="field-input"></select>
+              </label>
               <button class="charge-btn" id="staff-f-save">Add team member</button>
             </div>
             <button class="ghost-btn" id="staff-cancel">Close</button>
@@ -2671,13 +2834,72 @@ button.pick-price:hover{background:var(--field)}
         </div>
       </div>
 
+      <!-- payment link sheet -->
+      <div class="sheet" id="paylink-sheet" role="dialog" aria-label="Payment link" hidden>
+        <div class="sheet-grab" aria-hidden="true"></div>
+        <div class="sheet-head"><span>Payment link</span></div>
+        <div class="sheet-form">
+          <div class="paylink-amount-row">
+            <label class="ob-field paylink-amt-field">
+              <span>Amount</span>
+              <input id="paylink-amt" type="tel" inputmode="numeric" autocomplete="off" placeholder="0">
+            </label>
+            <label class="ob-field paylink-note-field">
+              <span>For (optional)</span>
+              <input id="paylink-note" type="text" maxlength="30" autocomplete="off" placeholder="Order #12 · udhaar">
+            </label>
+          </div>
+          <div class="paylink-qr" id="paylink-qr"></div>
+          <p class="paylink-url" id="paylink-url"></p>
+          <button class="charge-btn" id="paylink-share">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm5.3 14.1c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .2-3.4-.7-2.9-1.1-4.7-4-4.9-4.2-.1-.2-1.1-1.5-1.1-2.9s.7-2 1-2.3c.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.9 2.1c.1.2.1.4 0 .6l-.4.6-.4.5c-.1.1-.3.3-.1.6.2.3.8 1.3 1.7 2.1 1.2 1.1 2.2 1.4 2.5 1.5.3.1.5.1.7-.1l1-1.2c.2-.3.4-.2.7-.1l2 1c.3.1.5.2.6.4 0 .1 0 .7-.2 1.1z"/></svg>
+            Send on WhatsApp (simulated)
+          </button>
+          <button class="ghost-btn" id="paylink-paid">Customer paid — record it (demo)</button>
+          <button class="ghost-btn" id="paylink-close">Close</button>
+          <small class="set-hint">Simulation — the link opens UPI on the customer's phone in a real deployment.</small>
+        </div>
+      </div>
+
+      <!-- whatsapp order sheet -->
+      <div class="sheet" id="waorder-sheet" role="dialog" aria-label="WhatsApp order" hidden>
+        <div class="sheet-grab" aria-hidden="true"></div>
+        <div class="sheet-head"><span>WhatsApp order</span></div>
+        <div class="wa-chat" id="wa-chat"></div>
+        <div class="wa-compose">
+          <input id="wa-input" type="text" autocomplete="off" placeholder="Type what the customer asked for… e.g. 2 cutting chai 1 samosa">
+          <button class="charge-btn wa-send" id="wa-convert">Convert to order</button>
+        </div>
+        <div class="wa-draft" id="wa-draft" hidden></div>
+        <div class="wa-sheet-actions" id="wa-actions" hidden>
+          <button class="charge-btn" id="wa-confirm">Create order</button>
+          <button class="ghost-btn" id="waorder-cancel">Discard</button>
+        </div>
+        <small class="set-hint" style="padding:0 20px 14px;display:block">Simulation — in production the chat is the customer's real WhatsApp message and items parse automatically.</small>
+      </div>
+
+      <!-- catalogue pick sheet -->
+      <div class="sheet" id="catpick-sheet" role="dialog" aria-label="Catalogue order" hidden>
+        <div class="sheet-grab" aria-hidden="true"></div>
+        <div class="sheet-head"><span>Catalogue pick · customer selection</span></div>
+        <div class="sheet-form">
+          <p class="set-hint" style="margin-top:0">Your WhatsApp catalogue — tap what the customer picked, then create the order.</p>
+          <div class="catpick-grid" id="catpick-grid"></div>
+          <div class="catpick-total" id="catpick-total"></div>
+          <button class="charge-btn" id="catpick-create">Create order</button>
+          <button class="ghost-btn" id="catpick-close">Close</button>
+        </div>
+      </div>
+
       <!-- side menu -->
       <div class="drawer-backdrop" id="drawer-backdrop" hidden></div>
       <aside class="drawer" id="drawer" aria-label="App menu" hidden>
         <div class="drawer-brand"><span class="avatar" id="drawer-avatar">CC</span><div><strong id="drawer-brand-name">Cutting Chai Co.</strong><small>MG Road · Counter 1</small></div></div>
         <span class="drawer-sec">Sell</span>
         <button class="drawer-item" data-drawer="register">Register</button>
-        <button class="drawer-item" data-drawer="recon">Recon &amp; settlement</button>
+        <button class="drawer-item" data-drawer="orders">Online orders</button>
+        <button class="drawer-item" data-drawer="recon">Payment recon</button>
+        <button class="drawer-item" data-drawer="settle">Settlement recon</button>
         <button class="drawer-item" data-drawer="transactions">Transactions</button>
         <button class="drawer-item" data-drawer="invoices">Invoices</button>
         <span class="drawer-sec">Manage</span>
@@ -3673,6 +3895,61 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
     "7641": "Naya Purana Furniture", "7699": "Jugaad Repair Shop", "7631": "Ghadi Jewels Care",
     "7349": "Saaf-Safai Services", "5552": "Volt EV Point", "8099": "Sehat Home Care", "8999": "Kanoon & Hisaab Desk",
   });
+  /* ============ N=1 segment packs — one config per merchant type ============
+     Core engine stays identical; the pack reshapes language, module defaults,
+     voice vocabulary and the hero moment for each segment. */
+  const SEGMENT_PACKS = {
+    "5411": { /* Kirana & Grocery */
+      tagline: "Kirana mode — barcode billing, khata and distributor-wise stock",
+      lexicon: { libraryTab: "Library", grossLabel: "Aaj ki bikri", khataTitle: "Khata · udhaar book" },
+      modules: { invoice: true, khata: true, customers: true, stock: true, social: true },
+      hero: "barcode",
+      voice: ["cold drink 40 rupaye", "atta 5 kilo 275 rupaye", "kitna doodh bacha"],
+    },
+    "5812": { /* Restaurant & Dhaba */
+      tagline: "Restaurant mode — table billing, parcel and kitchen stock",
+      lexicon: { libraryTab: "Menu", grossLabel: "Food sales", khataTitle: "Table khata · credit" },
+      modules: { invoice: true, khata: true, customers: true, stock: true, social: true },
+      hero: "tables",
+      voice: ["table 4 ko 2 roti 1 dal fry batao", "parcel 1 biryani 180 rupaye", "kitna atta bacha"],
+    },
+    "5814": { /* Tea, Snacks & Ice Cream */
+      tagline: "Tea-stall mode — voice-first counter billing and daily profit",
+      lexicon: { libraryTab: "Library", grossLabel: "Aaj ki bikri", khataTitle: "Khata · udhaar book" },
+      modules: { invoice: false, khata: true, customers: true, stock: true, social: true },
+      hero: "voice",
+      voice: ["2 cutting chai 1 samosa", "kulfi 35 rupaye", "kitni chai bachi"],
+    },
+    "5993": { /* Paan & Cigarette */
+      tagline: "Paan-shop mode — tiny catalog, khata-first, everything else off",
+      lexicon: { libraryTab: "Library", grossLabel: "Aaj ki bikri", khataTitle: "Udhaar ki chitthi" },
+      modules: { invoice: false, khata: true, customers: true, stock: false, social: false },
+      hero: "khata",
+      voice: ["2 paan 20 rupaye", "gutkha 10 packet", "kiske paise baki hain"],
+    },
+  };
+  const DEFAULT_PACK = {
+    tagline: "",
+    lexicon: { libraryTab: "Library", grossLabel: "Gross sales", khataTitle: "Khata · udhaar book" },
+    modules: { invoice: true, khata: true, customers: true, stock: true, social: true },
+    hero: "billing",
+    voice: ["cold drink 40 rupaye", "bhujia 10 rupaye 20 packet", "kitna stock bacha"],
+  };
+  const packFor = (mcc) => SEGMENT_PACKS[mcc] || DEFAULT_PACK;
+  function applyPackDefaults(mcc) {
+    /* module defaults for this segment — merchant can still flip any toggle in step 4 */
+    state.settings.modules = { ...packFor(mcc).modules };
+    if (!modOn("invoice") && gstOn()) state.settings.gstApplies = false;
+    applyModules();
+  }
+  function renderPackLabels() {
+    const pack = packFor(state.mcc);
+    const L = { ...DEFAULT_PACK.lexicon, ...(pack.lexicon || {}) };
+    document.querySelectorAll("[data-lex]").forEach((n) => {
+      const k = n.dataset.lex;
+      if (L[k]) n.textContent = L[k];
+    });
+  }
   const defaultItemIds = (mcc) => MCC_STORES[mcc].items.filter((i) => i.pop).map((i) => i.id);
   const CATALOG = MCC_STORES["5814"].items.filter((i) => i.pop).map((it, i) => ({ ...it, color: TILE_COLORS[i] }));
   const STOCK_SEED = [40, 35, 25, 12, 18, 4, 0, 22];   // per catalog index: one low, one out
@@ -3694,6 +3971,21 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
   const lowAt = () => state.settings.lowStockAt ?? LOW_STOCK_AT;
   const ptsPerReward = () => state.settings.pointsPerReward ?? POINTS_PER_REWARD;
   const shopVpa = () => state.settings.upiVpa || `${vpaSlug(state.bizName)}@okhdfc`;
+
+  /* ---------- multi-store: owner sees all, staff see their store only ---------- */
+  const isOwner = () => !state.activeStaff;
+  const curStoreId = () =>
+    state.activeStaff ? (state.activeStaff.storeId || "s1")
+    : (state.activeStore && state.activeStore !== "all" ? state.activeStore : "s1");
+  const storeById = (id) => (state.stores || []).find((s) => s.id === id);
+  const storeName = (id) => { const s = storeById(id); return s ? s.name : "Main store"; };
+  const visibleStoreIds = () => {
+    if (state.activeStaff) return [state.activeStaff.storeId || "s1"];
+    if (state.activeStore && state.activeStore !== "all") return [state.activeStore];
+    return (state.stores || []).map((s) => s.id);
+  };
+  const txVisible = (t) => visibleStoreIds().includes(t.storeId || "s1");
+  const visibleTx = () => state.transactions.filter(txVisible);
 
   /* ---------- state ---------- */
   const state = {
@@ -3734,6 +4026,11 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
     staff: [],
     audit: [],
     activeStaff: null,
+    stores: [{ id: "s1", name: "Main store" }],
+    activeStore: "all",
+    orders: [],
+    mailConnected: false,
+    mailImports: [],
     payers: {},              // upi handle -> customer id
     settlements: [],
     settleDue: 0,
@@ -3886,6 +4183,8 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
         settlements: state.settlements, campaigns: state.campaigns, stock: state.stock,
         expenses: state.expenses, drawer: state.drawer, staff: state.staff, audit: state.audit,
         invSeq: state.invSeq, settleDue: state.settleDue, payers: state.payers,
+        stores: state.stores, activeStore: state.activeStore, orders: state.orders,
+        mailConnected: state.mailConnected, mailImports: state.mailImports,
         trend: state.trend, settings: state.settings, gstFilings: state.gstFilings,
         dashPeriod: state.dashPeriod,
         social: state.social, socialStats: state.socialStats,
@@ -3917,6 +4216,11 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
     state.staff = d.staff || [];
     state.audit = d.audit || [];
     state.activeStaff = d.activeStaff || null;
+  state.stores = d.stores && d.stores.length ? d.stores : [{ id: "s1", name: "Main store" }];
+  state.activeStore = d.activeStore || "all";
+  state.orders = d.orders || [];
+  state.mailConnected = !!d.mailConnected;
+  state.mailImports = d.mailImports || [];
     state.settlements = d.settlements || [];
     state.campaigns = d.campaigns || [];
     state.stock = d.stock || {};
@@ -4002,6 +4306,8 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
     if (name === "khata") renderKhata();
     if (name === "stock") { renderStock(); renderPurchases(); }
     if (name === "recon") { renderRecon(); startSoundbox(); }
+    if (name === "settle") renderSettlement();
+    if (name === "orders") renderOrders();
     if (name === "grow") renderCampaigns();
     if (name === "reports") renderReports();
     if (name === "gst") renderGst();
@@ -4237,6 +4543,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       toast(`Scanned ${pick.name} · ${fmt(pick.price)}`);
       scanEl.value = "";
       renderGrid();
+      renderKeypadQuick();
     });
   }
 
@@ -4856,6 +5163,8 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
     const tx = {
       id: "sq-" + Math.random().toString(36).slice(2, 8),
       lines, ...t, ...payment,
+      ff: payment.method === "card" ? "EDC" : payment.method === "upi" ? "QR" : "Cash",
+      storeId: curStoreId(),
       date: now(), refunded: false,
     };
     // loyalty — attached customer, or auto-tagged via their UPI handle
@@ -5174,7 +5483,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
   function renderTransactions() {
     const list = $("#tx-list");
     list.innerHTML = "";
-    const active = state.transactions.filter((t) => !t.refunded);
+    const active = state.transactions.filter((t) => !t.refunded && txVisible(t));
     const sum = active.reduce((a, t) => a + t.total, 0);
     $("#tx-total").textContent = active.length
       ? `${active.length} sale${active.length > 1 ? "s" : ""} · ${fmt(sum)}`
@@ -5183,7 +5492,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       list.appendChild(el("p", "tx-empty", "No sales yet today.\nCompleted payments will appear here."));
       return;
     }
-    state.transactions.forEach((tx) => {
+    visibleTx().forEach((tx) => {
       const row = el("button", "tx-row");
       const ic = el("span", "tx-ic");
       ic.innerHTML = txIcon(tx);
@@ -5281,7 +5590,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
   }
   function dashStats(range) {
     const r = range || dashRange();
-    const active = state.transactions.filter((t) => !t.refunded && t.date >= r.from && t.date <= r.to);
+    const active = state.transactions.filter((t) => !t.refunded && t.date >= r.from && t.date <= r.to && txVisible(t));
     const gross = active.reduce((a, t) => a + t.total, 0);
     const count = active.length;
     const items = active.reduce((a, t) => a + t.lines.reduce((x, l) => x + l.qty, 0), 0);
@@ -5889,6 +6198,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
     state.cart.clear();
     seedStock();
     renderGrid();
+    renderKeypadQuick();
     renderCart();
     renderKhataSamples();
     renderStockSamples();
@@ -5911,6 +6221,8 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
     dv.textContent = initials;
     dv.style.background = accent;
     document.title = name;
+    renderPackLabels();
+    renderStorePill();
   }
 
     /* ---------- reports & GST ---------- */
@@ -6012,7 +6324,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
     const today = (now().getDay() + 6) % 7;
     // page chips
     const chips = el("div", "soc-pages");
-    [["FB", state.social.meta.page, "#4f46e5"], ["IG", state.social.meta.ig, "#c026d3"]].forEach(([tag, label, col]) => {
+    [["FB", state.social.meta.page, "#0057b8"], ["IG", state.social.meta.ig, "#c026d3"]].forEach(([tag, label, col]) => {
       const c = el("div", "soc-page-chip");
       const av = el("span", "cust-avatar", tag);
       av.style.background = col;
@@ -6052,7 +6364,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       rect.setAttribute("width", String(bw));
       rect.setAttribute("height", String(bh));
       rect.setAttribute("rx", "5");
-      rect.setAttribute("fill", idx === 6 ? "#4f46e5" : "#c7d2fe");
+      rect.setAttribute("fill", idx === 6 ? "#0057b8" : "#b9d2f0");
       svg.appendChild(rect);
       const lbl = document.createElementNS("http://www.w3.org/2000/svg", "text");
       lbl.setAttribute("x", String(i * (bw + gap) + bw / 2));
@@ -6145,7 +6457,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
     body.appendChild(el("div", "soc-card-title", "Top post this week"));
     const post = el("div", "soc-top-post");
     const av = el("span", "cust-avatar", "ST");
-    av.style.background = "#4f46e5";
+    av.style.background = "#0057b8";
     const pm = el("div", "soc-top-post-main");
     pm.append(el("strong", null, state.social.meta.page),
       el("p", null, st.topPost.text));
@@ -6310,6 +6622,7 @@ function renderReports() {
   }
 
 function renderSettings() {
+    renderStoresSettings();
     $("#set-merchant").textContent = state.ownerName || "Demo merchant";
     $("#set-mobile").textContent = state.auth.mobile
       ? `+91 ${state.auth.mobile.slice(0, 5)} ${state.auth.mobile.slice(5)}`
@@ -7440,7 +7753,7 @@ function renderSettings() {
     state.staff.forEach((s) => {
       const row = el("div", "staff-row");
       const main = el("div", "staff-main");
-      main.append(el("strong", null, s.name), el("small", null, s.role === "owner" ? "Owner" : "Cashier — no discounts over 10%"));
+      main.append(el("strong", null, s.name), el("small", null, s.role === "owner" ? "Owner" : `Cashier — no discounts over 10% · ${storeName(s.storeId || "s1")}`));
       const right = el("div", "staff-right");
       const sign = el("button", "chip", "Sign in");
       sign.addEventListener("click", () => {
@@ -7472,7 +7785,9 @@ function renderSettings() {
       const pin = boxes.map((b) => b.value).join("");
       if (pin.length === 4 && staffPinFor) {
         if (pin === staffPinFor.pin) {
-          state.activeStaff = { id: staffPinFor.id, name: staffPinFor.name, role: staffPinFor.role };
+          state.activeStaff = { id: staffPinFor.id, name: staffPinFor.name, role: staffPinFor.role, storeId: staffPinFor.storeId || "s1" };
+          renderStorePill();
+          renderDashboard(); renderTransactions(); renderRecon(); renderOrders();
           if (typeof auditLog === "function") auditLog("staff", `${staffPinFor.name} signed in`);
           persistState();
           closeSheetEl(); updateStaffUI();
@@ -7514,7 +7829,7 @@ function renderSettings() {
     const pin = $("#staff-f-pin").value.trim();
     if (!name) { toast("Add a name"); return; }
     if (!/^\d{4}$/.test(pin)) { toast("PIN must be 4 digits"); return; }
-    state.staff.unshift({ id: "st-" + Date.now().toString(36), name: titleCase(name), pin, role: staffRolePick });
+    state.staff.unshift({ id: "st-" + Date.now().toString(36), name: titleCase(name), pin, role: staffRolePick, storeId: ($("#staff-f-store") && $("#staff-f-store").value) || "s1" });
     if (typeof auditLog === "function") auditLog("staff", `Added team member ${titleCase(name)} (${staffRolePick})`);
     persistState();
     $("#staff-add-form").hidden = true;
@@ -7541,7 +7856,7 @@ function renderSettings() {
     state.staff.forEach((s) => {
       const row = el("div", "staff-row");
       const main = el("div", "staff-main");
-      main.append(el("strong", null, s.name), el("small", null, s.role === "owner" ? "Owner" : "Cashier"));
+      main.append(el("strong", null, s.name), el("small", null, s.role === "owner" ? "Owner" : `Cashier · ${storeName(s.storeId || "s1")}`));
       row.append(main, el("span", "staff-role-tag", s.role));
       list.appendChild(row);
     });
@@ -7784,7 +8099,9 @@ function renderSettings() {
     const tx = {
       id: "sq-" + Math.random().toString(36).slice(2, 8),
       method: "upi", upiRef: String(Math.floor(1e11 + Math.random() * 9e11)),
-      source: "static-qr", date: now(), refunded: false,
+      source: "static-qr", ff: pay.ff || "SoundBox",
+      storeId: curStoreId(),
+      date: now(), refunded: false,
     };
     if (cand) {
       const t = totals(cand.lines);
@@ -7816,8 +8133,9 @@ function renderSettings() {
     if (!card) return;
     const isToday = (d) => dateStr(d) === dateStr(now());
     const upiToday = state.transactions
-      .filter((t) => t.method === "upi" && isToday(t.date) && !t.refunded)
+      .filter((t) => t.method === "upi" && isToday(t.date) && !t.refunded && txVisible(t))
       .reduce((a, t) => a + t.total, 0);
+    $("#settle-head-total").textContent = state.settleDue ? `${fmt(state.settleDue)} due` : "All settled";
     $("#settle-due-amt").textContent = fmt(state.settleDue);
     $("#settle-due-sub").textContent = state.settleDue
       ? "Yesterday's UPI → HDFC ••4821"
@@ -7838,7 +8156,72 @@ function renderSettings() {
       row.append(top, sub);
       list.appendChild(row);
     });
+    /* imported settlement statements */
+    const st = $("#settle-stmt");
+    if (st) {
+      st.innerHTML = "";
+      if (!(state.mailImports || []).length)
+        st.appendChild(el("p", "recon-empty", "No statement imported yet — connect Gmail above."));
+      (state.mailImports || []).forEach((s) => {
+        const row = el("div", "recon-row");
+        const top = el("div", "recon-top");
+        top.append(el("span", "recon-amt", fmt(s.amount)), el("span", "recon-time", relTime(s.date)));
+        const sub = el("div", "recon-guess");
+        sub.innerHTML = `<strong>${s.source}</strong> · ${s.file}`;
+        const pill = el("span", "settle-pill st-" + s.status,
+          s.status === "matched" ? "Matched with T+1 due" :
+          s.status === "duplicate" ? "Duplicate — already settled via HDFC" :
+          s.status === "short" ? `Short by ${fmt(Math.max(0, s.expected - s.amount))} (gateway fee)` :
+          "No dues pending");
+        row.append(top, sub, pill);
+        st.appendChild(row);
+      });
+    }
+    /* mail connector */
+    const mbtn = $("#btn-mail-connect");
+    if (mbtn) {
+      mbtn.textContent = state.mailConnected ? "Re-scan inbox" : "Connect Gmail";
+      const inbox = $("#mail-inbox");
+      if (inbox && state.mailConnected) {
+        inbox.hidden = false;
+        inbox.innerHTML = "";
+        MAIL_SEED.forEach((m) => {
+          if ((state.mailImports || []).some((i) => i.mailId === m.id)) return;
+          const row = el("div", "mail-row");
+          row.append(el("strong", null, m.subj), el("small", null, `${m.from} · ${m.file}`));
+          const b = el("button", "ghost-btn sm", "Import");
+          b.addEventListener("click", () => importMail(m, b));
+          row.appendChild(b);
+          inbox.appendChild(row);
+        });
+        if (!inbox.children.length)
+          inbox.appendChild(el("p", "set-hint", "Inbox scanned — no new settlement files."));
+      }
+    }
   }
+  const MAIL_SEED = [
+    { id: "m-hdfc", from: "HDFC Bank · SmartGateway", subj: "Payout file — UPI collections", file: "hdfc_payout_0411.csv" },
+    { id: "m-pp", from: "PhonePe · PG", subj: "Settlement statement attached", file: "phonepe_settle_0411.csv" },
+    { id: "m-paytm", from: "Paytm · PG", subj: "Your daily settlement report", file: "paytm_settlement_0411.pdf" },
+  ];
+  function importMail(m, btn) {
+    const due = state.settleDue || 0;
+    const preset = {
+      "m-hdfc": { source: "HDFC SmartGateway", amount: due, status: due ? "matched" : "unmatched" },
+      "m-pp": { source: "PhonePe PG", amount: due, status: "duplicate" },
+      "m-paytm": { source: "Paytm PG", amount: Math.max(0, due - 2100), status: "short" },
+    }[m.id];
+    state.mailImports = state.mailImports || [];
+    state.mailImports.unshift({ id: "mi-" + Date.now().toString(36), mailId: m.id, source: preset.source, file: m.file, amount: preset.amount, expected: due, status: preset.status, date: now() });
+    btn.disabled = true; btn.textContent = "Imported";
+    persistState(); renderSettlement();
+    toast(`Imported ${m.file} (simulated)`);
+  }
+  $("#btn-mail-connect").addEventListener("click", () => {
+    state.mailConnected = true;
+    persistState(); renderSettlement();
+    toast(state.mailImports && state.mailImports.length ? "Inbox re-scanned (simulated)" : "Gmail connected — 3 settlement mails found (simulated)");
+  });
   $("#btn-settle").addEventListener("click", () => {
     const btn = $("#btn-settle");
     if (!state.settleDue) return;
@@ -7856,10 +8239,13 @@ function renderSettings() {
     toast("Settlement received in HDFC ••4821");
   });
 
+  function ffBadge(p) { return el("span", "ff-badge", p.ff || "SoundBox"); }
   function renderRecon() {
-    renderSettlement();
-    const pending = state.staticPayments.filter((p) => p.status === "pending");
-    const matched = state.staticPayments.filter((p) => p.status !== "pending");
+    const ffSel = state.reconFF || "all";
+    const ffOk = (p) => ffSel === "all" || (p.ff || "SoundBox") === ffSel;
+    const inScope = (p) => visibleStoreIds().includes(p.storeId || "s1");
+    const pending = state.staticPayments.filter((p) => p.status === "pending" && ffOk(p) && inScope(p));
+    const matched = state.staticPayments.filter((p) => p.status !== "pending" && ffOk(p) && inScope(p));
     const matchedSum = matched.reduce((a, p) => a + p.amount, 0);
     $("#recon-total").textContent = `${fmt(matchedSum)} matched · ${pending.length} pending`;
     $("#recon-review-title").textContent = pending.length ? `Needs review (${pending.length})` : "Needs review";
@@ -7870,7 +8256,7 @@ function renderSettings() {
     pending.forEach((p) => {
       const row = el("div", "recon-row");
       const top = el("div", "recon-top");
-      top.append(el("span", "recon-amt", fmt(p.amount)), el("span", "recon-time", timeStr(p.date)));
+      top.append(el("span", "recon-amt", fmt(p.amount)), el("span", "recon-time", timeStr(p.date)), ffBadge(p));
       const guess = el("div", "recon-guess");
       if (p.guess.length === 1) guess.innerHTML = `Likely sold: <strong>${p.guess[0].label}</strong>`;
       else if (p.guess.length > 1) guess.innerHTML = `Could be <strong>${p.guess.length} things</strong> — pick what was sold:`;
@@ -7898,7 +8284,7 @@ function renderSettings() {
     matched.slice(0, 8).forEach((p) => {
       const row = el("div", "recon-row");
       const top = el("div", "recon-top");
-      top.append(el("span", "recon-amt", fmt(p.amount)), el("span", "recon-time", timeStr(p.date)));
+      top.append(el("span", "recon-amt", fmt(p.amount)), el("span", "recon-time", timeStr(p.date)), ffBadge(p));
       const guess = el("div", "recon-guess");
       guess.innerHTML = p.auto ? `<span class="auto">Auto-matched:</span> <strong>${p.matchedLabel}</strong>` : `Matched: <strong>${p.matchedLabel}</strong>`;
       row.append(top, guess);
@@ -7937,6 +8323,7 @@ function renderSettings() {
       const pay = {
         id: "sp-" + Date.now(), amount, date: now(), vpa: pickPayerVpa(),
         status: "pending", guess: comboCandidates(amount), auto: false,
+        ff: Math.random() < 0.65 ? "SoundBox" : "DQR", storeId: curStoreId(),
       };
       // announce on the soundbox
       const box = $("#soundbox");
@@ -8169,6 +8556,368 @@ function renderSettings() {
     drawer.classList.remove("show"); drawerBackdrop.classList.remove("show");
     setTimeout(() => { drawer.hidden = true; drawerBackdrop.hidden = true; }, 300);
   }
+
+  /* ---------- recon form-factor filter ---------- */
+  document.querySelectorAll("#ff-chips .chip").forEach((c) =>
+    c.addEventListener("click", () => {
+      document.querySelectorAll("#ff-chips .chip").forEach((x) => x.classList.toggle("is-on", x === c));
+      state.reconFF = c.dataset.ff;
+      renderRecon();
+    })
+  );
+  const reconSettleLink = $("#recon-link-settle");
+  if (reconSettleLink) reconSettleLink.addEventListener("click", () => goRoot("settle"));
+
+  /* ---------- store pill (owner switches, staff is pinned) ---------- */
+  function renderStorePill() {
+    const pill = $("#store-pill");
+    if (!pill) return;
+    pill.hidden = false;
+    if (state.activeStaff) {
+      pill.classList.add("is-fixed");
+      pill.disabled = true;
+      $("#store-pill-label").textContent = storeName(state.activeStaff.storeId || "s1");
+    } else {
+      pill.classList.remove("is-fixed");
+      pill.disabled = false;
+      $("#store-pill-label").textContent =
+        !state.activeStore || state.activeStore === "all" ? "All stores" : storeName(state.activeStore);
+    }
+  }
+  $("#store-pill").addEventListener("click", () => {
+    if (state.activeStaff) return;
+    const ids = ["all", ...(state.stores || []).map((s) => s.id)];
+    const i = ids.indexOf(state.activeStore || "all");
+    state.activeStore = ids[(i + 1) % ids.length];
+    persistState();
+    renderStorePill(); renderDashboard(); renderTransactions(); renderRecon(); renderOrders();
+    toast(state.activeStore === "all" ? "Showing all stores" : `Store: ${storeName(state.activeStore)}`);
+  });
+
+  /* ---------- settings: stores ---------- */
+  function renderStoresSettings() {
+    const list = $("#set-stores-list");
+    if (!list) return;
+    list.innerHTML = "";
+    const stores = state.stores || [];
+    $("#set-stores-count").textContent = `${stores.length} store${stores.length > 1 ? "s" : ""}`;
+    stores.forEach((s) => {
+      const row = el("div", "set-row");
+      const staffCount = state.staff.filter((x) => (x.storeId || "s1") === s.id).length;
+      const main = el("div", "set-row-main");
+      main.append(el("strong", null, s.name), el("small", null, `${staffCount} staff assigned`));
+      const btn = el("button", "ghost-btn sm", "Switch");
+      btn.addEventListener("click", () => {
+        state.activeStore = s.id;
+        persistState(); renderStorePill(); renderDashboard(); renderStoresSettings();
+        toast(`Store: ${s.name}`);
+      });
+      row.append(main, btn);
+      list.appendChild(row);
+    });
+    const sel = $("#staff-f-store");
+    if (sel) {
+      sel.innerHTML = "";
+      stores.forEach((s) => {
+        const o = el("option", "", s.name);
+        o.value = s.id;
+        sel.appendChild(o);
+      });
+    }
+  }
+  const storeAddBtn = $("#btn-store-add");
+  if (storeAddBtn) storeAddBtn.addEventListener("click", () => {
+    $("#store-add-form").hidden = false;
+    setTimeout(() => $("#store-f-name").focus(), 100);
+  });
+  const storeSaveBtn = $("#store-f-save");
+  if (storeSaveBtn) storeSaveBtn.addEventListener("click", () => {
+    const name = $("#store-f-name").value.trim();
+    if (!name) { toast("Store name is required"); return; }
+    state.stores.push({ id: "sto-" + Date.now().toString(36), name });
+    $("#store-f-name").value = "";
+    $("#store-add-form").hidden = true;
+    persistState(); renderStoresSettings(); renderStorePill();
+    toast(`Store added — ${name}`);
+  });
+
+  /* ---------- khata: add customer inline ---------- */
+  const khataAddBtn = $("#btn-khata-add-cust");
+  if (khataAddBtn) khataAddBtn.addEventListener("click", () => openCustAdd(null));
+
+  /* ---------- keypad: add items while collecting ---------- */
+  function renderKeypadQuick() {
+    const box = $("#keypad-quick");
+    if (!box) return;
+    box.innerHTML = "";
+    box.appendChild(el("span", "keypad-quick-label", "Add items"));
+    state.catalog.slice(0, 10).forEach((item) => {
+      const chip = el("button", "chip", item.name);
+      chip.addEventListener("click", () => {
+        addToCart({ key: item.id, name: item.name, price: item.price });
+        renderKeypadLines();
+      });
+      box.appendChild(chip);
+    });
+  }
+  function renderKeypadLines() {
+    const box = $("#keypad-lines");
+    if (!box) return;
+    box.innerHTML = "";
+    const lines = cartLines();
+    box.style.display = lines.length ? "flex" : "none";
+    lines.forEach((l) => {
+      const row = el("div", "keypad-line");
+      row.append(el("span", "keypad-line-name", `${l.qty}× ${l.name}`), el("span", "keypad-line-amt", fmt(l.price * l.qty)));
+      row.title = "Tap to remove one";
+      row.addEventListener("click", () => {
+        const cur = state.cart.get(l.key);
+        if (cur && cur.qty > 1) cur.qty -= 1; else state.cart.delete(l.key);
+        renderCart(); renderKeypadLines();
+      });
+      box.appendChild(row);
+    });
+  }
+
+
+  /* ---------- online orders ---------- */
+  const ORDER_FLOW = ["new", "accepted", "ready", "out", "delivered"];
+  const ORDER_LABEL = { new: "New", accepted: "Accepted", ready: "Ready", out: "Out for delivery", delivered: "Delivered", cancelled: "Cancelled" };
+  const ORDER_SOURCE = { whatsapp: "WhatsApp", catalogue: "Catalogue", link: "Payment link" };
+  function createOrder({ source, customer, lines, note }) {
+    const t = totals(lines);
+    const o = {
+      id: "ord-" + Math.random().toString(36).slice(2, 8), source,
+      customer: customer || "WhatsApp customer", lines,
+      sub: t.sub, disc: t.disc, tax: t.tax, total: t.total,
+      status: "new", pay: "unpaid", note: note || "", date: now(), storeId: curStoreId(),
+    };
+    state.orders.unshift(o);
+    persistState(); renderOrders();
+    return o;
+  }
+  function renderOrders() {
+    const list = $("#orders-list");
+    if (!list) return;
+    const mine = (state.orders || []).filter((o) => visibleStoreIds().includes(o.storeId || "s1"));
+    const open = mine.filter((o) => !["delivered", "cancelled"].includes(o.status)).length;
+    const todayD = mine.filter((o) => o.status === "delivered" && dateStr(o.date) === dateStr(now())).length;
+    const linkPaid = mine.filter((o) => o.pay === "paid").reduce((a, o) => a + o.total, 0);
+    $("#orders-total").textContent = open ? `${open} open` : "";
+    const stats = $("#orders-stats");
+    stats.innerHTML = "";
+    [["Open", String(open)], ["Delivered today", String(todayD)], ["Collected via link", fmt(linkPaid)]].forEach(([k, v]) => {
+      const t = el("div", "stat-tile");
+      t.append(el("strong", null, v), el("span", null, k));
+      stats.appendChild(t);
+    });
+    list.innerHTML = "";
+    if (!mine.length) {
+      list.appendChild(el("p", "tx-empty", "No online orders yet.\nWhatsApp messages and catalogue picks become orders here."));
+      return;
+    }
+    mine.forEach((o) => {
+      const row = el("div", "order-card");
+      const head = el("div", "order-head");
+      head.append(el("strong", null, o.customer), el("span", "order-src", ORDER_SOURCE[o.source] || o.source));
+      const meta = el("div", "order-meta");
+      meta.textContent = `${timeStr(o.date)} · ${o.lines.map((l) => `${l.qty}× ${l.name}`).join(", ")}`;
+      const totalRow = el("div", "order-total");
+      totalRow.append(el("span", "order-status st-" + o.status, ORDER_LABEL[o.status] || o.status), el("strong", null, fmt(o.total)));
+      if (o.pay === "paid") totalRow.appendChild(el("span", "pill-paid", "Paid"));
+      else if (["out", "delivered"].includes(o.status)) totalRow.appendChild(el("span", "pill-overdue", "Unpaid"));
+      const actions = el("div", "order-actions");
+      const idx = ORDER_FLOW.indexOf(o.status);
+      if (idx >= 0 && idx < ORDER_FLOW.length - 1) {
+        const next = el("button", "chip", idx === 0 ? "Accept" : "Mark " + ORDER_LABEL[ORDER_FLOW[idx + 1]].toLowerCase());
+        next.addEventListener("click", () => advanceOrder(o, ORDER_FLOW[idx + 1]));
+        actions.appendChild(next);
+      }
+      if (o.status === "new") {
+        const c = el("button", "chip", "Cancel");
+        c.addEventListener("click", () => { o.status = "cancelled"; persistState(); renderOrders(); });
+        actions.appendChild(c);
+      }
+      if (o.pay === "unpaid" && ["accepted", "ready", "out"].includes(o.status)) {
+        const pl = el("button", "chip", "Send payment link");
+        pl.addEventListener("click", () => openPayLink(o.total, `Order · ${o.customer}`, o.id));
+        actions.appendChild(pl);
+      }
+      row.append(head, meta, totalRow, actions);
+      list.appendChild(row);
+    });
+  }
+  function advanceOrder(o, stage) {
+    o.status = stage;
+    if (stage === "accepted") decrementStock(o.lines);
+    if (stage === "delivered" && o.pay === "paid") {
+      state.transactions.unshift({
+        id: "sq-" + Math.random().toString(36).slice(2, 8), lines: o.lines,
+        sub: o.sub, disc: o.disc || 0, tax: o.tax, total: o.total,
+        method: "upi", upiRef: String(Math.floor(1e11 + Math.random() * 9e11)),
+        ff: "Link Pay", source: "order", orderId: o.id,
+        customerName: o.customer, date: now(), refunded: false, storeId: o.storeId || curStoreId(),
+      });
+    }
+    persistState(); renderOrders();
+    if (stage === "delivered") toast("Order delivered");
+  }
+
+  /* ---------- payment link ---------- */
+  let paylinkCtx = null;
+  function openPayLink(amountCents, note, orderId) {
+    paylinkCtx = orderId ? { orderId } : null;
+    $("#paylink-amt").value = amountCents ? String(Math.round(amountCents / 100)) : "";
+    $("#paylink-note").value = note || "";
+    renderPayLink();
+    openSheetElFn($("#paylink-sheet"));
+  }
+  function renderPayLink() {
+    const amt = Math.round((parseFloat($("#paylink-amt").value) || 0) * 100);
+    const note = $("#paylink-note").value.trim();
+    const payload = `upi://pay?pa=${encodeURIComponent(shopVpa())}&pn=${encodeURIComponent(state.bizName)}&am=${(amt / 100).toFixed(2)}&cu=INR&tn=${encodeURIComponent(note || "DukaanOS payment")}`;
+    const box = $("#paylink-qr");
+    box.innerHTML = "";
+    if (amt > 0 && window.QRCode) new QRCode(box, { text: payload, width: 172, height: 172, correctLevel: QRCode.CorrectLevel.M });
+    else box.appendChild(el("p", "set-hint", "Enter an amount to generate the QR"));
+    $("#paylink-url").textContent = amt > 0 ? payload : "";
+  }
+  $("#btn-paylink").addEventListener("click", () => openPayLink(0, "", null));
+  $("#btn-order-wa").addEventListener("click", openWaOrder);
+  $("#btn-order-catalogue").addEventListener("click", openCatPick);
+  $("#paylink-amt").addEventListener("input", renderPayLink);
+  $("#paylink-note").addEventListener("input", renderPayLink);
+  $("#paylink-share").addEventListener("click", () => {
+    if (!(Math.round((parseFloat($("#paylink-amt").value) || 0) * 100) > 0)) { toast("Enter an amount first"); return; }
+    toast("Payment link sent on WhatsApp (simulated)");
+  });
+  $("#paylink-paid").addEventListener("click", () => {
+    const amt = Math.round((parseFloat($("#paylink-amt").value) || 0) * 100);
+    if (!amt) { toast("Enter an amount first"); return; }
+    const note = $("#paylink-note").value.trim() || "Payment link";
+    state.transactions.unshift({
+      id: "sq-" + Math.random().toString(36).slice(2, 8),
+      lines: [{ name: note, price: amt, qty: 1 }],
+      sub: amt, disc: 0, tax: 0, total: amt,
+      method: "upi", upiRef: String(Math.floor(1e11 + Math.random() * 9e11)),
+      ff: "Link Pay", source: "paylink", date: now(), refunded: false, storeId: curStoreId(),
+    });
+    if (paylinkCtx && paylinkCtx.orderId) {
+      const o = state.orders.find((x) => x.id === paylinkCtx.orderId);
+      if (o) o.pay = "paid";
+    }
+    persistState(); renderOrders(); renderTransactions();
+    closeSheetEl();
+    toast(`Recorded ₹${(amt / 100).toFixed(0)} · Link Pay`);
+  });
+  $("#paylink-close").addEventListener("click", closeSheetEl);
+
+  /* ---------- whatsapp message -> order ---------- */
+  let waDraftLines = null;
+  function waBubble(dir, text) { return el("div", "wa-bubble wa-" + dir, text); }
+  function openWaOrder() {
+    const chat = $("#wa-chat");
+    chat.innerHTML = "";
+    chat.appendChild(waBubble("in", "Namaste! 2 cutting chai, 1 samosa — ghar pe bhej dena, paisa UPI kar dunga"));
+    $("#wa-input").value = "2 cutting chai 1 samosa";
+    $("#wa-draft").hidden = true;
+    $("#wa-actions").hidden = true;
+    waDraftLines = null;
+    openSheetElFn($("#waorder-sheet"));
+  }
+  function parseOrderText(text) {
+    const t = " " + text.toLowerCase().replace(/[.,!?]/g, " ") + " ";
+    const lines = [];
+    state.catalog.forEach((item) => {
+      const name = item.name.toLowerCase();
+      if (!t.includes(name) && !t.includes(name.split(" ")[0])) return;
+      let qty = 1;
+      const first = name.split(" ")[0].replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      const m = t.match(new RegExp("(\\d{1,2})[^a-z0-9]{0,14}" + first));
+      if (m) qty = Math.min(9, parseInt(m[1], 10));
+      lines.push({ name: item.name, price: item.price, qty });
+    });
+    return lines;
+  }
+  $("#wa-convert").addEventListener("click", () => {
+    const text = $("#wa-input").value.trim();
+    if (!text) { toast("Type the customer's message first"); return; }
+    const chat = $("#wa-chat");
+    chat.appendChild(waBubble("in", text));
+    $("#wa-input").value = "2 cutting chai 1 samosa";
+    chat.scrollTop = chat.scrollHeight;
+    const lines = parseOrderText(text);
+    const draft = $("#wa-draft");
+    draft.hidden = false;
+    draft.innerHTML = "";
+    if (!lines.length) {
+      draft.appendChild(el("p", "set-hint", "Couldn't match items — try “2 cutting chai 1 samosa”"));
+      $("#wa-actions").hidden = true;
+      waDraftLines = null;
+      return;
+    }
+    waDraftLines = lines;
+    lines.forEach((l) => {
+      const row = el("div", "keypad-line");
+      row.append(el("span", "keypad-line-name", `${l.qty}× ${l.name}`), el("span", "keypad-line-amt", fmt(l.price * l.qty)));
+      draft.appendChild(row);
+    });
+    const tot = el("div", "order-total");
+    tot.append(el("span", null, ""), el("strong", null, fmt(totals(lines).total)));
+    draft.appendChild(tot);
+    $("#wa-actions").hidden = false;
+  });
+  $("#wa-confirm").addEventListener("click", () => {
+    if (!waDraftLines) return;
+    createOrder({ source: "whatsapp", customer: "WhatsApp customer", lines: waDraftLines });
+    closeSheetEl();
+    toast("Order created from WhatsApp message");
+  });
+  $("#waorder-cancel").addEventListener("click", closeSheetEl);
+
+  /* ---------- whatsapp catalogue pick -> order ---------- */
+  const catPicks = new Map();
+  function openCatPick() {
+    catPicks.clear();
+    const grid = $("#catpick-grid");
+    grid.innerHTML = "";
+    state.catalog.slice(0, 12).forEach((item) => {
+      const tile = el("button", "catpick-tile");
+      tile.append(el("span", "catpick-name", item.name), el("span", "catpick-price", fmt(item.price)));
+      tile.addEventListener("click", () => {
+        const q = (catPicks.get(item.id) || 0) + 1;
+        catPicks.set(item.id, q);
+        tile.classList.add("is-on");
+        const old = tile.querySelector(".catpick-qty");
+        if (old) old.remove();
+        tile.appendChild(el("span", "catpick-qty", String(q)));
+        renderCatPickTotal();
+      });
+      grid.appendChild(tile);
+    });
+    renderCatPickTotal();
+    openSheetElFn($("#catpick-sheet"));
+  }
+  function catPickLines() {
+    return [...catPicks.entries()]
+      .map(([id, q]) => { const it = state.catalog.find((c) => c.id === id); return it ? { name: it.name, price: it.price, qty: q } : null; })
+      .filter(Boolean);
+  }
+  function renderCatPickTotal() {
+    const lines = catPickLines();
+    $("#catpick-total").textContent = lines.length
+      ? `${lines.reduce((a, l) => a + l.qty, 0)} items · ${fmt(totals(lines).total)}`
+      : "Tap the items the customer picked";
+  }
+  $("#catpick-create").addEventListener("click", () => {
+    const lines = catPickLines();
+    if (!lines.length) { toast("Pick at least one item"); return; }
+    createOrder({ source: "catalogue", customer: "Catalogue customer", lines });
+    closeSheetEl();
+    toast("Order created from catalogue pick");
+  });
+  $("#catpick-close").addEventListener("click", closeSheetEl);
+
   $("#btn-menu").addEventListener("click", openDrawer);
   drawerBackdrop.addEventListener("click", closeDrawer);
   document.querySelectorAll(".drawer-item").forEach((b) =>
@@ -8401,6 +9150,7 @@ function renderSettings() {
 
   function renderAll() {
     renderGrid();
+    renderKeypadQuick();
     renderCart();
     renderTransactions();
     renderCustomers();
@@ -8413,6 +9163,7 @@ function renderSettings() {
     renderPurSamples();
     renderPurchases();
     renderRecon();
+    renderOrders();
     renderCampaigns();
     renderReports();
     renderGst();
@@ -8561,8 +9312,9 @@ function renderSettings() {
       card.append(top, items, el("small", null, "MCC " + mcc));
       card.addEventListener("click", () => {
         obBiz = mcc;
-        applyBusiness(mcc);   // stages this type's catalog + popular items
-        obGo(3);              // tap a type → straight to item picker
+        applyBusiness(mcc);      // stages this type's catalog + popular items
+        applyPackDefaults(mcc);  // N=1: segment pack reshapes modules + language
+        obGo(3);                 // tap a type → straight to item picker
       });
       box.appendChild(card);
     });
@@ -8673,9 +9425,10 @@ function renderSettings() {
   }
 
   function renderObSamples() {
+    const base = packFor(state.mcc).voice || DEFAULT_PACK.voice;
     const phrases = hiMode()
       ? ["कोल्ड ड्रिंक 40 रुपये", "मिक्सचर 10 रुपये 20 पैकेट"]
-      : ["cold drink 40 rupaye", "bhujia 10 rupaye 20 packet"];
+      : base.slice(0, 2);
     voiceChips($("#ob-samples"), phrases, (p) => { addStockFromPhrase(p, "#ob-transcript"); renderObItems(); });
   }
 
@@ -8728,8 +9481,10 @@ function renderSettings() {
     }
     onboard.hidden = true;
     applyModules();           // module picks from the Toolkit step shape menus instantly
+    renderPackLabels();
     goRoot("register");
-    toast(`Welcome to ${state.bizName}`);
+    const tag = packFor(state.mcc).tagline;
+    toast(tag ? `${state.bizName} is open — ${tag}` : `Welcome to ${state.bizName}`);
   }
 
   $("#ob-next").addEventListener("click", () => {
@@ -8742,6 +9497,7 @@ function renderSettings() {
   $("#ob-skip").addEventListener("click", () => {
     obBiz = "5814";
     if (state.mcc !== "5814") applyBusiness("5814");
+    applyPackDefaults("5814");
     finishOnboarding();
   });
   $("#biz-search").addEventListener("input", () => { bizShown = BIZ_PAGE; renderBizGrid(); });
