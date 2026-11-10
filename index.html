@@ -4824,6 +4824,8 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
   const LS_SESSION = "dukaanos.session";
   /* hosted database API (see server/README.md). Empty = local-only: nothing leaves the browser. */
   const DB_API = "";
+  /* Google Apps Script web app (server/apps-script): shared key, must match SECRET in Code.gs */
+  const DB_KEY = "change-this-key";
   let dbTimer = null, dbPending = null;
   const dbEvents = [];
   const DB_SID = (() => {
@@ -4849,6 +4851,11 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
   }
   function dbSend(path, body) {
     if (!DB_API) return Promise.resolve(false);
+    // Apps Script takes one URL, so the route travels in the body. text/plain avoids a CORS preflight it cannot answer.
+    if (/script\.google\.com/.test(DB_API)) {
+      return fetch(DB_API, { method: "POST", headers: { "content-type": "text/plain;charset=utf-8" }, body: JSON.stringify({ key: DB_KEY, route: path, ...body }), keepalive: true })
+        .then((r) => r.ok).catch(() => false);
+    }
     return fetch(DB_API + path, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(body), keepalive: true })
       .then((r) => r.ok).catch(() => false);
   }

@@ -53,3 +53,17 @@ with a persistent disk for the SQLite file. Then set `DB_API` to that host's URL
 - `tap`: every button tapped, by its label
 - `sale`, `refund`, `purchase`, `supplier`, `drawer`, `staff`, `grow`, `expense`, `discount`, `owner`, `data`: the app's own activity log
 - `merchants` and `snapshots`: the full business data after each save (every sale, customer, khata line, stock count and setting)
+
+## Option: Google Apps Script + Google Sheet (no server to run)
+
+Activity events go to an `Events` sheet in your Google account. Each merchant's full data goes to a JSON file in the Drive folder `DukaanOS snapshots`.
+
+1. Create a Google Sheet. Open Extensions, then Apps Script. Paste `server/apps-script/Code.gs`, and change `SECRET`.
+2. Deploy, then New deployment, type Web app. Set Execute as: Me, and Who has access: Anyone. Copy the `/exec` URL.
+3. In `index.html`, set `DB_API` to that URL and `DB_KEY` to the same secret as `SECRET`.
+
+Limits:
+- The app's shared key sits in the page source, so it only stops casual misuse. Anyone who reads the page can use it.
+- Apps Script cannot see the caller's IP address, so IP addresses are not recorded on this option. Device IDs and session history still are.
+- Google stores the data outside India. Check this against your DPDP obligations.
+- Apps Script has daily quotas, so heavy use will hit them.
