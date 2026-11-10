@@ -102,6 +102,14 @@ const server = http.createServer(async (req, res) => {
       return send(res, 200, { ok: true, stored: Math.min(b.events.length, 500) });
     }
 
+    // Reads are private: every GET needs the READ_KEY secret (header x-read-key or ?key=).
+    // If READ_KEY is not set, all reads are refused.
+    if (req.method === "GET" && url.pathname.startsWith("/api/")) {
+      const want = process.env.READ_KEY || "";
+      const got = req.headers["x-read-key"] || url.searchParams.get("key") || "";
+      if (!want || got !== want) return send(res, 401, { error: "read key required" });
+    }
+
     if (req.method === "GET" && url.pathname === "/api/merchant") {
       const m = url.searchParams.get("mobile");
       const row = isMobile(m) ? stmt.getMerchant.get(m) : null;
