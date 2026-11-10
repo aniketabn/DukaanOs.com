@@ -4822,6 +4822,15 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
   /* ---------- merchant accounts (mobile number → business profile) ---------- */
   const LS_REGISTRY = "dukaanos.merchants";
   const LS_SESSION = "dukaanos.session";
+  const LS_SIGNED_AT = "dukaanos.signedAt";
+  const SESSION_MS = 5 * 60 * 60 * 1000;   /* after 5 hours the owner must sign in again */
+  const markSignedIn = () => { try { localStorage.setItem(LS_SIGNED_AT, String(Date.now())); } catch (_) { /* private mode */ } };
+  const sessionExpired = () => {
+    try {
+      const at = Number(localStorage.getItem(LS_SIGNED_AT));
+      return !at || Date.now() - at > SESSION_MS;
+    } catch (_) { return true; }
+  };
   /* hosted database API (see server/README.md). Empty = local-only: nothing leaves the browser. */
   const DB_API = "https://dukaanos-api.fly.dev";
   /* Google Apps Script web app (server/apps-script): shared key, must match SECRET in Code.gs */
@@ -12101,6 +12110,7 @@ function renderSettings() {
       persistProfile();
       persistState();
       try { localStorage.setItem(LS_SESSION, state.auth.mobile); } catch (_) { /* private mode */ }
+      markSignedIn();
     }
     onboard.hidden = true;
     applyModules();           // module picks from the Toolkit step shape menus instantly
@@ -12425,6 +12435,7 @@ function renderSettings() {
     const reg = loadRegistry();
     const profile = reg[state.auth.mobile];
     try { localStorage.setItem(LS_SESSION, state.auth.mobile); } catch (_) { /* private mode */ }
+    markSignedIn();
     dbLog("session", `Signed in with mobile ${state.auth.mobile}`);
     authEl.hidden = true;
     if (profile) {
@@ -12490,7 +12501,7 @@ function renderSettings() {
   $("#set-logout").addEventListener("click", () => {
     dbLog("session", "Logged out");
     persistProfile();
-    try { localStorage.removeItem(LS_SESSION); } catch (_) { /* private mode */ }
+    try { localStorage.removeItem(LS_SESSION); localStorage.removeItem(LS_SIGNED_AT); } catch (_) { /* private mode */ }
     toast("Logged out");
     setTimeout(() => location.reload(), 600);
   });
@@ -12500,10 +12511,18 @@ function renderSettings() {
     let sess = null;
     try { sess = localStorage.getItem(LS_SESSION); } catch (_) { sess = null; }
     const reg = loadRegistry();
-    if (sess && reg[sess]) {
+    if (sess && reg[sess] && !sessionExpired()) {
       hydrateMerchant(sess, reg[sess]);
       dbLog("session", `Opened the app, resumed session for ${sess}`);
       toast(`Welcome back, ${(reg[sess].owner || "").split(" ")[0] || "ji"}`);
+    } else if (sess && reg[sess]) {
+      /* session older than 5 hours: keep the shop data, ask for OTP sign-in again */
+      try { localStorage.removeItem(LS_SESSION); localStorage.removeItem(LS_SIGNED_AT); } catch (_) { /* private mode */ }
+      dbLog("session", `Session expired for ${sess}, sign-in required`);
+      state.auth.mobile = sess;
+      authEl.hidden = false;
+      authGo(1);
+      toast("Please sign in again to continue");
     } else {
       dbLog("session", "Opened the app, no session");
       authEl.hidden = false;
