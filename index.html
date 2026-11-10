@@ -1464,6 +1464,8 @@ button.pick-price:hover{background:var(--field)}
 .art{display:block;line-height:0}
 .art svg{width:100%;height:auto;display:block;color:#fff}
 .cr-art{position:absolute;right:10px;top:26px;width:40%;max-width:116px;pointer-events:none;opacity:.96}
+/* keep the text clear of the artwork on cards that have it */
+.cr:has(.cr-art) .cr-kicker,.cr:has(.cr-art) .cr-title,.cr:has(.cr-art) .cr-offer{max-width:58%}
 .clip-thumb .cr-art,.cr-thumb .cr-art{top:20px;width:52%}
 .clip-art{width:64%;max-width:200px;margin-bottom:4px}
 .clip-art.sm{width:34%;max-width:100px;margin-bottom:0}
@@ -1497,7 +1499,7 @@ button.pick-price:hover{background:var(--field)}
 .store-pill:hover{background:var(--brand-soft)}
 .store-pill.is-fixed{opacity:.85;cursor:default}
 .store-pill span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.appbar-title{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.appbar-title{min-width:0;overflow:hidden;white-space:normal;line-height:1.15;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
 
 .keypad-lines{display:none;flex-direction:column;gap:4px;padding:8px 14px 0}
 .keypad-line{display:flex;justify-content:space-between;align-items:center;gap:10px;
@@ -6300,7 +6302,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
         toast(`${cust.name} is over the set khata limit`, 2600);
     }
     if (typeof auditLog === "function")
-      auditLog("sale", `${lines.reduce((a, l) => a + l.qty, 0)} items · ${fmt(t.total)} · ${payment.method}${t.disc ? ` · disc ${fmt(t.disc)}` : ""}`);
+      auditLog("sale", `${lines.reduce((a, l) => a + l.qty, 0)} ${lines.reduce((a, l) => a + l.qty, 0) === 1 ? "item" : "items"} · ${fmt(t.total)} · ${payment.method}${t.disc ? ` · disc ${fmt(t.disc)}` : ""}`);
     persistState();
     state.lastSale = tx;
     state.viewReceiptTx = null;
@@ -10925,7 +10927,7 @@ function renderSettings() {
     if (!box || !fulfilCtx) return;
     const t = totals(fulfilCtx.lines);
     const fee = Math.round((parseFloat($("#fulfil-fee").value) || 0) * 100);
-    box.textContent = `${fulfilCtx.lines.reduce((a, l) => a + l.qty, 0)} items · ${fmt(t.total)}` +
+    box.textContent = `${fulfilCtx.lines.reduce((a, l) => a + l.qty, 0)} ${fulfilCtx.lines.reduce((a, l) => a + l.qty, 0) === 1 ? "item" : "items"} · ${fmt(t.total)}` +
       (fee ? ` + ${fmt(fee)} delivery` : "");
   }
   function openFulfil(ctx) {
@@ -11086,7 +11088,7 @@ function renderSettings() {
   function renderCatPickTotal() {
     const lines = catPickLines();
     $("#catpick-total").textContent = lines.length
-      ? `${lines.reduce((a, l) => a + l.qty, 0)} items · ${fmt(totals(lines).total)}`
+      ? `${lines.reduce((a, l) => a + l.qty, 0)} ${lines.reduce((a, l) => a + l.qty, 0) === 1 ? "item" : "items"} · ${fmt(totals(lines).total)}`
       : "Tap the items the customer picked";
   }
   $("#catpick-create").addEventListener("click", () => {
