@@ -1,0 +1,32 @@
+# Fly.io config for the DukaanOS database API. Region bom = Mumbai (data stays in India).
+# First time: fly launch --no-deploy --copy-config, then:
+#   fly volumes create dukaan_data --region bom --size 1
+#   fly deploy
+app = "dukaanos-api"
+primary_region = "bom"
+
+[build]
+  dockerfile = "server/Dockerfile"
+
+[env]
+  PORT = "8787"
+  DB_FILE = "/data/dukaanos.db"
+  CORS_ORIGIN = "https://aniketabn.github.io"
+
+[[mounts]]
+  source = "dukaan_data"
+  destination = "/data"
+
+[http_service]
+  internal_port = 8787
+  force_https = true
+  auto_stop_machines = false
+  auto_start_machines = true
+  min_machines_running = 1
+
+  [[http_service.checks]]
+    grace_period = "10s"
+    interval = "30s"
+    method = "GET"
+    path = "/health"
+    timeout = "5s"
