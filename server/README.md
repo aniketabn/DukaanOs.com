@@ -33,8 +33,10 @@ With `DB_API` empty, the app stays local-only and sends nothing.
 ## Endpoints
 
 - `POST /api/snapshot` body `{ mobile, bizName, mcc, data }`
-- `POST /api/events` body `{ mobile, events: [{ ts, who, cat, what }] }`
+- `POST /api/events` body `{ mobile, events: [{ ts, session_id, who, cat, what }] }`
 - `GET /api/merchant?mobile=...`
+- `GET /api/sessions?mobile=...` one row per browser session: start, last activity, event count
+- `GET /api/session?id=...` every event in one session, in order
 - `GET /api/events?mobile=...&limit=100`
 - `GET /health`
 
@@ -42,3 +44,12 @@ With `DB_API` empty, the app stays local-only and sends nothing.
 
 GitHub Pages only serves static files, so the API must run on a server host (for example Render, Railway or Fly.io)
 with a persistent disk for the SQLite file. Then set `DB_API` to that host's URL.
+
+## What the app records
+
+- `session`: opened the app, resumed, signed in, logged out, closed the app
+- `input`: every field the user changes (values of PIN and OTP fields are masked)
+- `navigate`: every menu screen opened
+- `tap`: every button tapped, by its label
+- `sale`, `refund`, `purchase`, `supplier`, `drawer`, `staff`, `grow`, `expense`, `discount`, `owner`, `data`: the app's own activity log
+- `merchants` and `snapshots`: the full business data after each save (every sale, customer, khata line, stock count and setting)

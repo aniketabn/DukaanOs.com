@@ -4826,6 +4826,27 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
   const DB_API = "";
   let dbTimer = null, dbPending = null;
   const dbEvents = [];
+  const DB_SID = (() => {
+    try {
+      let id = sessionStorage.getItem("dukaanos.sid");
+      if (!id) { id = (self.crypto && crypto.randomUUID) ? crypto.randomUUID() : Date.now().toString(36) + Math.random().toString(36).slice(2); sessionStorage.setItem("dukaanos.sid", id); }
+      return id;
+    } catch (_) { return "tab-" + Date.now().toString(36); }
+  })();
+  const DB_DEVICE = (() => {
+    try {
+      let id = localStorage.getItem("dukaanos.device");
+      if (!id) { id = (self.crypto && crypto.randomUUID) ? crypto.randomUUID() : Date.now().toString(36) + Math.random().toString(36).slice(2); localStorage.setItem("dukaanos.device", id); }
+      return id;
+    } catch (_) { return "device-" + Date.now().toString(36); }
+  })();
+  function dbLog(cat, what) {
+    if (!DB_API) return;
+    let who = "";
+    try { who = state.auth && state.auth.mobile ? activeStaffName() : ""; } catch (_) { who = ""; }
+    dbEvents.push({ ts: new Date().toISOString(), who, cat, what: String(what).slice(0, 500), session_id: DB_SID, device_id: DB_DEVICE });
+    dbSchedule();
+  }
   function dbSend(path, body) {
     if (!DB_API) return Promise.resolve(false);
     return fetch(DB_API + path, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(body), keepalive: true })
@@ -4837,14 +4858,32 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
     const mobile = state.auth.mobile;
     if (dbPending) {
       const snap = dbPending; dbPending = null;
-      dbSend("/api/snapshot", { mobile, bizName: state.bizName, mcc: state.mcc, data: snap }).then((ok) => { if (!ok) dbPending = snap; });
+      dbSend("/api/snapshot", { mobile, bizName: state.bizName, mcc: state.mcc, device_id: DB_DEVICE, data: snap }).then((ok) => { if (!ok) dbPending = snap; });
     }
     if (dbEvents.length) {
       const batch = dbEvents.splice(0);
       dbSend("/api/events", { mobile, events: batch }).then((ok) => { if (!ok) dbEvents.unshift(...batch); });
     }
   }
-  window.addEventListener("pagehide", () => dbFlush());
+  window.addEventListener("pagehide", () => { dbLog("session", "Closed the app"); dbFlush(); });
+  /* every field the user types or picks, and every tap on a labelled control (pins and OTPs are masked) */
+  const DB_SECRET = /pin|otp|password/i;
+  const dbLabel = (el) => (el.getAttribute("aria-label") || el.getAttribute("placeholder") || el.id || el.name || el.type || "field").trim();
+  document.addEventListener("change", (e) => {
+    const t = e.target;
+    if (!DB_API || !t || !t.matches || !t.matches("input, textarea, select")) return;
+    const secret = t.type === "password" || DB_SECRET.test((t.id || "") + " " + (t.name || "") + " " + (t.getAttribute("aria-label") || ""));
+    const val = t.type === "checkbox" ? (t.checked ? "on" : "off") : secret ? "[masked]" : t.value;
+    dbLog("input", `${dbLabel(t)} = ${val}`);
+  }, true);
+  document.addEventListener("click", (e) => {
+    if (!DB_API) return;
+    const b = e.target && e.target.closest ? e.target.closest("button, a, [data-drawer]") : null;
+    if (!b) return;
+    const text = (b.getAttribute("aria-label") || b.textContent || "").replace(/\s+/g, " ").trim();
+    if (!text) return;
+    dbLog(b.hasAttribute("data-drawer") ? "navigate" : "tap", `${text.slice(0, 80)}${b.disabled ? " (disabled)" : ""}`);
+  }, true);
   const MERCHANT_SEED = {
     "9876543210": { owner: "Ramesh Sharma", bizName: "Sharma Tea & Snacks", mcc: "5814", reg: { mcc: "5814", via: "QR code" } },
     "9822034567": { owner: "Sunita Gupta",  bizName: "Gupta Kirana Store",  mcc: "5411", reg: { mcc: "5411", via: "Soundbox" } },
@@ -9017,7 +9056,7 @@ function renderSettings() {
   /* audit + drawer — shared hooks (drawer detail lands in the Drawer feature) */
   function auditLog(cat, what) {
     state.audit.unshift({ ts: now(), who: activeStaffName(), cat, what });
-    if (DB_API) { dbEvents.push({ ts: new Date().toISOString(), who: activeStaffName(), cat, what }); dbSchedule(); }
+    dbLog(cat, what);
     if (state.audit.length > 120) state.audit.length = 120;
   }
   function drawerCashOut(amtCents, note) {
@@ -12379,6 +12418,7 @@ function renderSettings() {
     const reg = loadRegistry();
     const profile = reg[state.auth.mobile];
     try { localStorage.setItem(LS_SESSION, state.auth.mobile); } catch (_) { /* private mode */ }
+    dbLog("session", `Signed in with mobile ${state.auth.mobile}`);
     authEl.hidden = true;
     if (profile) {
       hydrateMerchant(state.auth.mobile, profile);
@@ -12441,6 +12481,7 @@ function renderSettings() {
   $("#auth-phone").addEventListener("keydown", (e) => { if (e.key === "Enter") sendOtp(); });
 
   $("#set-logout").addEventListener("click", () => {
+    dbLog("session", "Logged out");
     persistProfile();
     try { localStorage.removeItem(LS_SESSION); } catch (_) { /* private mode */ }
     toast("Logged out");
@@ -12454,8 +12495,10 @@ function renderSettings() {
     const reg = loadRegistry();
     if (sess && reg[sess]) {
       hydrateMerchant(sess, reg[sess]);
+      dbLog("session", `Opened the app, resumed session for ${sess}`);
       toast(`Welcome back, ${(reg[sess].owner || "").split(" ")[0] || "ji"}`);
     } else {
+      dbLog("session", "Opened the app, no session");
       authEl.hidden = false;
       authGo(1);
     }
