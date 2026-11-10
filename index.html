@@ -2003,13 +2003,6 @@ button.sheet-empty:active{transform:scale(.98)}
               <span class="tender-text"><strong>Tap to Pay</strong><small>Contactless card or phone</small></span>
               <svg class="tender-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 6l6 6-6 6"/></svg>
             </button>
-            <button class="tender-opt" id="tender-insert">
-              <span class="tender-ic" aria-hidden="true">
-                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="5" width="18" height="14" rx="2.5"/><rect x="6" y="8.5" width="4.5" height="3.5" rx="0.8"/><line x1="3" y1="15.5" x2="21" y2="15.5" stroke-dasharray="2 3"/></svg>
-              </span>
-              <span class="tender-text"><strong>Insert or swipe</strong><small>Chip &amp; magnetic stripe</small></span>
-              <svg class="tender-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 6l6 6-6 6"/></svg>
-            </button>
             <button class="tender-opt" id="tender-cash">
               <span class="tender-ic" aria-hidden="true">
                 <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="2.5" y="6" width="19" height="12" rx="2"/><circle cx="12" cy="12" r="2.6"/><path d="M6 9.5h.01M18 14.5h.01"/></svg>
@@ -5826,7 +5819,6 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
     show("reader");
   }
   $("#tender-card").addEventListener("click", () => openReader("tap"));
-  $("#tender-insert").addEventListener("click", () => openReader("insert"));
   readerRing.addEventListener("click", () => {
     if (state.processing) return;
     state.processing = true;
