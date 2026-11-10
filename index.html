@@ -611,6 +611,9 @@ select.field-input{appearance:none;background-image:url("data:image/svg+xml,%3Cs
 @keyframes micpulse{0%{box-shadow:0 0 0 0 rgba(194,64,47,.35)}100%{box-shadow:0 0 0 16px rgba(194,64,47,0)}}
 .voice-main{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px}
 .voice-label{font-size:13.5px;font-weight:600;color:var(--ink-60)}
+.ca-voice{display:flex;gap:12px;align-items:center;padding:4px 0 14px}
+.ca-voice-main{display:grid;gap:4px;min-width:0}
+.ca-mic{width:48px;height:48px;flex:none}
 .voice-transcript{font-family:var(--mono);font-size:14px;color:var(--ink);min-height:18px}
 .voice-samples{display:flex;gap:8px;padding:6px 16px 2px;flex-wrap:wrap}
 .voice-samples:empty{display:none}
@@ -3199,6 +3202,15 @@ button.sheet-empty:active{transform:scale(.98)}
         <div class="sheet-grab" aria-hidden="true"></div>
         <div class="sheet-head"><span>Add customer</span></div>
         <div class="sheet-form">
+          <div class="ca-voice">
+            <button class="mic-btn ca-mic" id="ca-mic" aria-label="Enter customer details by voice">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21M8.5 21h7"/></svg>
+            </button>
+            <div class="ca-voice-main">
+              <span class="voice-label" id="ca-voice-label">Tap and say: name, mobile, area, limit</span>
+              <span class="voice-transcript" id="ca-transcript"></span>
+            </div>
+          </div>
           <label class="ob-field">
             <span>Name</span>
             <input id="ca-f-name" type="text" maxlength="30" autocomplete="off" placeholder="e.g. Priya Deshmukh">
@@ -8908,6 +8920,42 @@ function renderSettings() {
   });
   $("#ca-f-cancel").addEventListener("click", closeSheetEl);
   $("#btn-add-customer").addEventListener("click", () => openCustAdd(null));
+
+  /* voice entry for the add-customer form: "Priya Deshmukh, 9876543210, area Gandhi Chowk, limit 2000, note likes less sugar" */
+  function parseCustomerPhrase(text) {
+    const t = " " + text.replace(/[“”"]/g, "").replace(/\s+/g, " ").trim() + " ";
+    const out = {};
+    const upi = t.match(/[\w.\-]+@[a-z]{2,}/i);
+    if (upi) out.vpa = upi[0].toLowerCase();
+    const mob = t.replace(/(?<=\d)[\s-]+(?=\d)/g, "").match(/\b\d{10}\b/);
+    if (mob) out.mobile = mob[0];
+    const bday = t.match(/\b(\d{1,2})[\/\-](\d{1,2})\b/);
+    if (bday) out.bday = `${bday[1]}/${bday[2]}`;
+    const limit = t.match(/(?:credit limit|limit|सीमा)\D{0,12}?(\d{2,6})/i);
+    if (limit) out.limit = limit[1];
+    const area = t.match(/(?:area|locality|इलाका)\s+([^,]+?)(?=,|\s(?:mobile|number|limit|note|birthday|upi|whatsapp)\b|$)/i);
+    if (area) out.area = area[1].trim();
+    const note = t.match(/\bnote\s+(.+)$/i);
+    if (note) out.note = note[1].replace(/,\s*$/, "").trim();
+    const nm = t.match(/(?:name is|naam(?: hai)?|name)\s+([^,]+?)(?=,|\s(?:mobile|number|area|limit|note|birthday|upi|whatsapp)\b|$)/i);
+    if (nm) out.name = nm[1].trim();
+    else {
+      const first = text.split(",")[0].trim();
+      if (first && !/\d|@/.test(first) && first.split(" ").length <= 4) out.name = first;
+    }
+    return out;
+  }
+  function fillCustomerFromVoice(text) {
+    const d = parseCustomerPhrase(text);
+    const fields = { name: "#ca-f-name", mobile: "#ca-f-mobile", vpa: "#ca-f-vpa", bday: "#ca-f-bday", area: "#ca-f-area", note: "#ca-f-note", limit: "#ca-f-limit" };
+    const heard = Object.keys(fields).filter((k) => d[k]);
+    if (!heard.length) { toast("Didn't catch the details, try again or type them"); return; }
+    heard.forEach((k) => { $(fields[k]).value = d[k]; });
+    toast(`Filled ${heard.join(", ")}. Check and save.`);
+  }
+  wireMic("#ca-mic", "#ca-voice-label", "#ca-transcript",
+    () => state.settings.voiceLang === "hi-IN" ? "बोलिए: नाम, मोबाइल, इलाका, सीमा" : "Tap and say: name, mobile, area, limit",
+    fillCustomerFromVoice);
 
   $("#btn-add-item").addEventListener("click", () => openItemSheet(null));
   $("#item-f-photo").addEventListener("click", (e) => {
