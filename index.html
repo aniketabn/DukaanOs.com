@@ -1463,9 +1463,16 @@ button.pick-price:hover{background:var(--field)}
 /* ---- contextual illustrations ---- */
 .art{display:block;line-height:0}
 .art svg{width:100%;height:auto;display:block;color:#fff}
-.cr-art{position:absolute;right:10px;top:26px;width:40%;max-width:116px;pointer-events:none;opacity:.96}
+.cr-art{position:absolute;right:10px;top:26px;width:32%;max-width:92px;pointer-events:none;opacity:.96}
 /* keep the text clear of the artwork on cards that have it */
-.cr:has(.cr-art) .cr-kicker,.cr:has(.cr-art) .cr-title,.cr:has(.cr-art) .cr-offer{max-width:58%}
+.cr:has(.cr-art) .cr-kicker,.cr:has(.cr-art) .cr-title,.cr:has(.cr-art) .cr-offer{max-width:62%}
+button.avatar{border:0;padding:0;cursor:pointer;font:inherit;color:inherit}
+.stock-swatch{display:grid;place-items:center;font-weight:700;font-size:15px}
+.dash-empty{display:grid;gap:6px;justify-items:start;padding:14px 16px;border-radius:16px;background:var(--brand-soft)}
+.dash-empty[hidden]{display:none}
+.dash-empty strong{font-size:15px}
+.dash-empty span{font-size:13px;color:var(--ink-60)}
+.screen-gloss{margin:8px 16px 0;font-size:13px;line-height:1.4;color:var(--ink-60)}
 .clip-thumb .cr-art,.cr-thumb .cr-art{top:20px;width:52%}
 .clip-art{width:64%;max-width:200px;margin-bottom:4px}
 .clip-art.sm{width:34%;max-width:100px;margin-bottom:0}
@@ -1732,7 +1739,7 @@ button.sheet-empty:active{transform:scale(.98)}
         <button class="icon-btn" id="btn-assist" aria-label="Open voice & chat assistant">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21M8.5 21h7"/></svg>
         </button>
-        <div class="avatar" id="appbar-avatar" aria-hidden="true">CC</div>
+        <button class="avatar" id="appbar-avatar" aria-label="Shop settings" onclick="document.querySelector('[data-drawer=settings]').click()">CC</button>
       </header>
       <div class="offline-banner" id="offline-banner" hidden>You're offline, billing, khata &amp; stock keep working on this device</div>
 
@@ -1806,6 +1813,11 @@ button.sheet-empty:active{transform:scale(.98)}
             <input type="date" id="dash-to" aria-label="To date">
           </div>
           <div class="dash-scroll">
+            <div class="dash-empty" id="dash-empty" hidden>
+              <strong>Make your first sale</strong>
+              <span>Open the Register, tap an item and charge the bill. Your numbers appear here.</span>
+              <button class="ghost-btn ghost-sm" onclick="document.querySelector('[data-nav=register]').click()">Open Register</button>
+            </div>
             <div class="dash-hero">
               <span class="dash-hero-label" data-lex="grossLabel">Gross sales</span>
               <div class="dash-hero-amount" id="dash-gross">₹0.00</div>
@@ -2155,6 +2167,7 @@ button.sheet-empty:active{transform:scale(.98)}
             <span class="tx-total" id="khata-total"></span>
             <button class="ghost-btn ghost-sm" id="btn-khata-add-cust">+ Customer</button>
           </div>
+          <p class="screen-gloss">Khata is your credit book: money customers still owe you.</p>
           <div class="voice-card">
             <button class="mic-btn" id="btn-mic" aria-label="Record credit by voice">
               <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21M8.5 21h7"/></svg>
@@ -2244,7 +2257,7 @@ button.sheet-empty:active{transform:scale(.98)}
         <!-- RECON -->
         <section class="screen" id="screen-recon" data-screen="recon">
           <div class="flow-head">
-            <span class="flow-head-title">Payment recon</span>
+            <span class="flow-head-title">Payments</span>
             <span class="tx-total" id="recon-total"></span>
           </div>
           <div class="soundbox" id="soundbox">
@@ -3468,7 +3481,7 @@ button.sheet-empty:active{transform:scale(.98)}
         <span class="drawer-sec">Sell</span>
         <button class="drawer-item" data-drawer="register">Register</button>
         <button class="drawer-item" data-drawer="orders">Online orders</button>
-        <button class="drawer-item" data-drawer="recon">Payment recon</button>
+        <button class="drawer-item" data-drawer="recon">Payments</button>
         <button class="drawer-item" data-drawer="settle">Settlement recon</button>
         <button class="drawer-item" data-drawer="transactions">Transactions</button>
         <button class="drawer-item" data-drawer="invoices">Invoices</button>
@@ -4559,7 +4572,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
   const SEGMENT_PACKS = {
     "5411": { /* Kirana & Grocery */
       tagline: "Kirana mode, barcode billing, khata and distributor-wise stock",
-      lexicon: { libraryTab: "Items", libraryView: "Items view", grossLabel: "Aaj ki bikri", khataTitle: "Khata book" },
+      lexicon: { libraryTab: "Items", libraryView: "Items view", grossLabel: "Aaj ki bikri (today's sales)", khataTitle: "Khata book" },
       modules: { invoice: true, khata: true, customers: true, stock: true, social: true },
       hero: "barcode",
       voice: ["cold drink 40 rupaye", "atta 5 kilo 275 rupaye", "kitna doodh bacha"],
@@ -4573,14 +4586,14 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
     },
     "5814": { /* Tea, Snacks & Ice Cream */
       tagline: "Tea-stall mode, voice-first counter billing and daily profit",
-      lexicon: { libraryTab: "Library", grossLabel: "Aaj ki bikri", khataTitle: "Khata book" },
+      lexicon: { libraryTab: "Library", grossLabel: "Aaj ki bikri (today's sales)", khataTitle: "Khata book" },
       modules: { invoice: false, khata: true, customers: true, stock: true, social: true },
       hero: "voice",
       voice: ["2 cutting chai 1 samosa", "kulfi 35 rupaye", "kitni chai bachi"],
     },
     "5993": { /* Paan & Cigarette */
       tagline: "Paan-shop mode, tiny catalog, khata-first, everything else off",
-      lexicon: { libraryTab: "Library", grossLabel: "Aaj ki bikri", khataTitle: "Udhaar ki chitthi" },
+      lexicon: { libraryTab: "Library", grossLabel: "Aaj ki bikri (today's sales)", khataTitle: "Udhaar ki chitthi" },
       modules: { invoice: false, khata: true, customers: true, stock: false, social: false },
       hero: "khata",
       voice: ["2 paan 20 rupaye", "gutkha 10 packet", "kiske paise baki hain"],
@@ -5297,7 +5310,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
     if ($("#lib-count")) {
       $("#lib-count").textContent = (q || libCat)
         ? `${matches.length} in your shop${extra.length ? " · " + extra.length + " more in catalogue" : ""}`
-        : frequent ? `Top ${FREQ} of ${state.catalog.length} · search for the rest` : `${state.catalog.length} items`;
+        : frequent ? `Top ${FREQ} of ${state.catalog.length} · search for the rest` : `${state.catalog.length} items · tap to add, hold to edit`;
     }
     const catBox = $("#lib-cats");
     if (catBox) {
@@ -6734,6 +6747,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
     if (headTitle) headTitle.textContent = periodModeLabel();
     $("#dash-date").textContent = periodLabel(range);
     $("#dash-gross").textContent = fmt(gross);
+    if ($("#dash-empty")) $("#dash-empty").hidden = state.transactions.length > 0;
     const delta = $("#dash-delta");
     if (gross === 0) {
       delta.textContent = "No sales in this period";
@@ -7350,6 +7364,8 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
     const initials = name.split(/\s+/).map((w) => w[0]).join("").slice(0, 2).toUpperCase();
     const accent = MCC_ACCENT[state.mcc];
     $("#appbar-title").textContent = name;
+    $("#appbar-title").title = name;
+    $("#appbar-title").style.fontSize = name.length > 22 ? "15px" : "";
     const av = $("#appbar-avatar");
     av.textContent = initials;
     av.style.background = accent;
@@ -8234,7 +8250,12 @@ function renderSettings() {
       const row = el("div", "stock-row");
       let sw;
       if (it.photo) { sw = el("img", "stock-thumb"); sw.src = it.photo; sw.alt = ""; }
-      else { sw = el("span", "stock-swatch"); sw.style.background = it.color || "var(--brand-soft)"; }
+      else {
+        sw = el("span", "stock-swatch");
+        sw.textContent = (it.name || "?").trim().charAt(0).toUpperCase();
+        sw.style.background = it.color || "var(--brand-soft)";
+        sw.style.color = it.color ? "#fff" : "var(--brand)";
+      }
       const main = el("div", "stock-main");
       const sub = q === 0 ? "out of stock" : q <= lowAt() ? `low · ${q} left` : `${q} in stock`;
       main.append(el("strong", null, it.name), el("small", null, `${fmt(it.price)} · ${sub}`));
