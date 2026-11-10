@@ -771,6 +771,7 @@ select.field-input{appearance:none;background-image:url("data:image/svg+xml,%3Cs
   border-radius:99px;padding:3px 8px;
 }
 .biz-card small{font-family:var(--mono);font-size:10.5px;color:var(--ink-38)}
+.biz-code{font-family:var(--mono);font-size:12px;font-weight:600;color:var(--ink-60)}
 
 /* onboarding stock preview */
 .ob-stock-list{display:flex;flex-wrap:wrap;gap:6px;margin-top:16px}
@@ -3571,18 +3572,18 @@ button.sheet-empty:active{transform:scale(.98)}
               <input id="ob-name" type="text" placeholder="e.g. Cutting Chai Co." maxlength="28" autocomplete="off">
             </label>
             <button class="ob-skiplink" id="ob-skip">Skip, explore with demo data</button>
-            <p class="ob-live">(Kirana, Restaurant &amp; Salon Live)</p>
+            <p class="ob-live">(Kirana &amp; Food Cart Live)</p>
           </section>
           <section class="ostep" data-ostep="2">
             <p class="ob-kicker">Nature of business</p>
             <h1 class="ob-title">What do you sell?</h1>
             <p class="ob-sub">Every retail shop type is covered. Search below or tap a letter to jump. Your item list, payment matching, voice and stock adapt to this one choice.</p>
             <p class="ob-regsel" id="ob-reg-banner" hidden></p>
-            <label class="ob-field">
+            <label class="ob-field" hidden>
               <span>Search business types</span>
               <input id="biz-search" type="search" placeholder="e.g. salon, petrol, jewellery" autocomplete="off">
             </label>
-            <div class="biz-index" id="biz-index"></div>
+            <div class="biz-index" id="biz-index" hidden></div>
             <div class="biz-grid" id="biz-grid"></div>
             <button class="load-more" id="biz-more" hidden>Load more</button>
           </section>
@@ -11578,8 +11579,18 @@ function renderSettings() {
     return hit ? hit[1] : null;
   }
 
+  /* Only these four merchant categories are offered at sign-up. Other MCC_STORES entries stay in the code, hidden. */
+  const BIZ_ALLOWED = ["5411", "5814", "5812", "5499"];
+  const MCC_DESC = {
+    "5411": "Grocery Stores, Supermarkets",
+    "5814": "Fast Food Restaurants",
+    "5812": "Eating Places, Restaurants",
+    "5499": "Miscellaneous Food Stores",
+  };
   function bizTypes() {
-    const all = Object.entries(MCC_STORES).sort((a, b) => a[1].label.localeCompare(b[1].label));
+    const all = Object.entries(MCC_STORES)
+      .filter(([mcc]) => BIZ_ALLOWED.includes(mcc))
+      .sort((a, b) => BIZ_ALLOWED.indexOf(a[0]) - BIZ_ALLOWED.indexOf(b[0]));
     const q = ($("#biz-search").value || "").trim().toLowerCase();
     if (!q) {
       const hint = obHintMcc();
@@ -11599,7 +11610,7 @@ function renderSettings() {
   function renderBizGrid() {
     const box = $("#biz-grid");
     const all = bizTypes();
-    const showing = all.slice(0, bizShown);
+    const showing = all;   /* four fixed categories: no paging */
     const hint = ($("#biz-search").value || "").trim() ? null : obHintMcc();
     box.innerHTML = "";
     showing.forEach(([mcc, s]) => {
@@ -11608,11 +11619,9 @@ function renderSettings() {
       card.dataset.letter = s.label[0].toUpperCase();
       card.style.setProperty("--c", MCC_ACCENT[mcc]);
       const top = el("div", "biz-card-top");
-      top.append(el("span", "biz-dot"), el("strong", null, s.label));
+      top.append(el("span", "biz-code", mcc), el("strong", null, MCC_DESC[mcc] || s.label));
       if (mcc === hint) top.appendChild(el("span", "biz-suggested", "Suggested for “" + ($("#ob-name").value || "").trim() + "”"));
-      const items = el("div", "biz-items");
-      s.items.slice(0, 3).forEach((i) => items.appendChild(el("span", null, i.name)));
-      card.append(top, items);
+      card.append(top);
       card.addEventListener("click", () => {
         obBiz = mcc;
         applyBusiness(mcc);      // stages this type's catalog + popular items
