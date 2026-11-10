@@ -39,6 +39,7 @@ const stmt = {
   listSessionEvents: db.prepare("SELECT ts, who, cat, what, device_id, ip, user_agent FROM events WHERE session_id = ? ORDER BY ts ASC LIMIT ?"),
   getMerchant: db.prepare("SELECT mobile, biz_name, mcc, updated_at FROM merchants WHERE mobile = ?"),
   listEvents: db.prepare("SELECT ts, session_id, who, cat, what, device_id, ip FROM events WHERE mobile = ? ORDER BY ts DESC LIMIT ?"),
+  listAllEvents: db.prepare("SELECT mobile, ts, session_id, who, cat, what, device_id, ip FROM events ORDER BY ts DESC LIMIT ?"),
 };
 
 const str = (v, max = 200) => (v == null ? null : String(v).slice(0, max));
@@ -139,21 +140,29 @@ const server = http.createServer(async (req, res) => {
 
     // CSV export of one shop's events (opens in Excel / Google Sheets). Protected by the same read key.
     if (req.method === "GET" && url.pathname === "/api/events.csv") {
+      // With ?mobile=NUMBER -> that shop only. Without it -> every shop, with a mobile column.
       const m = url.searchParams.get("mobile");
-      if (!isMobile(m)) return send(res, 400, { error: "mobile required" });
-      const limit = Math.min(Number(url.searchParams.get("limit") || 5000), 20000);
-      const rows = stmt.listEvents.all(m, limit);
+      if (m && !isMobile(m)) return send(res, 400, { error: "invalid mobile" });
+      const limit = Math.min(Number(url.searchParams.get("limit") || 20000), 100000);
+      const rows = m ? stmt.listEvents.all(m, limit) : stmt.listAllEvents.all(limit);
       const cell = (v) => {
         const s = v == null ? "" : String(v);
         return /[",\r\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
       };
-      const header = ["time_utc", "session_id", "who", "category", "what", "device_id", "ip"];
+      const header = m
+        ? ["time_utc", "session_id", "who", "category", "what", "device_id", "ip"]
+        : ["mobile", "time_utc", "session_id", "who", "category", "what", "device_id", "ip"];
       const lines = [header.join(",")].concat(
-        rows.map((r) => [r.ts, r.session_id, r.who, r.cat, r.what, r.device_id, r.ip].map(cell).join(","))
+        rows.map((r) =>
+          (m
+            ? [r.ts, r.session_id, r.who, r.cat, r.what, r.device_id, r.ip]
+            : [r.mobile, r.ts, r.session_id, r.who, r.cat, r.what, r.device_id, r.ip]
+          ).map(cell).join(",")
+        )
       );
       res.writeHead(200, {
         "content-type": "text/csv; charset=utf-8",
-        "content-disposition": `attachment; filename="dukaanos-events-${m}.csv"`,
+        "content-disposition": `attachment; filename="dukaanos-events-${m || "all"}.csv"`,
         "access-control-allow-origin": CORS_ORIGIN,
       });
       return res.end("﻿" + lines.join("\r\n") + "\r\n");
