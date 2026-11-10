@@ -1,0 +1,114 @@
+// DukaanOS database API: stores merchant snapshots and the activity log in SQLite.
+// Run: node --no-warnings server/server.js   (env: PORT, DB_FILE, CORS_ORIGIN)
+const http = require("node:http");
+const path = require("node:path");
+const fs = require("node:fs");
+const { DatabaseSync } = require("node:sqlite");
+
+const PORT = Number(process.env.PORT || 8787);
+const DB_FILE = process.env.DB_FILE || path.join(__dirname, "data", "dukaanos.db");
+const CORS_ORIGIN = process.env.CORS_ORIGIN || "*";
+const MAX_BODY = 8 * 1024 * 1024;
+
+fs.mkdirSync(path.dirname(DB_FILE), { recursive: true });
+const db = new DatabaseSync(DB_FILE);
+db.exec(`
+  PRAGMA journal_mode = WAL;
+  CREATE TABLE IF NOT EXISTS merchants (
+    mobile TEXT PRIMARY KEY, biz_name TEXT, mcc TEXT, data TEXT NOT NULL, updated_at TEXT NOT NULL
+  );
+  CREATE TABLE IF NOT EXISTS snapshots (
+    id INTEGER PRIMARY KEY AUTOINCREMENT, mobile TEXT NOT NULL, data TEXT NOT NULL, saved_at TEXT NOT NULL
+  );
+  CREATE TABLE IF NOT EXISTS events (
+    id INTEGER PRIMARY KEY AUTOINCREMENT, mobile TEXT NOT NULL, ts TEXT NOT NULL,
+    who TEXT, cat TEXT, what TEXT, received_at TEXT NOT NULL
+  );
+  CREATE INDEX IF NOT EXISTS events_mobile_ts ON events (mobile, ts);
+`);
+
+const stmt = {
+  upsertMerchant: db.prepare(`INSERT INTO merchants (mobile, biz_name, mcc, data, updated_at) VALUES (?, ?, ?, ?, ?)
+    ON CONFLICT(mobile) DO UPDATE SET biz_name = excluded.biz_name, mcc = excluded.mcc, data = excluded.data, updated_at = excluded.updated_at`),
+  addSnapshot: db.prepare("INSERT INTO snapshots (mobile, data, saved_at) VALUES (?, ?, ?)"),
+  addEvent: db.prepare("INSERT INTO events (mobile, ts, who, cat, what, received_at) VALUES (?, ?, ?, ?, ?, ?)"),
+  getMerchant: db.prepare("SELECT mobile, biz_name, mcc, updated_at FROM merchants WHERE mobile = ?"),
+  listEvents: db.prepare("SELECT ts, who, cat, what FROM events WHERE mobile = ? ORDER BY ts DESC LIMIT ?"),
+};
+
+const str = (v, max = 200) => (v == null ? null : String(v).slice(0, max));
+const isMobile = (m) => typeof m === "string" && /^\d{6,15}$/.test(m);
+
+function send(res, code, body) {
+  res.writeHead(code, {
+    "content-type": "application/json",
+    "access-control-allow-origin": CORS_ORIGIN,
+    "access-control-allow-headers": "content-type",
+    "access-control-allow-methods": "GET,POST,OPTIONS",
+  });
+  res.end(JSON.stringify(body));
+}
+
+function readBody(req) {
+  return new Promise((resolve, reject) => {
+    let size = 0; const chunks = [];
+    req.on("data", (c) => { size += c.length; if (size > MAX_BODY) { reject(new Error("too large")); req.destroy(); } else chunks.push(c); });
+    req.on("end", () => { try { resolve(JSON.parse(Buffer.concat(chunks).toString("utf8") || "{}")); } catch (e) { reject(e); } });
+    req.on("error", reject);
+  });
+}
+
+const server = http.createServer(async (req, res) => {
+  const url = new URL(req.url, "http://x");
+  if (req.method === "OPTIONS") return send(res, 204, {});
+  try {
+    if (req.method === "GET" && url.pathname === "/health") return send(res, 200, { ok: true });
+
+    if (req.method === "POST" && url.pathname === "/api/snapshot") {
+      const b = await readBody(req);
+      if (!isMobile(b.mobile) || typeof b.data !== "string") return send(res, 400, { error: "mobile and data required" });
+      const now = new Date().toISOString();
+      db.exec("BEGIN");
+      try {
+        stmt.upsertMerchant.run(b.mobile, str(b.bizName), str(b.mcc, 10), b.data, now);
+        stmt.addSnapshot.run(b.mobile, b.data, now);
+        db.exec("COMMIT");
+      } catch (e) { db.exec("ROLLBACK"); throw e; }
+      return send(res, 200, { ok: true, saved_at: now });
+    }
+
+    if (req.method === "POST" && url.pathname === "/api/events") {
+      const b = await readBody(req);
+      if (!isMobile(b.mobile) || !Array.isArray(b.events)) return send(res, 400, { error: "mobile and events required" });
+      const now = new Date().toISOString();
+      db.exec("BEGIN");
+      try {
+        for (const e of b.events.slice(0, 500)) {
+          stmt.addEvent.run(b.mobile, str(e.ts, 40) || now, str(e.who, 60), str(e.cat, 40), str(e.what, 500), now);
+        }
+        db.exec("COMMIT");
+      } catch (e) { db.exec("ROLLBACK"); throw e; }
+      return send(res, 200, { ok: true, stored: Math.min(b.events.length, 500) });
+    }
+
+    if (req.method === "GET" && url.pathname === "/api/merchant") {
+      const m = url.searchParams.get("mobile");
+      const row = isMobile(m) ? stmt.getMerchant.get(m) : null;
+      return row ? send(res, 200, row) : send(res, 404, { error: "not found" });
+    }
+
+    if (req.method === "GET" && url.pathname === "/api/events") {
+      const m = url.searchParams.get("mobile");
+      if (!isMobile(m)) return send(res, 400, { error: "mobile required" });
+      const limit = Math.min(Number(url.searchParams.get("limit") || 100), 1000);
+      return send(res, 200, { events: stmt.listEvents.all(m, limit) });
+    }
+
+    return send(res, 404, { error: "no such route" });
+  } catch (e) {
+    return send(res, 400, { error: String(e.message || e) });
+  }
+});
+
+if (require.main === module) server.listen(PORT, () => console.log(`DukaanOS API on :${PORT}, db ${DB_FILE}`));
+module.exports = server;

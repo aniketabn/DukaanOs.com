@@ -4822,6 +4822,29 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
   /* ---------- merchant accounts (mobile number → business profile) ---------- */
   const LS_REGISTRY = "dukaanos.merchants";
   const LS_SESSION = "dukaanos.session";
+  /* hosted database API (see server/README.md). Empty = local-only: nothing leaves the browser. */
+  const DB_API = "";
+  let dbTimer = null, dbPending = null;
+  const dbEvents = [];
+  function dbSend(path, body) {
+    if (!DB_API) return Promise.resolve(false);
+    return fetch(DB_API + path, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(body), keepalive: true })
+      .then((r) => r.ok).catch(() => false);
+  }
+  function dbSchedule() { if (!DB_API) return; clearTimeout(dbTimer); dbTimer = setTimeout(dbFlush, 1200); }
+  function dbFlush() {
+    if (!DB_API || !state.auth || !state.auth.mobile) return;
+    const mobile = state.auth.mobile;
+    if (dbPending) {
+      const snap = dbPending; dbPending = null;
+      dbSend("/api/snapshot", { mobile, bizName: state.bizName, mcc: state.mcc, data: snap }).then((ok) => { if (!ok) dbPending = snap; });
+    }
+    if (dbEvents.length) {
+      const batch = dbEvents.splice(0);
+      dbSend("/api/events", { mobile, events: batch }).then((ok) => { if (!ok) dbEvents.unshift(...batch); });
+    }
+  }
+  window.addEventListener("pagehide", () => dbFlush());
   const MERCHANT_SEED = {
     "9876543210": { owner: "Ramesh Sharma", bizName: "Sharma Tea & Snacks", mcc: "5814", reg: { mcc: "5814", via: "QR code" } },
     "9822034567": { owner: "Sunita Gupta",  bizName: "Gupta Kirana Store",  mcc: "5411", reg: { mcc: "5411", via: "Soundbox" } },
@@ -4885,6 +4908,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       }, function (k, v) { return this[k] instanceof Date ? { [DATE_TAG]: this[k].getTime() } : v; });
       reg[state.auth.mobile] = { ...cur, data };
       saveRegistry(reg);
+      if (DB_API) { dbPending = data; dbSchedule(); }
     } catch (_) { /* storage full / private mode, demo keeps running in memory */ }
   }
   function restoreState(m) {
@@ -8993,6 +9017,7 @@ function renderSettings() {
   /* audit + drawer — shared hooks (drawer detail lands in the Drawer feature) */
   function auditLog(cat, what) {
     state.audit.unshift({ ts: now(), who: activeStaffName(), cat, what });
+    if (DB_API) { dbEvents.push({ ts: new Date().toISOString(), who: activeStaffName(), cat, what }); dbSchedule(); }
     if (state.audit.length > 120) state.audit.length = 120;
   }
   function drawerCashOut(amtCents, note) {
