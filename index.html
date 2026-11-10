@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<title>Square POS — Interactive Demo</title>
+<title>Square POS, Interactive Demo</title>
 <meta name="description" content="A hands-on interactive simulation of the Square point-of-sale app: ring up sales, take payments, then explore the dashboard, invoices and customer discount tools owners use daily." />
 <style>
 /* ============ Square POS Demo — design tokens ============ */
@@ -721,7 +721,7 @@ select.field-input{appearance:none;background-image:url("data:image/svg+xml,%3Cs
 .ob-sub{font-size:16px;line-height:1.4;color:var(--ink-60);margin-bottom:28px}
 .ob-field{display:block}
 .ob-field + .ob-field{margin-top:20px}
-.ob-field span{display:block;font-size:13px;font-weight:600;color:var(--ink-60);margin-bottom:8px;padding-left:2px}
+.ob-field > span{display:block;font-size:13px;font-weight:600;color:var(--ink-60);margin-bottom:8px;padding-left:2px}
 .ob-field input{
   width:100%;min-height:52px;border:0;border-radius:12px;background:rgba(118,118,128,.12);
   padding:14px 16px;font-size:17px;font-weight:500;color:var(--ink);outline:none;
@@ -729,6 +729,12 @@ select.field-input{appearance:none;background-image:url("data:image/svg+xml,%3Cs
 }
 .ob-field input::placeholder{color:var(--ink-38)}
 .ob-field input:focus{box-shadow:0 0 0 3px rgba(10,132,255,.35)}
+.onboard-body{display:flex;flex-direction:column}
+.auth-body{display:flex;flex-direction:column}
+.ostep.ostep-center.is-on{flex:1;display:flex;flex-direction:column;justify-content:center;text-align:center}
+.ostep-center .ob-title,.ostep-center .ob-sub{text-align:center}
+.ostep-center .ob-sub{margin-left:auto;margin-right:auto;max-width:320px}
+.ostep-center .ob-field > span{text-align:center;padding-left:0}
 .ob-skiplink{
   display:block;margin:26px auto 0;min-height:44px;padding:0 16px;font-size:16px;font-weight:500;color:#0a84ff;
   background:none;border:0;
@@ -1684,15 +1690,15 @@ button.sheet-empty:active{transform:scale(.98)}
     <p class="brief-eyebrow">Interactive simulation · CRM-lite for India</p>
     <h1 class="brief-title">One app for the<br />whole shop.</h1>
     <p class="brief-copy">
-      Payments, reconciliation, voice inventory, udhaar khata and customer growth — built
+      Payments, reconciliation, voice inventory, udhaar khata and customer growth, built
       around how Indian merchants actually work: static QR on the counter, soundbox
       announcements, and a shop you set up by talking to it. Nothing is real; every control works.
     </p>
     <ol class="brief-steps">
-      <li><span>1</span><strong>Onboarding</strong> — pick your business, the whole app re-shapes</li>
-      <li><span>2</span>Take payment — dynamic QR, static QR, card or cash; <strong>Payments</strong> auto-match</li>
-      <li><span>3</span><strong>Stock</strong> — say “maggi 20 packet” or “atta khatam” to update inventory</li>
-      <li><span>4</span><strong>Khata</strong> + <strong>Marketing</strong> — voice udhaar, then nudge customers back</li>
+      <li><span>1</span><strong>Onboarding</strong>, pick your business, the whole app re-shapes</li>
+      <li><span>2</span>Take payment, dynamic QR, static QR, card or cash; <strong>Payments</strong> auto-match</li>
+      <li><span>3</span><strong>Stock</strong>, say “maggi 20 packet” or “atta khatam” to update inventory</li>
+      <li><span>4</span><strong>Khata</strong> + <strong>Marketing</strong>, voice udhaar, then nudge customers back</li>
     </ol>
     <p class="brief-foot">Best experienced in the phone frame →</p>
   </aside>
@@ -1725,7 +1731,7 @@ button.sheet-empty:active{transform:scale(.98)}
         </button>
         <div class="avatar" id="appbar-avatar" aria-hidden="true">CC</div>
       </header>
-      <div class="offline-banner" id="offline-banner" hidden>You're offline — billing, khata &amp; stock keep working on this device</div>
+      <div class="offline-banner" id="offline-banner" hidden>You're offline, billing, khata &amp; stock keep working on this device</div>
 
       <!-- ======================= SCREENS ======================= -->
       <main class="screens" id="screens">
@@ -1814,16 +1820,16 @@ button.sheet-empty:active{transform:scale(.98)}
               <div class="dash-peak" id="dash-peak-note"></div>
             </div>
             <div class="dash-card">
-              <div class="dash-card-title">Payment mix — today</div>
+              <div class="dash-card-title">Payment mix, today</div>
               <div id="dash-paymix"></div>
             </div>
             <div class="dash-card">
-              <div class="dash-card-title">Customers — new vs repeat (7 days)</div>
+              <div class="dash-card-title">Customers, new vs repeat (7 days)</div>
               <svg class="dash-chart" id="trend-chart" role="img" aria-label="New versus repeat customers by day"></svg>
               <div class="trend-legend"><span class="lg lg-repeat">Repeat</span><span class="lg lg-new">New</span><span class="trend-note" id="trend-note"></span></div>
             </div>
             <div class="dash-card">
-              <div class="dash-card-title exp-title"><span>Expenses — today</span><button class="ghost-btn ghost-sm" id="btn-add-expense">+ Add</button></div>
+              <div class="dash-card-title exp-title"><span>Expenses, today</span><button class="ghost-btn ghost-sm" id="btn-add-expense">+ Add</button></div>
               <div id="dash-exp-list"></div>
               <div class="dash-exp-total" id="dash-exp-total"></div>
             </div>
@@ -1843,7 +1849,7 @@ button.sheet-empty:active{transform:scale(.98)}
             <div class="dash-card">
               <div class="dash-card-title exp-title"><span>Owner update</span><span class="drawer-status" id="wa-status"></span></div>
               <div id="dash-wa-body">
-                <p class="sheet-empty" style="text-align:left">Send today's numbers to the owner on WhatsApp — sales, expenses, drawer &amp; udhaar in one message.</p>
+                <p class="sheet-empty" style="text-align:left">Send today's numbers to the owner on WhatsApp, sales, expenses, drawer &amp; udhaar in one message.</p>
                 <button class="ghost-btn ghost-sm" id="btn-wa-summary" style="width:100%;margin-top:6px">Send today's summary (simulated)</button>
               </div>
             </div>
@@ -1853,15 +1859,15 @@ button.sheet-empty:active{transform:scale(.98)}
             </div>
             <div class="dash-links">
               <button class="dash-link" id="dash-link-invoices">
-                <span class="dash-link-main"><strong>Invoices</strong><small id="dash-inv-summary">—</small></span>
+                <span class="dash-link-main"><strong>Invoices</strong><small id="dash-inv-summary">-</small></span>
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 6l6 6-6 6"/></svg>
               </button>
               <button class="dash-link" id="dash-link-customers">
-                <span class="dash-link-main"><strong>Customers &amp; discounts</strong><small id="dash-cust-summary">—</small></span>
+                <span class="dash-link-main"><strong>Customers &amp; discounts</strong><small id="dash-cust-summary">-</small></span>
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 6l6 6-6 6"/></svg>
               </button>
               <button class="dash-link" id="dash-link-stock">
-                <span class="dash-link-main"><strong>Stock · inventory</strong><small id="dash-stock-summary">—</small></span>
+                <span class="dash-link-main"><strong>Stock · inventory</strong><small id="dash-stock-summary">-</small></span>
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 6l6 6-6 6"/></svg>
               </button>
             </div>
@@ -1899,7 +1905,7 @@ button.sheet-empty:active{transform:scale(.98)}
             </label>
             <label class="field">
               <span class="field-label">Description</span>
-              <input id="inv-desc" class="field-input" type="text" maxlength="60" placeholder="e.g. Catering — office lunch" />
+              <input id="inv-desc" class="field-input" type="text" maxlength="60" placeholder="e.g. Catering, office lunch" />
             </label>
             <label class="field">
               <span class="field-label">Amount</span>
@@ -2000,7 +2006,7 @@ button.sheet-empty:active{transform:scale(.98)}
               <span class="tender-ic" aria-hidden="true">
                 <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M5 4.5h11a2.5 2.5 0 0 1 2.5 2.5v10.5a2.5 2.5 0 0 1-2.5 2.5H5z"/><path d="M5 4.5A1.5 1.5 0 0 0 3.5 6v12A1.5 1.5 0 0 0 5 19.5"/><line x1="8.5" y1="8.5" x2="14.5" y2="8.5"/><line x1="8.5" y1="12" x2="13" y2="12"/></svg>
               </span>
-              <span class="tender-text"><strong>Khata · udhaar</strong><small>Charge to customer — pay later</small></span>
+              <span class="tender-text"><strong>Khata · udhaar</strong><small>Charge to customer, pay later</small></span>
               <svg class="tender-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 6l6 6-6 6"/></svg>
             </button>
             <button class="tender-opt" id="tender-split">
@@ -2013,10 +2019,10 @@ button.sheet-empty:active{transform:scale(.98)}
           </div>
           <button class="attach-row" id="btn-attach">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="8" r="3.6"/><path d="M5 19.5c1.2-3.4 3.9-5 7-5s5.8 1.6 7 5"/></svg>
-            <span id="attach-label">Add customer — keep visit history</span>
+            <span id="attach-label">Add customer, keep visit history</span>
             <span class="attach-clear" id="attach-clear" hidden>Remove</span>
           </button>
-          <p class="tender-note">UPI is free to accept — settlement same day. Card fee 1.9% applies.</p>
+          <p class="tender-note">UPI is free to accept, settlement same day. Card fee 1.9% applies.</p>
         </section>
 
         <!-- CARD READER -->
@@ -2067,7 +2073,7 @@ button.sheet-empty:active{transform:scale(.98)}
               <span class="upi-app">Paytm</span>
               <span class="upi-app">BHIM</span>
             </div>
-            <p class="upi-hint">Customer scans with any UPI app — the amount is pre-filled.<br /><em>(payment arrives automatically in this demo)</em></p>
+            <p class="upi-hint">Customer scans with any UPI app, the amount is pre-filled.<br /><em>(payment arrives automatically in this demo)</em></p>
           </div>
         </section>
 
@@ -2194,7 +2200,7 @@ button.sheet-empty:active{transform:scale(.98)}
             <div class="voice-samples" id="stock-samples"></div>
             <button class="add-row" id="btn-add-item">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
-              Add item — type it in
+              Add item, type it in
             </button>
             <div class="tx-list" id="stock-list"></div>
           </div>
@@ -2205,14 +2211,14 @@ button.sheet-empty:active{transform:scale(.98)}
                 <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21M8.5 21h7"/></svg>
               </button>
               <div class="voice-main">
-                <span class="voice-label" id="pur-voice-label">Say: item + qty + rate — “maggi 50 packet 65 rupaye”</span>
+                <span class="voice-label" id="pur-voice-label">Say: item + qty + rate, “maggi 50 packet 65 rupaye”</span>
                 <span class="voice-transcript" id="pur-transcript"></span>
               </div>
             </div>
             <div class="voice-samples" id="pur-samples"></div>
             <button class="add-row" id="btn-add-purchase">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
-              Add purchase — type it in
+              Add purchase, type it in
             </button>
             <div class="reorder-card" id="reorder-card" hidden>
               <div class="reorder-head">
@@ -2363,7 +2369,7 @@ button.sheet-empty:active{transform:scale(.98)}
             <div class="set-card">
               <div class="set-card-title">Account</div>
               <div class="set-row">
-                <div class="set-row-main"><strong id="set-merchant">—</strong><small id="set-mobile">—</small></div>
+                <div class="set-row-main"><strong id="set-merchant">-</strong><small id="set-mobile">-</small></div>
                 <button class="ghost-btn sm" id="set-logout">Log out</button>
               </div>
             </div>
@@ -2374,11 +2380,11 @@ button.sheet-empty:active{transform:scale(.98)}
                 <input id="set-name" type="text" maxlength="28" autocomplete="off">
               </label>
               <div class="set-row">
-                <div class="set-row-main"><strong>Business type</strong><small id="set-type-label">—</small></div>
+                <div class="set-row-main"><strong>Business type</strong><small id="set-type-label">-</small></div>
                 <button class="ghost-btn sm" id="btn-set-type">Change</button>
               </div>
               <div class="set-row">
-                <div class="set-row-main"><strong data-lex="libraryTab">Library</strong><small id="set-items-label">—</small></div>
+                <div class="set-row-main"><strong data-lex="libraryTab">Library</strong><small id="set-items-label">-</small></div>
                 <button class="ghost-btn sm" id="btn-set-items">Manage</button>
               </div>
               <div class="set-row">
@@ -2409,7 +2415,7 @@ button.sheet-empty:active{transform:scale(.98)}
               </label>
             </div>
             <div class="set-card" id="set-features-card">
-              <div class="set-card-title">Feature switches <small class="set-hint-inline">one place to run the whole app — menus &amp; screens adjust instantly</small></div>
+              <div class="set-card-title">Feature switches <small class="set-hint-inline">one place to run the whole app, menus &amp; screens adjust instantly</small></div>
               <div class="set-table">
               <div class="set-divider">Modules</div>
               <div class="set-row">
@@ -2434,7 +2440,7 @@ button.sheet-empty:active{transform:scale(.98)}
               </div>
               <div class="set-divider">Billing</div>
               <div class="set-row">
-                <div class="set-row-main"><strong>GST applicable</strong><small id="set-gst-sub">turn off if your business is not GST registered — prices become final, no tax on sales</small></div>
+                <div class="set-row-main"><strong>GST applicable</strong><small id="set-gst-sub">turn off if your business is not GST registered, prices become final, no tax on sales</small></div>
                 <button class="switch is-on" id="sw-gst" role="switch" aria-checked="true"><span></span></button>
               </div>
               <div class="set-divider">Headless UI <small class="set-hint-inline">voice &amp; chat can run these for you</small></div>
@@ -2469,7 +2475,7 @@ button.sheet-empty:active{transform:scale(.98)}
                 <button class="switch is-on" data-setff="soundbox" role="switch" aria-checked="true"><span></span></button>
               </div>
               <div class="set-row">
-                <div class="set-row-main"><strong>Static QR standee</strong><small>printed counter QR — customer enters the amount</small></div>
+                <div class="set-row-main"><strong>Static QR standee</strong><small>printed counter QR, customer enters the amount</small></div>
                 <button class="switch is-on" data-setff="standee" role="switch" aria-checked="true"><span></span></button>
               </div>
               <div class="set-row">
@@ -2485,7 +2491,7 @@ button.sheet-empty:active{transform:scale(.98)}
                 <button class="switch" data-setff="linkpay" role="switch" aria-checked="false"><span></span></button>
               </div>
               <div class="set-row">
-                <div class="set-row-main"><strong>All-in-One device</strong><small>all form factors in one device — sound box, static QR, card swipe &amp; DQR screen · DQR &amp; card auto-match</small></div>
+                <div class="set-row-main"><strong>All-in-One device</strong><small>all form factors in one device, sound box, static QR, card swipe &amp; DQR screen · DQR &amp; card auto-match</small></div>
                 <button class="switch" data-setff="allinone" role="switch" aria-checked="false"><span></span></button>
               </div>
               </div>
@@ -2527,7 +2533,7 @@ button.sheet-empty:active{transform:scale(.98)}
             <div class="set-card" id="set-disc-card">
               <div class="set-card-title">Customer discounts</div>
               <div class="set-row">
-                <div class="set-row-main"><strong>Discount module</strong><small>flat % off for tagged customers — totally optional</small></div>
+                <div class="set-row-main"><strong>Discount module</strong><small>flat % off for tagged customers, totally optional</small></div>
                 <button class="switch" id="set-disc-toggle" role="switch" aria-checked="false"><span></span></button>
               </div>
               <div class="set-row" id="set-disc-pct-row" hidden>
@@ -2542,7 +2548,7 @@ button.sheet-empty:active{transform:scale(.98)}
             <div class="set-card" id="set-stores-card">
               <div class="set-card-title">Stores</div>
               <div class="set-row">
-                <div class="set-row-main"><strong>Branches</strong><small id="set-stores-count">—</small></div>
+                <div class="set-row-main"><strong>Branches</strong><small id="set-stores-count">-</small></div>
                 <button class="ghost-btn sm" id="btn-store-add">+ Add</button>
               </div>
               <div id="set-stores-list"></div>
@@ -2562,7 +2568,7 @@ button.sheet-empty:active{transform:scale(.98)}
                 <button class="ghost-btn sm" id="btn-staff-switch">Switch</button>
               </div>
               <div class="set-row">
-                <div class="set-row-main"><strong>Team</strong><small id="set-staff-count">—</small></div>
+                <div class="set-row-main"><strong>Team</strong><small id="set-staff-count">-</small></div>
                 <button class="ghost-btn sm" id="btn-staff-add">+ Add</button>
               </div>
               <div id="set-staff-list"></div>
@@ -2591,7 +2597,7 @@ button.sheet-empty:active{transform:scale(.98)}
                 <div class="set-row-main"><strong>Meta · Facebook &amp; Instagram</strong><small id="set-meta-state">not connected</small></div>
                 <button class="ghost-btn sm" id="btn-meta-connect">Connect</button>
               </div>
-              <small class="set-hint" id="set-meta-hint">Connect once — then run campaigns and see your Meta dashboard inside Social.</small>
+              <small class="set-hint" id="set-meta-hint">Connect once, then run campaigns and see your Meta dashboard inside Social.</small>
             </div>
             <div class="set-card">
               <div class="set-card-title">Voice · आवाज़</div>
@@ -2612,7 +2618,7 @@ button.sheet-empty:active{transform:scale(.98)}
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 6l6 6-6 6"/></svg>
               </button>
             </div>
-            <p class="drawer-foot">Simulation — no real payments, messages or settlements happen.</p>
+            <p class="drawer-foot">Simulation, no real payments, messages or settlements happen.</p>
           </div>
         </section>
 
@@ -2640,7 +2646,7 @@ button.sheet-empty:active{transform:scale(.98)}
                 <div class="rep-cell"><small>Orders</small><strong id="rep-orders">0</strong></div>
                 <div class="rep-cell"><small>Avg order</small><strong id="rep-avg">₹0</strong></div>
                 <div class="rep-cell"><small>Items sold</small><strong id="rep-items">0</strong></div>
-                <div class="rep-cell"><small>Top item</small><strong id="rep-top">—</strong></div>
+                <div class="rep-cell"><small>Top item</small><strong id="rep-top">-</strong></div>
               </div>
               <div class="rep-paymix" id="rep-paymix"></div>
             </div>
@@ -2883,7 +2889,7 @@ button.sheet-empty:active{transform:scale(.98)}
             <input id="supa-f-name" type="text" maxlength="28" autocomplete="off" placeholder="e.g. Sharma Distributors">
           </label>
           <label class="ob-field">
-            <span>Opening udhaar (₹) <small style="text-transform:none;letter-spacing:0;font-weight:400">optional — already owed</small></span>
+            <span>Opening udhaar (₹) <small style="text-transform:none;letter-spacing:0;font-weight:400">optional, already owed</small></span>
             <input id="supa-f-due" type="text" inputmode="decimal" autocomplete="off" placeholder="0">
           </label>
           <button class="charge-btn" id="supa-f-save">Save supplier</button>
@@ -2957,8 +2963,8 @@ button.sheet-empty:active{transform:scale(.98)}
               <button class="chip" data-m="Bank">Bank transfer</button>
             </div>
           </div>
-          <p class="set-hint" id="pur-f-later-note" hidden>Added to the supplier's udhaar — settle later from Suppliers.</p>
-          <p class="set-hint" id="pur-f-already-note" hidden>Recorded as already paid — the bill shows settled, no money moves now.</p>
+          <p class="set-hint" id="pur-f-later-note" hidden>Added to the supplier's udhaar, settle later from Suppliers.</p>
+          <p class="set-hint" id="pur-f-already-note" hidden>Recorded as already paid, the bill shows settled, no money moves now.</p>
           <button class="charge-btn" id="pur-f-save">Add purchase</button>
         </div>
       </div>
@@ -2991,7 +2997,7 @@ button.sheet-empty:active{transform:scale(.98)}
         <div class="sheet-head"><span>Staff</span></div>
         <div class="sheet-form">
           <div id="staff-pin-stage">
-            <div class="tag-vpa"><span class="tag-vpa-label">Sign in with your 4-digit PIN</span><strong id="staff-pin-name">—</strong></div>
+            <div class="tag-vpa"><span class="tag-vpa-label">Sign in with your 4-digit PIN</span><strong id="staff-pin-name">-</strong></div>
             <div class="staff-pin-row" id="staff-pin-row">
               <input maxlength="1" inputmode="numeric"><input maxlength="1" inputmode="numeric"><input maxlength="1" inputmode="numeric"><input maxlength="1" inputmode="numeric">
             </div>
@@ -3030,7 +3036,7 @@ button.sheet-empty:active{transform:scale(.98)}
         <div class="sheet-form">
           <div class="tag-vpa">
             <span class="tag-vpa-label">WhatsApp · to owner</span>
-            <strong id="wa-to">+91 —</strong>
+            <strong id="wa-to">+91 -</strong>
           </div>
           <pre class="wa-preview" id="wa-preview"></pre>
           <button class="charge-btn" id="wa-send">Send on WhatsApp (simulated)</button>
@@ -3132,7 +3138,7 @@ button.sheet-empty:active{transform:scale(.98)}
       <!-- day-end Z report sheet -->
       <div class="sheet" id="z-sheet" role="dialog" aria-label="Day-end report" hidden>
         <div class="sheet-grab" aria-hidden="true"></div>
-        <div class="sheet-head"><span>Day-end — Z report</span></div>
+        <div class="sheet-head"><span>Day-end, Z report</span></div>
         <div class="sheet-form">
           <div id="z-rows"></div>
           <label class="ob-field">
@@ -3162,7 +3168,7 @@ button.sheet-empty:active{transform:scale(.98)}
             <span id="link-diff">Pick what was sold</span>
           </div>
           <button class="charge-btn" id="link-save" disabled>Save linked items</button>
-          <button class="ghost-btn" id="link-othinc" hidden>Not a sale — mark as other income</button>
+          <button class="ghost-btn" id="link-othinc" hidden>Not a sale, mark as other income</button>
           <button class="ghost-btn" id="link-cancel">Cancel</button>
         </div>
       </div>
@@ -3225,7 +3231,7 @@ button.sheet-empty:active{transform:scale(.98)}
       <div class="sheet" id="assist-sheet" hidden>
         <div class="sheet-grab"></div>
         <div class="sheet-head"><span>Assistant · voice &amp; chat</span><button class="ghost-btn sm" id="assist-close">Close</button></div>
-        <small class="assist-sub">Headless control — say it or type it, DukaanOS does it</small>
+        <small class="assist-sub">Headless control, say it or type it, DukaanOS does it</small>
         <div class="assist-log" id="assist-log"></div>
         <div class="assist-chips" id="assist-chips"></div>
         <div class="assist-inputrow">
@@ -3277,7 +3283,7 @@ button.sheet-empty:active{transform:scale(.98)}
           </div>
           <button class="charge-btn" id="meta-f-connect">Connect Page</button>
           <button class="ghost-btn" id="meta-f-cancel">Not now</button>
-          <small class="set-hint">Simulation — no real Meta account is touched.</small>
+          <small class="set-hint">Simulation, no real Meta account is touched.</small>
         </div>
       </div>
 
@@ -3293,7 +3299,7 @@ button.sheet-empty:active{transform:scale(.98)}
             <span>Customer name</span>
             <input id="tag-f-name" type="text" maxlength="26" autocomplete="off" placeholder="e.g. Arjun Mehta">
           </label>
-          <small class="set-hint">Next time this UPI id pays at your counter, the sale tags itself — no typing, no phone number needed.</small>
+          <small class="set-hint">Next time this UPI id pays at your counter, the sale tags itself, no typing, no phone number needed.</small>
           <button class="charge-btn" id="tag-f-save">Tag customer</button>
           <button class="ghost-btn" id="tag-f-skip">Skip for now</button>
         </div>
@@ -3340,9 +3346,9 @@ button.sheet-empty:active{transform:scale(.98)}
             <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm5.3 14.1c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .2-3.4-.7-2.9-1.1-4.7-4-4.9-4.2-.1-.2-1.1-1.5-1.1-2.9s.7-2 1-2.3c.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.9 2.1c.1.2.1.4 0 .6l-.4.6-.4.5c-.1.1-.3.3-.1.6.2.3.8 1.3 1.7 2.1 1.2 1.1 2.2 1.4 2.5 1.5.3.1.5.1.7-.1l1-1.2c.2-.3.4-.2.7-.1l2 1c.3.1.5.2.6.4 0 .1 0 .7-.2 1.1z"/></svg>
             Send on WhatsApp (simulated)
           </button>
-          <button class="ghost-btn" id="paylink-paid">Customer paid — record it (demo)</button>
+          <button class="ghost-btn" id="paylink-paid">Customer paid, record it (demo)</button>
           <button class="ghost-btn" id="paylink-close">Close</button>
-          <small class="set-hint">Simulation — the link opens UPI on the customer's phone in a real deployment.</small>
+          <small class="set-hint">Simulation, the link opens UPI on the customer's phone in a real deployment.</small>
         </div>
       </div>
 
@@ -3351,7 +3357,7 @@ button.sheet-empty:active{transform:scale(.98)}
         <div class="sheet-grab" aria-hidden="true"></div>
         <div class="sheet-head"><span>WhatsApp Business</span></div>
         <div class="sheet-form">
-          <p class="set-hint" style="margin-top:0">Share your catalogue and order link — customers order from the WhatsApp Business catalogue and orders land here with their name, number and address.</p>
+          <p class="set-hint" style="margin-top:0">Share your catalogue and order link, customers order from the WhatsApp Business catalogue and orders land here with their name, number and address.</p>
           <label class="ob-field">
             <span>Catalogue link</span>
             <input id="walink-cat" type="text" readonly>
@@ -3373,7 +3379,7 @@ button.sheet-empty:active{transform:scale(.98)}
             Share catalogue on WhatsApp (simulated)
           </button>
           <button class="ghost-btn" id="walink-close">Close</button>
-          <small class="set-hint">Simulation — the links open WhatsApp on the customer&#39;s phone in a real deployment.</small>
+          <small class="set-hint">Simulation, the links open WhatsApp on the customer&#39;s phone in a real deployment.</small>
         </div>
       </div>
 
@@ -3430,7 +3436,7 @@ button.sheet-empty:active{transform:scale(.98)}
         <div class="wa-sheet-actions" id="wa-actions">
           <button class="ghost-btn" id="waorder-cancel">Discard</button>
         </div>
-        <small class="set-hint" style="padding:0 20px 14px;display:block">Simulation — in production the number, message and location pin arrive from WhatsApp, and the order is created when you convert.</small>
+        <small class="set-hint" style="padding:0 20px 14px;display:block">Simulation, in production the number, message and location pin arrive from WhatsApp, and the order is created when you convert.</small>
       </div>
 
       <!-- catalogue pick sheet -->
@@ -3438,7 +3444,7 @@ button.sheet-empty:active{transform:scale(.98)}
         <div class="sheet-grab" aria-hidden="true"></div>
         <div class="sheet-head"><span>Catalogue pick · customer selection</span></div>
         <div class="sheet-form">
-          <p class="set-hint" style="margin-top:0">Your full catalogue — tap what the customer picked, then create the order.</p>
+          <p class="set-hint" style="margin-top:0">Your full catalogue, tap what the customer picked, then create the order.</p>
           <div class="catpick-tools">
             <input id="catpick-q" type="search" autocomplete="off" placeholder="Search the full catalogue">
             <select id="catpick-cat" class="camp-select" aria-label="Category"></select>
@@ -3476,7 +3482,7 @@ button.sheet-empty:active{transform:scale(.98)}
         <button class="drawer-item" data-drawer="social" id="drawer-social" hidden>Social · Meta</button>
         <span class="drawer-sec">Setup</span>
         <button class="drawer-item" data-drawer="settings">Settings</button>
-        <p class="drawer-foot">Simulation — no real payments, invoices or messages are sent.</p>
+        <p class="drawer-foot">Simulation, no real payments, invoices or messages are sent.</p>
       </aside>
 
       <!-- mobile-number login with OTP -->
@@ -3484,10 +3490,10 @@ button.sheet-empty:active{transform:scale(.98)}
         <div class="auth-body">
           <div class="auth-brand"><span class="auth-logo">₹</span><span class="auth-brandname">Dukaan<strong>OS</strong></span></div>
 
-          <section class="ostep is-on" data-astep="1">
+          <section class="ostep ostep-center is-on" data-astep="1">
             <p class="ob-kicker">Login / Sign up</p>
             <h1 class="ob-title">Your shop, one OTP away.</h1>
-            <p class="ob-sub">Enter your mobile number — your business type, items, customers and khata load with it. New number? We’ll set up your shop in 3 taps.</p>
+            <p class="ob-sub">Enter your mobile number, your business type, items, customers and khata load with it. New number? We’ll set up your shop in 3 taps.</p>
             <label class="ob-field">
               <span>Mobile number</span>
               <div class="phone-row">
@@ -3505,7 +3511,7 @@ button.sheet-empty:active{transform:scale(.98)}
             <button class="ob-skiplink" id="auth-demo">Use the demo account · 98765 43210</button>
           </section>
 
-          <section class="ostep" data-astep="2">
+          <section class="ostep ostep-center" data-astep="2">
             <p class="ob-kicker">Verify</p>
             <h1 class="ob-title">Enter the OTP.</h1>
             <p class="ob-sub" id="auth-otp-sub">Sent on WhatsApp to +91 98765 43210. <button class="linklike" id="auth-change">Change number</button></p>
@@ -3515,7 +3521,7 @@ button.sheet-empty:active{transform:scale(.98)}
               <input class="otp-box" type="tel" inputmode="numeric" maxlength="1">
               <input class="otp-box" type="tel" inputmode="numeric" maxlength="1">
             </div>
-            <p class="auth-err" id="auth-err" hidden>Incorrect OTP — check the message and try again</p>
+            <p class="auth-err" id="auth-err" hidden>Incorrect OTP, check the message and try again</p>
             <div class="otp-demo" id="otp-demo"></div>
             <button class="linklike auth-resend" id="auth-resend" disabled>Resend OTP in 30s</button>
           </section>
@@ -3531,10 +3537,10 @@ button.sheet-empty:active{transform:scale(.98)}
       <div class="onboard" id="onboard" hidden>
         <div class="onboard-dots" id="onboard-dots"><span class="is-on"></span><span></span><span></span><span></span><span></span></div>
         <div class="onboard-body">
-          <section class="ostep is-on" data-ostep="1">
+          <section class="ostep ostep-center is-on" data-ostep="1">
             <p class="ob-kicker">Welcome</p>
             <h1 class="ob-title">Let's set up your shop.</h1>
-            <p class="ob-sub">One light app for payments, recon, khata, stock and customer growth — tuned to your business.</p>
+            <p class="ob-sub">One light app for payments, recon, khata, stock and customer growth, tuned to your business.</p>
             <label class="ob-field">
               <span>Your name</span>
               <input id="ob-owner" type="text" placeholder="e.g. Ramesh Kumar" maxlength="24" autocomplete="off">
@@ -3543,7 +3549,7 @@ button.sheet-empty:active{transform:scale(.98)}
               <span>Your shop's name</span>
               <input id="ob-name" type="text" placeholder="e.g. Cutting Chai Co." maxlength="28" autocomplete="off">
             </label>
-            <button class="ob-skiplink" id="ob-skip">Skip — explore with demo data</button>
+            <button class="ob-skiplink" id="ob-skip">Skip, explore with demo data</button>
           </section>
           <section class="ostep" data-ostep="2">
             <p class="ob-kicker">Nature of business</p>
@@ -3561,7 +3567,7 @@ button.sheet-empty:active{transform:scale(.98)}
           <section class="ostep" data-ostep="3">
             <p class="ob-kicker">Your items</p>
             <h1 class="ob-title">Pick what you sell.</h1>
-            <p class="ob-sub">Fast movers are preselected — tap a name to add or remove, tap a price to set your own. Search or say a new item by voice.</p>
+            <p class="ob-sub">Fast movers are preselected, tap a name to add or remove, tap a price to set your own. Search or say a new item by voice.</p>
             <label class="ob-field">
               <span>Search items</span>
               <input id="ob-item-search" type="search" placeholder="e.g. chai, atta, tel" autocomplete="off">
@@ -3618,30 +3624,30 @@ button.sheet-empty:active{transform:scale(.98)}
           <section class="ostep" data-ostep="4">
             <p class="ob-kicker">Payments</p>
             <h1 class="ob-title">How will customers pay?</h1>
-            <p class="ob-sub">Pick the form factors you actually take at the counter. Only these appear in payment recon — a static QR payment needs your nod to tag, while a card machine settles itself.</p>
+            <p class="ob-sub">Pick the form factors you actually take at the counter. Only these appear in payment recon, a static QR payment needs your nod to tag, while a card machine settles itself.</p>
             <div class="set-table" id="obff-table">
               <div class="set-row">
                 <div class="set-row-main"><strong>Soundbox · audio QR</strong><small>static counter QR with voice alerts · rental device · payments land decoupled, tagged in recon</small></div>
                 <button class="switch is-on" data-obff="soundbox" role="switch" aria-checked="true"><span></span></button>
               </div>
               <div class="set-row">
-                <div class="set-row-main"><strong>Static QR standee</strong><small>printed counter QR — customer enters the amount · payments land decoupled, tagged in recon</small></div>
+                <div class="set-row-main"><strong>Static QR standee</strong><small>printed counter QR, customer enters the amount · payments land decoupled, tagged in recon</small></div>
                 <button class="switch is-on" data-obff="standee" role="switch" aria-checked="true"><span></span></button>
               </div>
               <div class="set-row">
-                <div class="set-row-main"><strong>Dynamic QR (DQR)</strong><small>amount-encoded QR generated per sale in the app — payments auto-match the bill, no manual recon</small></div>
+                <div class="set-row-main"><strong>Dynamic QR (DQR)</strong><small>amount-encoded QR generated per sale in the app, payments auto-match the bill, no manual recon</small></div>
                 <button class="switch" data-obff="dqr" role="switch" aria-checked="false"><span></span></button>
               </div>
               <div class="set-row">
-                <div class="set-row-main"><strong>Card machine (EDC)</strong><small>debit · credit · RuPay POS — contactless under ₹5,000 needs no PIN · auto-matched on settlement</small></div>
+                <div class="set-row-main"><strong>Card machine (EDC)</strong><small>debit · credit · RuPay POS, contactless under ₹5,000 needs no PIN · auto-matched on settlement</small></div>
                 <button class="switch" data-obff="edc" role="switch" aria-checked="false"><span></span></button>
               </div>
               <div class="set-row">
-                <div class="set-row-main"><strong>Link Pay</strong><small>UPI payment links shared on WhatsApp / SMS — amount is fixed in the link · payments auto-match, no manual recon</small></div>
+                <div class="set-row-main"><strong>Link Pay</strong><small>UPI payment links shared on WhatsApp / SMS, amount is fixed in the link · payments auto-match, no manual recon</small></div>
                 <button class="switch" data-obff="linkpay" role="switch" aria-checked="false"><span></span></button>
               </div>
               <div class="set-row">
-                <div class="set-row-main"><strong>All-in-One device</strong><small>every form factor in one device — sound box, static QR, card swipe &amp; dynamic QR screen · QR payments announced, DQR &amp; card auto-match</small></div>
+                <div class="set-row-main"><strong>All-in-One device</strong><small>every form factor in one device, sound box, static QR, card swipe &amp; dynamic QR screen · QR payments announced, DQR &amp; card auto-match</small></div>
                 <button class="switch" data-obff="allinone" role="switch" aria-checked="false"><span></span></button>
               </div>
             </div>
@@ -3649,7 +3655,7 @@ button.sheet-empty:active{transform:scale(.98)}
           <section class="ostep" data-ostep="5">
             <p class="ob-kicker">Toolkit</p>
             <h1 class="ob-title">What should DukaanOS run?</h1>
-            <p class="ob-sub">Switch features on or off — your menus and screens shape themselves. Everything stays changeable later in Settings.</p>
+            <p class="ob-sub">Switch features on or off, your menus and screens shape themselves. Everything stays changeable later in Settings.</p>
             <div class="set-table" id="obm-table">
               <div class="set-divider">Counter hardware</div>
               <div class="set-row">
@@ -3694,7 +3700,7 @@ button.sheet-empty:active{transform:scale(.98)}
               <div class="set-row-main"><strong>Invoice</strong><small>bill customers by voice or chat</small></div>
               <button class="switch is-on" data-obhl="invoice" role="switch" aria-checked="true"><span></span></button>
             </div>
-            <small class="set-hint" id="obm-gst-note" hidden>GST billing rides on Invoicing — turning it off switches GST off too.</small>
+            <small class="set-hint" id="obm-gst-note" hidden>GST billing rides on Invoicing, turning it off switches GST off too.</small>
           </section>
         </div>
         <footer class="onboard-foot">
@@ -4104,7 +4110,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
   });
   /* retail & personal-service MCCs reconciled against NIC divisions 47 & 96 —
      no manufacturing (NIC 10–32) and no large-format businesses (dept stores, hotels,
-     hospitals, vehicle dealers, airlines) — those stay out of shop setup */
+     hospitals, vehicle dealers, airlines), those stay out of shop setup */
   Object.assign(MCC_STORES, {
     "5193": { label: "Nursery · Plants & Flowers", items: [
       itx("nurose", "Rose Plant",           "गुलाब",        15000, 1),
@@ -4535,28 +4541,28 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
      voice vocabulary and the hero moment for each segment. */
   const SEGMENT_PACKS = {
     "5411": { /* Kirana & Grocery */
-      tagline: "Kirana mode — barcode billing, khata and distributor-wise stock",
+      tagline: "Kirana mode, barcode billing, khata and distributor-wise stock",
       lexicon: { libraryTab: "Items", libraryView: "Items view", grossLabel: "Aaj ki bikri", khataTitle: "Khata book" },
       modules: { invoice: true, khata: true, customers: true, stock: true, social: true },
       hero: "barcode",
       voice: ["cold drink 40 rupaye", "atta 5 kilo 275 rupaye", "kitna doodh bacha"],
     },
     "5812": { /* Restaurant & Dhaba */
-      tagline: "Restaurant mode — table billing, parcel and kitchen stock",
+      tagline: "Restaurant mode, table billing, parcel and kitchen stock",
       lexicon: { libraryTab: "Menu", grossLabel: "Food sales", khataTitle: "Table khata · credit" },
       modules: { invoice: true, khata: true, customers: true, stock: true, social: true },
       hero: "tables",
       voice: ["table 4 ko 2 roti 1 dal fry batao", "parcel 1 biryani 180 rupaye", "kitna atta bacha"],
     },
     "5814": { /* Tea, Snacks & Ice Cream */
-      tagline: "Tea-stall mode — voice-first counter billing and daily profit",
+      tagline: "Tea-stall mode, voice-first counter billing and daily profit",
       lexicon: { libraryTab: "Library", grossLabel: "Aaj ki bikri", khataTitle: "Khata book" },
       modules: { invoice: false, khata: true, customers: true, stock: true, social: true },
       hero: "voice",
       voice: ["2 cutting chai 1 samosa", "kulfi 35 rupaye", "kitni chai bachi"],
     },
     "5993": { /* Paan & Cigarette */
-      tagline: "Paan-shop mode — tiny catalog, khata-first, everything else off",
+      tagline: "Paan-shop mode, tiny catalog, khata-first, everything else off",
       lexicon: { libraryTab: "Library", grossLabel: "Aaj ki bikri", khataTitle: "Udhaar ki chitthi" },
       modules: { invoice: false, khata: true, customers: true, stock: false, social: false },
       hero: "khata",
@@ -4670,7 +4676,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
     svcIds: [],
     itemEdits: {},            // per-merchant name/price overrides on suggestion items
     regMcc: null,             // MCC from the merchant's QR / soundbox registration
-    regVia: null,             // "QR code" | "Soundbox" — how the merchant registered
+    regVia: null,             // "QR code" | "Soundbox", how the merchant registered
     seededFor: null,          // mobile for whom demo data was seeded this session
     seededMcc: null,          // mcc the demo data was seeded for
     catalog: CATALOG,
@@ -4705,10 +4711,10 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       headless: { item: true, stock: true, inventory: true, invoice: true },
     social: null, socialStats: null, socialCampaigns: [],
       tagline: "", address: "", gstin: "", receiptNote: "",
-      taxRate: 0.05,            // GST slab — owner picks 0/5/12/18/28%
+      taxRate: 0.05,            // GST slab, owner picks 0/5/12/18/28%
       lowStockAt: 5,            // "low" alert threshold
       openingStock: 15,         // stock given to an item added from search, before any stock is loaded
-      discountOn: false,        // customer discount module — merchant opts in
+      discountOn: false,        // customer discount module, merchant opts in
       discountPct: 5,           // flat % off for tagged customers
       upiVpa: "",               // override for QR / payment links
     },
@@ -4864,7 +4870,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       }, function (k, v) { return this[k] instanceof Date ? { [DATE_TAG]: this[k].getTime() } : v; });
       reg[state.auth.mobile] = { ...cur, data };
       saveRegistry(reg);
-    } catch (_) { /* storage full / private mode — demo keeps running in memory */ }
+    } catch (_) { /* storage full / private mode, demo keeps running in memory */ }
   }
   function restoreState(m) {
     const d = JSON.parse(m.data, (k, v) =>
@@ -5050,7 +5056,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
   }
   function goRoot(name) {
     if (MODULE_HOME[name] && !modOn(MODULE_HOME[name])) {
-      toast(`${MODULE_LABEL[MODULE_HOME[name]]} is off — turn it on in Settings`);
+      toast(`${MODULE_LABEL[MODULE_HOME[name]]} is off, turn it on in Settings`);
       return;
     }
     renderFor(name);
@@ -5272,7 +5278,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
         if (lpFired) { lpFired = false; return; }
         const go = () => {
           if (item.price == null) { openItemSheet(item); return; }
-          if (state.stock[item.id] === 0) { toast(`${item.name} is out of stock — hold to edit or restock`); return; }
+          if (state.stock[item.id] === 0) { toast(`${item.name} is out of stock, hold to edit or restock`); return; }
           addToCart({ key: item.id, name: item.name, price: item.price });
         };
         if (item.skuSearch) askOpeningQty(item, go); else go();
@@ -5289,7 +5295,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
     if (!state.settings.seenEditTip) {
       state.settings.seenEditTip = true;
       persistState();
-      setTimeout(() => toast("Tip — hold any item to edit price, stock or colour"), 900);
+      setTimeout(() => toast("Tip, hold any item to edit price, stock or colour"), 900);
     }
   }
 
@@ -5300,7 +5306,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
     renderCart();
   }
   /* qty badge doubles as a stepper: − reduces/removes, + (or tapping the
-     tile) adds — an item can never be stuck in the cart with no way back */
+     tile) adds, an item can never be stuck in the cart with no way back */
   function paintQtyBadge(badge, item) {
     const line = state.cart.get(item.id);
     badge.innerHTML = "";
@@ -5412,10 +5418,10 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
   }
   function onScanMatch(pick, viaCamera) {
     if (!pick) {
-      if (viaCamera) setScanStatus("Barcode not in your catalog — check the code");
+      if (viaCamera) setScanStatus("Barcode not in your catalog, check the code");
       return;
     }
-    if (state.stock[pick.id] === 0) { toast(`${pick.name} is out of stock`); if (viaCamera) setScanStatus("That item is out of stock — scan another"); return; }
+    if (state.stock[pick.id] === 0) { toast(`${pick.name} is out of stock`); if (viaCamera) setScanStatus("That item is out of stock, scan another"); return; }
     stopScanner();
     closeSheetEl();
     addToCart({ key: pick.id, name: pick.name, price: pick.price });
@@ -5439,12 +5445,12 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
     if (scanManual) scanManual.value = "";
     setScanStatus("Starting camera…");
     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-      setScanStatus("Camera not available in this browser — type the code below.");
+      setScanStatus("Camera not available in this browser, type the code below.");
       scanManual && scanManual.focus();
       return;
     }
     if (!("BarcodeDetector" in window)) {
-      setScanStatus("Live scanning needs Chrome or Edge on Android — type the code below.");
+      setScanStatus("Live scanning needs Chrome or Edge on Android, type the code below.");
       scanManual && scanManual.focus();
       return;
     }
@@ -5453,8 +5459,8 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
     } catch (err) {
       const name = err && err.name;
       setScanStatus(name === "NotAllowedError" || name === "SecurityError"
-        ? "Camera permission blocked — allow it in browser settings, or type the code below."
-        : "No camera found on this device — type the code below.");
+        ? "Camera permission blocked, allow it in browser settings, or type the code below."
+        : "No camera found on this device, type the code below.");
       scanStream = null;
       scanManual && scanManual.focus();
       return;
@@ -5480,7 +5486,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
           setTimeout(() => { scanCooling = false; }, 1500);
           onScanMatch(matchScanCode(raw), true);
         }
-      } catch (_) { /* frame not ready yet — keep trying */ }
+      } catch (_) { /* frame not ready yet, keep trying */ }
     }, 400);
   }
   if (scanManual) scanManual.addEventListener("keydown", (e) => {
@@ -5538,7 +5544,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
     lines.innerHTML = "";
     const items = cartLines();
     if (!items.length) {
-      const hint = el("button", "sheet-empty sheet-empty-btn", "Sale is empty — tap here to add items");
+      const hint = el("button", "sheet-empty sheet-empty-btn", "Sale is empty, tap here to add items");
       hint.addEventListener("click", () => {
         closeSheetEl();
         const tab = document.querySelector('[data-tab="library"]');
@@ -5586,7 +5592,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
     if (typeof isCashier === "function" && isCashier()) {
       const cap = Math.round(sub * 0.10);
       if (v > cap) {
-        toast(`Cashier sign-in can't discount over 10% (${fmt(cap)}) — ask the owner`);
+        toast(`Cashier sign-in can't discount over 10% (${fmt(cap)}), ask the owner`);
         return false;
       }
     }
@@ -5666,8 +5672,8 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
     } else {
       row.classList.remove("attached");
       label.textContent = discOn()
-        ? `Add customer — they get ${discPct()}% off`
-        : "Add customer — keep visit history";
+        ? `Add customer, they get ${discPct()}% off`
+        : "Add customer, keep visit history";
       clear.hidden = true;
     }
   }
@@ -5770,7 +5776,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
         clearTimeout(upiTimer.pay);
         if (current === "upi") {
           $("#upi-expired").hidden = false;
-          status.textContent = "QR expired — refresh to retry";
+          status.textContent = "QR expired, refresh to retry";
           status.classList.remove("received");
         }
       }
@@ -5971,7 +5977,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
     renderDashboard();
     if (state.viewReceiptTx) { renderReceipt(state.viewReceiptTx); renderReceiptActions(state.viewReceiptTx, false); }
     persistState();
-    toast(`${c.name} tagged — payments from this UPI id now auto-tag`);
+    toast(`${c.name} tagged, payments from this UPI id now auto-tag`);
   });
   $("#tag-f-skip").addEventListener("click", closeSheetEl);
 
@@ -6267,7 +6273,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
     const wrap = $("#receipt-actions");
     wrap.querySelectorAll(".rc-act-row, .rc-cust-chip").forEach((n) => n.remove());
     if (fresh) return; // fresh sale: tagging already offered on the success screen
-    if (!modOn("customers")) return; // customer module off — no tagging UI on receipts
+    if (!modOn("customers")) return; // customer module off, no tagging UI on receipts
     const frag = [];
     if (tx.customerName) {
       const c = state.customers.find((x) => x.id === tx.customerId);
@@ -6323,26 +6329,26 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
 
   function invoiceShareText(inv) {
     const lines = [
-      `${inv.num} — ${state.bizName}`,
+      `${inv.num}, ${state.bizName}`,
       `Bill to: ${inv.customerName}`,
       `For: ${inv.desc}`,
       `Total: ${fmt(inv.amount)}`,
     ];
     if (inv.status === "paid") lines.push("Status: PAID. Thank you!");
     else lines.push(`Due: ${inv.dueText}`, `Pay via UPI: ${upiPayLink(inv.amount, inv.num)}`);
-    lines.push(`— ${merchantLine()}`);
+    lines.push(`${merchantLine()}`);
     return lines.join("\n");
   }
 
   function receiptShareText(tx) {
     const lines = [
-      `${state.bizName} — receipt ${tx.id}`,
+      `${state.bizName}, receipt ${tx.id}`,
       dateStr(tx.date) + " " + timeStr(tx.date),
-      ...tx.lines.map((l) => `${l.qty > 1 ? l.qty + "× " : ""}${l.name} — ${fmt(l.price * l.qty)}`),
+      ...tx.lines.map((l) => `${l.qty > 1 ? l.qty + "× " : ""}${l.name}, ${fmt(l.price * l.qty)}`),
       `Total: ${fmt(tx.total)} (${tx.method === "upi" ? "UPI" : tx.method === "card" ? "Card" : "Cash"})`,
     ];
     if (tx.customerName) lines.push(`Customer: ${tx.customerName}`);
-    lines.push("Dhanyavaad — visit again!", `— ${merchantLine()}`);
+    lines.push("Dhanyavaad, visit again!", `${merchantLine()}`);
     return lines.join("\n");
   }
 
@@ -6454,7 +6460,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
     r.appendChild(el("div", "rc-rule"));
     const foot = el("div", "rc-center rc-sub");
     if (state.settings.receiptNote) foot.append(el("div", null, state.settings.receiptNote));
-    foot.append(el("div", null, "Thank you — come back soon"), el("div", null, "(simulated receipt)"));
+    foot.append(el("div", null, "Thank you, come back soon"), el("div", null, "(simulated receipt)"));
     r.appendChild(foot);
   }
 
@@ -6700,7 +6706,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       rect.setAttribute("height", String(bh));
       if (v === 0) rect.setAttribute("class", "dim");
       const title = document.createElementNS("http://www.w3.org/2000/svg", "title");
-      title.textContent = `${bucketLabel[i]} — ${fmt(v)}`;
+      title.textContent = `${bucketLabel[i]}, ${fmt(v)}`;
       rect.appendChild(title);
       svg.appendChild(rect);
     });
@@ -6935,7 +6941,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
     );
     const share = shareRow(
       () => invoiceShareText(state.viewInvoice),
-      () => `${state.viewInvoice.num} — ${state.bizName}`
+      () => `${state.viewInvoice.num}, ${state.bizName}`
     );
     share.style.marginBottom = "10px";
     const actions = el("div", "inv-detail-actions");
@@ -6944,7 +6950,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       remind.addEventListener("click", () => {
         const first = inv.customerName.split(" ")[0];
         shareVia("wa",
-          `Namaste ${first} ji — a gentle reminder from ${state.bizName}: ${inv.num} of ${fmt(inv.amount)} is due (${inv.dueText}).\nPay via UPI: ${upiPayLink(inv.amount, inv.num)}\n— ${merchantLine()}`,
+          `Namaste ${first} ji, a gentle reminder from ${state.bizName}: ${inv.num} of ${fmt(inv.amount)} is due (${inv.dueText}).\nPay via UPI: ${upiPayLink(inv.amount, inv.num)}\n${merchantLine()}`,
           `${inv.num} reminder`);
       });
       const pay = el("button", "charge-btn", "Record payment");
@@ -6989,7 +6995,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
   /* new invoice */
   function openNewInvoice() {
     const from = $("#inv-from");
-    if (from) from.innerHTML = `From <strong>${state.bizName}</strong>${state.auth.mobile ? ` · +91 ${state.auth.mobile.slice(0, 5)} ${state.auth.mobile.slice(5)}` : ""} — this branding goes on the invoice.`;
+    if (from) from.innerHTML = `From <strong>${state.bizName}</strong>${state.auth.mobile ? ` · +91 ${state.auth.mobile.slice(0, 5)} ${state.auth.mobile.slice(5)}` : ""}, this branding goes on the invoice.`;
     const sel = $("#inv-customer");
     sel.innerHTML = "";
     state.customers.forEach((c) => {
@@ -7292,7 +7298,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       reach, engagement,
       followers: pg.followers,
       profileVisits: Math.round(pg.followers * 0.14),
-      topPost: { text: `Fresh ${state.catalog[0] ? state.catalog[0].name : "special"} — open today till 10 pm. Come say hi!`, likes: Math.round(pg.followers * 0.06), comments: Math.round(pg.followers * 0.008), shares: Math.round(pg.followers * 0.011) },
+      topPost: { text: `Fresh ${state.catalog[0] ? state.catalog[0].name : "special"}, open today till 10 pm. Come say hi!`, likes: Math.round(pg.followers * 0.06), comments: Math.round(pg.followers * 0.008), shares: Math.round(pg.followers * 0.011) },
     };
   }
   function openMetaSheet() {
@@ -7321,7 +7327,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
     persistState();
     renderSettings();
     if (current === "social") renderSocial();
-    toast(`Connected ${metaPick.name} — dashboard is live in Social`);
+    toast(`Connected ${metaPick.name}, dashboard is live in Social`);
   }
   /* social campaign execution — Meta ads simulation (boost / offer / announce) */
   const SOC_CAMP_TYPES = [
@@ -7346,12 +7352,12 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       const logo = el("span", "soc-logo");
       logo.innerHTML = '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12c0-4 2.5-7 5.5-7 2.3 0 3.6 1.6 4.5 4 .9-2.4 2.2-4 4.5-4C20.5 5 23 8 23 12s-2.5 7-5.5 7c-2.3 0-3.6-1.6-4.5-4-.9 2.4-2.2 4-4.5 4C5.5 19 3 16 3 12Z"/></svg>';
       card.append(logo, el("strong", null, "Connect Meta"),
-        el("p", null, "Link your Facebook Page and Instagram to see followers, reach and engagement here — and run social campaigns from Marketing."),
+        el("p", null, "Link your Facebook Page and Instagram to see followers, reach and engagement here, and run social campaigns from Marketing."),
         el("button", "charge-btn", "Connect Meta"));
       card.querySelector(".charge-btn").style.cssText = "width:100%;max-width:280px";
       card.querySelector(".charge-btn").addEventListener("click", openMetaSheet);
       body.appendChild(card);
-      body.appendChild(el("p", "fine-print", "Simulation — connects a sample Meta Business account. Nothing real is authorised."));
+      body.appendChild(el("p", "fine-print", "Simulation, connects a sample Meta Business account. Nothing real is authorised."));
       return;
     }
     const st = state.socialStats || seedSocialStats({ name: state.social.meta.page, followers: 1000 });
@@ -7471,7 +7477,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       // active campaigns
       campList.innerHTML = "";
       if (!state.socialCampaigns.length) {
-        campList.appendChild(el("p", "recon-empty", "No campaigns yet — launch your first one above."));
+        campList.appendChild(el("p", "recon-empty", "No campaigns yet, launch your first one above."));
       }
       state.socialCampaigns.forEach((c) => {
         const row = el("div", "camp-sent");
@@ -7542,7 +7548,7 @@ function renderReports() {
     const agg = {};
     inRange.forEach((t) => t.lines.forEach((l) => { agg[l.name] = (agg[l.name] || 0) + l.qty; }));
     const top = Object.entries(agg).sort((a, b) => b[1] - a[1])[0];
-    $("#rep-top").textContent = top ? `${top[0]} (${top[1]})` : "—";
+    $("#rep-top").textContent = top ? `${top[0]} (${top[1]})` : "-";
     // payment mix
     const pm = $("#rep-paymix");
     pm.innerHTML = "";
@@ -7710,7 +7716,7 @@ function renderSettings() {
     swG.setAttribute("aria-checked", gstOn());
     $("#set-gst-sub").textContent = !invOn
       ? "turn on Invoicing (above) to apply GST on sales"
-      : "turn off if your business is not GST registered — prices become final, no tax on sales";
+      : "turn off if your business is not GST registered, prices become final, no tax on sales";
     $("#set-tax").classList.toggle("disabled", !gstOn());
     $("#set-slab-row").style.opacity = gstOn() ? "" : ".45";
     document.querySelectorAll("#set-libview .seg").forEach((s) =>
@@ -7785,7 +7791,7 @@ function renderSettings() {
   bindSetting("#set-address", "address", "Address saved");
   bindSetting("#set-gstin", "gstin", "GSTIN saved");
   bindSetting("#set-note", "receiptNote", "Receipt note saved");
-  bindSetting("#set-vpa", "upiVpa", "UPI ID saved — QR & pay links updated");
+  bindSetting("#set-vpa", "upiVpa", "UPI ID saved, QR & pay links updated");
   /* GST slab */
   document.querySelectorAll("#set-tax .seg").forEach((s) =>
     s.addEventListener("click", () => {
@@ -7793,7 +7799,7 @@ function renderSettings() {
       renderSettings();
       renderCart();
       persistState();
-      toast(`GST set to ${s.textContent} — applies to new sales`);
+      toast(`GST set to ${s.textContent}, applies to new sales`);
     }));
   /* low-stock threshold stepper */
   const bump = (key, sel, d, min, max) => {
@@ -7868,16 +7874,16 @@ function renderSettings() {
     renderSettings();
     renderCart();
     persistState();
-    toast(gstOn() ? `GST on — new sales taxed at ${Math.round(taxRate() * 100)}%` : "GST off — prices are final, no tax on sales");
+    toast(gstOn() ? `GST on, new sales taxed at ${Math.round(taxRate() * 100)}%` : "GST off, prices are final, no tax on sales");
   });
   [["invoice", "#sw-mod-invoice"], ["khata", "#sw-mod-khata"], ["customers", "#sw-mod-customers"], ["stock", "#sw-mod-stock"], ["social", "#sw-mod-social"]].forEach(([k, sel]) =>
     $(sel).addEventListener("click", () => {
       state.settings.modules[k] = !modOn(k);
       if (k === "invoice" && !modOn("invoice") && gstOn()) {
         state.settings.gstApplies = false;
-        toast("Invoicing off — GST turned off with it");
+        toast("Invoicing off, GST turned off with it");
       } else if (k === "social" && modOn("social") && !(state.social && state.social.meta && state.social.meta.connected)) {
-        toast("Social on — connect Meta below");
+        toast("Social on, connect Meta below");
       } else {
         toast(`${MODULE_LABEL[k]} ${modOn(k) ? "on" : "off"}`);
       }
@@ -8033,7 +8039,7 @@ function renderSettings() {
     const t = normVoice(text);
     const cust = state.customers.find((c) =>
       t.includes(c.name.split(" ")[0].toLowerCase()) || (c.hi && t.includes(c.hi)));
-    if (!cust) return { error: `No customer matched in “${text}” — try a first name from your directory.` };
+    if (!cust) return { error: `No customer matched in “${text}”, try a first name from your directory.` };
     const esc = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
     const item = matchCatalogItem(t.replace(new RegExp(esc(cust.name.split(" ")[0].toLowerCase()), "g"), " "));
     if (item) {
@@ -8047,7 +8053,7 @@ function renderSettings() {
     }
     const num = t.match(/(\d+(?:\.\d+)?)/);
     if (num) return { cust, amount: Math.round(parseFloat(num[1]) * 100), desc: "Udhaar" };
-    return { error: `Heard “${text}” — need an item name or an amount.` };
+    return { error: `Heard “${text}”, need an item name or an amount.` };
   }
   function addKhataFromPhrase(text) {
     $("#voice-transcript").textContent = `“${text}”`;
@@ -8093,7 +8099,7 @@ function renderSettings() {
         if (e.results[e.results.length - 1].isFinal) onText(text);
       };
       rec.onend = () => { btn.classList.remove("listening"); $(labelSel).textContent = restLabel(); };
-      rec.onerror = () => { btn.classList.remove("listening"); $(labelSel).textContent = "Didn't catch that — try again"; };
+      rec.onerror = () => { btn.classList.remove("listening"); $(labelSel).textContent = "Didn't catch that, try again"; };
       try { rec.start(); } catch (_) { /* already started */ }
     });
   }
@@ -8180,7 +8186,7 @@ function renderSettings() {
       const words = voiceTokens(t);
       const itemTokens = new Set(item.name.toLowerCase().split(/[^a-z0-9]+/).filter(Boolean));
       const qtyTok = words.find((w) => /^\d+$/.test(w) && !itemTokens.has(w));
-      if (!qtyTok) return { error: `Heard “${text}” — add a quantity, like “${lastWord(item.name)} 20”.` };
+      if (!qtyTok) return { error: `Heard “${text}”, add a quantity, like “${lastWord(item.name)} 20”.` };
       return { item, qty: Math.min(999, parseInt(qtyTok, 10)) };
     }
     // unknown item + price → create it ("cold drink 40 rupaye", optional "… 12 packet")
@@ -8195,7 +8201,7 @@ function renderSettings() {
     if (nameOnly && significantTokens(t).length) {
       return { create: { name: nameOnly, price: 0 }, qty: 0 };
     }
-    return { error: `No item matched in “${text}” — say an item you sell, or just its name to add it.` };
+    return { error: `No item matched in “${text}”, say an item you sell, or just its name to add it.` };
   }
   function addStockFromPhrase(text, transcriptSel = "#stock-transcript") {
     const tr = $(transcriptSel);
@@ -8211,7 +8217,7 @@ function renderSettings() {
       refreshStockUI();
       toast(r.create.price > 0
         ? `${r.create.name} added at ${fmt(r.create.price)}${r.qty ? ` · stock ${r.qty}` : ""}`
-        : `${r.create.name} added — hold the tile to set its price`);
+        : `${r.create.name} added, hold the tile to set its price`);
       return r;
     }
     state.stock[r.item.id] = r.qty;
@@ -8235,7 +8241,7 @@ function renderSettings() {
   function parsePurchasePhrase(text) {
     const t = normVoice(text);
     const item = matchCatalogItem(t);
-    if (!item) return { error: `No item matched in “${text}” — purchases work for items in your library.` };
+    if (!item) return { error: `No item matched in “${text}”, purchases work for items in your library.` };
     const words = voiceTokens(t);
     const itemTokens = new Set(item.name.toLowerCase().split(/[^a-z0-9]+/).filter(Boolean));
     const nums = words.filter((w) => /^\d+(?:\.\d+)?$/.test(w) && !itemTokens.has(w));
@@ -8248,7 +8254,7 @@ function renderSettings() {
     });
     if (qty == null && nums.length) qty = parseFloat(nums[0]);
     if (rate == null && nums.length > 1) rate = parseFloat(nums[1]);
-    if (qty == null) return { error: `Heard “${text}” — say a quantity, like “${lastWord(item.name)} 50 packet 65 rupaye”.` };
+    if (qty == null) return { error: `Heard “${text}”, say a quantity, like “${lastWord(item.name)} 50 packet 65 rupaye”.` };
     const assumed = rate == null;
     if (assumed) rate = Math.round(item.price * 0.8) / 100;   // assume ~20% margin when rate unsaid
     return { item, qty: Math.min(9999, Math.round(qty)), rate: Math.round(rate * 100), assumed };
@@ -8284,10 +8290,10 @@ function renderSettings() {
       });
       if (payMode === "now") {
         state.supEntries.unshift({ id: "se-p" + Date.now().toString(36), supplierId: sup.id, type: "paid", amount: amt, desc: `Paid via ${method}`, date: now() });
-        if (method === "Cash" && typeof drawerCashOut === "function") drawerCashOut(amt, "Supplier payment — " + sup.name);
+        if (method === "Cash" && typeof drawerCashOut === "function") drawerCashOut(amt, "Supplier payment, " + sup.name);
       }
       if (payMode === "already")
-        state.supEntries.unshift({ id: "se-a" + Date.now().toString(36), supplierId: sup.id, type: "paid", amount: amt, desc: "Settled earlier — bill paid in advance", date: now() });
+        state.supEntries.unshift({ id: "se-a" + Date.now().toString(36), supplierId: sup.id, type: "paid", amount: amt, desc: "Settled earlier, bill paid in advance", date: now() });
     }
     state.purchases.unshift({
       id: "po-" + Date.now() + Math.random().toString(36).slice(2, 4),
@@ -8320,7 +8326,7 @@ function renderSettings() {
     voiceChips($("#pur-samples"), phrases, addPurchaseFromPhrase);
   }
   wireMic("#btn-pur-mic", "#pur-voice-label", "#pur-transcript",
-    () => hiMode() ? "बोलिए: आइटम + मात्रा + भाव" : "Say: item + qty + rate — “maggi 50 packet 65 rupaye”",
+    () => hiMode() ? "बोलिए: आइटम + मात्रा + भाव" : "Say: item + qty + rate, “maggi 50 packet 65 rupaye”",
     addPurchaseFromPhrase);
 
   function renderPurchases() {
@@ -8393,7 +8399,7 @@ function renderSettings() {
     const dueTotal = sups.reduce((a, s) => a + (s.due || 0), 0);
     $("#sup-summary").textContent = sups.length
       ? `${sups.length} supplier${sups.length > 1 ? "s" : ""} · ${fmt(dueTotal)} total due`
-      : "none yet — add one on a stock-in";
+      : "none yet, add one on a stock-in";
     if (!sups.length) {
       list.appendChild(el("p", "tx-empty", "No suppliers yet.\nType a supplier name while adding stock-in to start the directory."));
       return;
@@ -8451,7 +8457,7 @@ function renderSettings() {
       amt: cents, date: now(), method: method || "Cash", ref: ref || undefined,
     });
     state.supEntries.unshift({ id: "se-s" + Date.now().toString(36), supplierId: sup.id, type: "paid", amount: cents, desc: "Payment · " + (method || "Cash"), date: now() });
-    if ((method || "Cash") === "Cash" && typeof drawerCashOut === "function") drawerCashOut(cents, "Supplier payment — " + sup.name);
+    if ((method || "Cash") === "Cash" && typeof drawerCashOut === "function") drawerCashOut(cents, "Supplier payment, " + sup.name);
     if (typeof auditLog === "function") auditLog("supplier", `Paid ${fmt(cents)} to ${sup.name} · ${method || "Cash"}${ref ? " · ref " + ref : ""}`);
     persistState();
     renderSuppliers();
@@ -8493,9 +8499,9 @@ function renderSettings() {
      UPI: instant push to the supplier's VPA · Netbanking: IMPS from the linked
      HDFC account · Cash: out of today's drawer */
   const SUP_RAILS = {
-    UPI:        { note: "Instant UPI transfer to the supplier's VPA · no charge", ref: () => "UPI" + String(Math.floor(1e10 + Math.random() * 9e10)), confirm: (p) => `Tap again — pay ${fmt(p)} via UPI` },
-    Netbanking: { note: "IMPS from HDFC ••4821 · instant · no charge", ref: () => "IMPS" + String(Math.floor(1e10 + Math.random() * 9e10)), confirm: (p) => `Tap again — transfer ${fmt(p)} by IMPS` },
-    Cash:       { note: "Taken out of today's cash drawer", ref: () => null, confirm: (p) => `Tap again — pay ${fmt(p)} in cash` },
+    UPI:        { note: "Instant UPI transfer to the supplier's VPA · no charge", ref: () => "UPI" + String(Math.floor(1e10 + Math.random() * 9e10)), confirm: (p) => `Tap again, pay ${fmt(p)} via UPI` },
+    Netbanking: { note: "IMPS from HDFC ••4821 · instant · no charge", ref: () => "IMPS" + String(Math.floor(1e10 + Math.random() * 9e10)), confirm: (p) => `Tap again, transfer ${fmt(p)} by IMPS` },
+    Cash:       { note: "Taken out of today's cash drawer", ref: () => null, confirm: (p) => `Tap again, pay ${fmt(p)} in cash` },
   };
   function railNote(method) { return (SUP_RAILS[method] || SUP_RAILS.Cash).note; }
 
@@ -8507,7 +8513,7 @@ function renderSettings() {
     const withDue = state.suppliers.filter((s) => (s.due || 0) > 0);
     const list = withDue.length ? withDue : state.suppliers;
     if (!list.length) {
-      box.appendChild(el("p", "set-hint", "No suppliers yet — add one first."));
+      box.appendChild(el("p", "set-hint", "No suppliers yet, add one first."));
       return;
     }
     list.slice(0, 6).forEach((s) => {
@@ -8561,7 +8567,7 @@ function renderSettings() {
     const name = $("#suppay-f-name").value.trim();
     const sup = state.suppliers.find((s) => s.name.toLowerCase() === name.toLowerCase());
     if (!sup) { toast("Pick a supplier from your list"); return; }
-    if (!(sup.due > 0)) { toast(`${sup.name} has no due — nothing to pay`); return; }
+    if (!(sup.due > 0)) { toast(`${sup.name} has no due, nothing to pay`); return; }
     const payIn = parseFloat($("#suppay-f-amt").value);
     const pay = Math.min(sup.due, Math.max(0, Math.round((payIn || 0) * 100)));
     if (!pay) { toast("Enter an amount"); return; }
@@ -8663,7 +8669,7 @@ function renderSettings() {
       img.src = p.invoice.data;
       box.appendChild(img);
     } else {
-      box.appendChild(el("p", "set-hint", p.invoice.name + " — PDF attached to this stock-in."));
+      box.appendChild(el("p", "set-hint", p.invoice.name + ", PDF attached to this stock-in."));
       const iframe = el("iframe", "inv-preview-pdf");
       iframe.src = p.invoice.data;
       box.appendChild(iframe);
@@ -8807,7 +8813,7 @@ function renderSettings() {
   $("#item-f-photo-input").addEventListener("change", (e) => {
     const f = e.target.files && e.target.files[0];
     if (!f) return;
-    if (f.size > 800 * 1024) { toast("Photo too large — pick one under 800 KB"); e.target.value = ""; return; }
+    if (f.size > 800 * 1024) { toast("Photo too large, pick one under 800 KB"); e.target.value = ""; return; }
     const r = new FileReader();
     r.onload = () => { itemPhotoPick = String(r.result); paintItemPhoto(); };
     r.readAsDataURL(f);
@@ -8847,7 +8853,7 @@ function renderSettings() {
       syncCatalog();
       state.stock[id] = qty;
       refreshStockUI();
-      toast(price > 0 ? `${titleCase(name)} added at ${fmt(price)}` : `${titleCase(name)} added — hold the tile to set its price`);
+      toast(price > 0 ? `${titleCase(name)} added at ${fmt(price)}` : `${titleCase(name)} added, hold the tile to set its price`);
     }
     closeSheetEl();
   });
@@ -8921,7 +8927,7 @@ function renderSettings() {
     const f = e.target.files && e.target.files[0];
     if (!f) { purInvoice = null; $("#pur-f-invoice-prev").innerHTML = ""; return; }
     if (f.type === "application/pdf" || f.name.toLowerCase().endsWith(".pdf")) {
-      if (f.size > 400 * 1024) { toast("PDF too large for the demo — keep it under 400 KB"); e.target.value = ""; return; }
+      if (f.size > 400 * 1024) { toast("PDF too large for the demo, keep it under 400 KB"); e.target.value = ""; return; }
       const rd = new FileReader();
       rd.onload = () => {
         purInvoice = { name: f.name, mime: "pdf", data: rd.result };
@@ -9014,9 +9020,9 @@ function renderSettings() {
       status.classList.remove("is-open");
       body.innerHTML = "";
       const p = el("p", "sheet-empty", state.drawer && state.drawer.day !== new Date().toDateString()
-        ? "Yesterday's drawer is closed — start today's shift."
+        ? "Yesterday's drawer is closed, start today's shift."
         : "Start the day by counting the cash you keep in the drawer.");
-      const start = el("button", "charge-btn", "Start day — opening float");
+      const start = el("button", "charge-btn", "Start day, opening float");
       start.style.marginTop = "8px";
       start.addEventListener("click", () => openDrawerSheet("start"));
       body.append(p, start);
@@ -9035,13 +9041,13 @@ function renderSettings() {
       body.appendChild(row);
     });
     if (state.drawer.z) {
-      const note = el("p", "sheet-empty", `Counted ${fmt(state.drawer.z.counted)} · difference ${state.drawer.z.diff >= 0 ? "+" : "−"}${fmt(Math.abs(state.drawer.z.diff))}${state.drawer.z.diff === 0 ? " — perfect match" : ""}`);
+      const note = el("p", "sheet-empty", `Counted ${fmt(state.drawer.z.counted)} · difference ${state.drawer.z.diff >= 0 ? "+" : "−"}${fmt(Math.abs(state.drawer.z.diff))}${state.drawer.z.diff === 0 ? ", perfect match" : ""}`);
       body.appendChild(note);
     }
   }
   function openDrawerSheet(mode) {
     drawerMode = mode;
-    $("#drawer-sheet-title").textContent = mode === "start" ? "Start day — opening float" : mode === "in" ? "Cash in" : "Cash out";
+    $("#drawer-sheet-title").textContent = mode === "start" ? "Start day, opening float" : mode === "in" ? "Cash in" : "Cash out";
     $("#drawer-amt-label").textContent = mode === "start" ? "Opening float (₹)" : "Amount (₹)";
     $("#drawer-note-wrap").style.display = mode === "start" ? "none" : "";
     $("#drawer-amt").value = mode === "start" ? "500" : "";
@@ -9058,11 +9064,11 @@ function renderSettings() {
       toast(`Day started · float ${fmt(amt)}`);
     } else if (drawerMode === "in") {
       drawerCashIn(amt, $("#drawer-note").value.trim());
-      if (typeof auditLog === "function") auditLog("drawer", `Cash in ${fmt(amt)} — ${$("#drawer-note").value.trim() || "no note"}`);
+      if (typeof auditLog === "function") auditLog("drawer", `Cash in ${fmt(amt)}, ${$("#drawer-note").value.trim() || "no note"}`);
       toast(`Cash in: ${fmt(amt)}`);
     } else {
       drawerCashOut(amt, $("#drawer-note").value.trim());
-      if (typeof auditLog === "function") auditLog("drawer", `Cash out ${fmt(amt)} — ${$("#drawer-note").value.trim() || "no note"}`);
+      if (typeof auditLog === "function") auditLog("drawer", `Cash out ${fmt(amt)}, ${$("#drawer-note").value.trim() || "no note"}`);
       toast(`Cash out: ${fmt(amt)}`);
     }
     persistState();
@@ -9094,7 +9100,7 @@ function renderSettings() {
     if (!(countedIn >= 0) || $("#z-counted").value.trim() === "") { out.textContent = "Enter the counted amount"; out.className = "z-diff"; return; }
     const counted = Math.round(countedIn * 100);
     const diff = counted - drawerExpected().expected;
-    out.textContent = diff === 0 ? "Perfect match — drawer is exact" : `Difference ${diff > 0 ? "+" : "−"}${fmt(Math.abs(diff))} ${diff > 0 ? "(extra cash)" : "(short)"}`;
+    out.textContent = diff === 0 ? "Perfect match, drawer is exact" : `Difference ${diff > 0 ? "+" : "−"}${fmt(Math.abs(diff))} ${diff > 0 ? "(extra cash)" : "(short)"}`;
     out.className = "z-diff " + (diff === 0 ? "is-ok" : "is-bad");
   }
   $("#z-counted").addEventListener("input", updateZDiff);
@@ -9108,7 +9114,7 @@ function renderSettings() {
     if (typeof auditLog === "function") auditLog("drawer", `Day-end Z: counted ${fmt(counted)}, diff ${diff >= 0 ? "+" : "−"}${fmt(Math.abs(diff))}`);
     persistState();
     closeSheetEl();
-    toast(diff === 0 ? "Day closed — drawer exact" : `Day closed · diff ${diff > 0 ? "+" : "−"}${fmt(Math.abs(diff))}`);
+    toast(diff === 0 ? "Day closed, drawer exact" : `Day closed · diff ${diff > 0 ? "+" : "−"}${fmt(Math.abs(diff))}`);
     renderDrawer();
   });
 
@@ -9132,7 +9138,7 @@ function renderSettings() {
     // owner row
     const owner = el("div", "staff-row");
     const oMain = el("div", "staff-main");
-    oMain.append(el("strong", null, state.ownerName || "Owner"), el("small", null, "Owner — full access"));
+    oMain.append(el("strong", null, state.ownerName || "Owner"), el("small", null, "Owner, full access"));
     const oBtn = el("button", "chip", state.activeStaff ? "Sign in" : "Current");
     if (!state.activeStaff) oBtn.disabled = true;
     oBtn.addEventListener("click", () => {
@@ -9147,7 +9153,7 @@ function renderSettings() {
     state.staff.forEach((s) => {
       const row = el("div", "staff-row");
       const main = el("div", "staff-main");
-      main.append(el("strong", null, s.name), el("small", null, s.role === "owner" ? "Owner" : `Cashier — no discounts over 10% · ${storeName(s.storeId || "s1")}`));
+      main.append(el("strong", null, s.name), el("small", null, s.role === "owner" ? "Owner" : `Cashier, no discounts over 10% · ${storeName(s.storeId || "s1")}`));
       const right = el("div", "staff-right");
       const sign = el("button", "chip", "Sign in");
       sign.addEventListener("click", () => {
@@ -9286,7 +9292,7 @@ function renderSettings() {
   function csvEsc(v) { return '"' + String(v == null ? "" : v).replace(/"/g, '""') + '"'; }
   function downloadCsv() {
     const rows = [];
-    rows.push(csvEsc(`DukaanOS export — ${state.bizName} (MCC ${state.mcc}) — ${now().toLocaleString("en-IN")}`));
+    rows.push(csvEsc(`DukaanOS export, ${state.bizName} (MCC ${state.mcc}), ${now().toLocaleString("en-IN")}`));
     rows.push("");
     rows.push("SALES");
     rows.push("Date,Time,Items,Subtotal,Discount,Tax,Total,Method,Staff,Refunded");
@@ -9308,7 +9314,7 @@ function renderSettings() {
     rows.push("Customer,Description,Amount,Type,Date");
     state.khata.forEach((e) => {
       const c = state.customers.find((x) => x.id === e.custId);
-      rows.push([c ? c.name : "—", e.desc, (e.amount / 100).toFixed(2), e.type, dateStr(e.date)].map(csvEsc).join(","));
+      rows.push([c ? c.name : "-", e.desc, (e.amount / 100).toFixed(2), e.type, dateStr(e.date)].map(csvEsc).join(","));
     });
     rows.push("");
     rows.push("EXPENSES");
@@ -9372,7 +9378,7 @@ function renderSettings() {
     const isToday = (state.dashPeriod || {}).mode === "today";
     const d = isToday && drawerOpen() ? drawerExpected() : null;
     const lines = [
-      `*${state.bizName} — ${label} (${periodLabel(range)})*`,
+      `*${state.bizName}, ${label} (${periodLabel(range)})*`,
       `Sales: ${fmt(gross)} (${count} bills)`,
       `Expenses: ${fmt(exp)} → Net: ${fmt(gross - exp)}`,
     ];
@@ -9381,7 +9387,7 @@ function renderSettings() {
     if (due) lines.push(`Udhaar out: ${fmt(due)}`);
     const supDue = state.suppliers.reduce((a, s) => a + (s.due || 0), 0);
     if (supDue) lines.push(`Supplier due: ${fmt(supDue)}`);
-    lines.push(`— ${activeStaffName()} · via DukaanOS (demo)`);
+    lines.push(`${activeStaffName()} · via DukaanOS (demo)`);
     return lines.join("\n");
   }
   $("#btn-wa-summary").addEventListener("click", () => {
@@ -9394,7 +9400,7 @@ function renderSettings() {
     closeSheetEl();
     $("#wa-status").textContent = "sent " + timeStr(now());
     if (typeof auditLog === "function") auditLog("owner", "Sent day summary to owner on WhatsApp (simulated)");
-    toast("WhatsApp sent (simulated) — no real message leaves this device");
+    toast("WhatsApp sent (simulated), no real message leaves this device");
   });
 
   /* expenses tracker */
@@ -9426,7 +9432,7 @@ function renderSettings() {
       today.slice(0, 6).forEach((e) => {
         const row = el("div", "exp-row");
         const main = el("div", "exp-main");
-        main.append(el("strong", null, e.cat + (e.note ? ` — ${e.note}` : "")), el("small", null, relTime(e.date)));
+        main.append(el("strong", null, e.cat + (e.note ? `, ${e.note}` : "")), el("small", null, relTime(e.date)));
         row.append(main, el("span", "exp-amt", fmt(e.amt)));
         list.appendChild(row);
       });
@@ -9451,8 +9457,8 @@ function renderSettings() {
       id: "ex-" + Date.now().toString(36), cat: expCatPick, amt, note,
       date: now(), by: "owner",
     });
-    if (typeof drawerCashOut === "function") drawerCashOut(amt, `Expense — ${expCatPick}${note ? " (" + note + ")" : ""}`);
-    if (typeof auditLog === "function") auditLog("expense", `Expense ${fmt(amt)} — ${expCatPick}${note ? " (" + note + ")" : ""}`);
+    if (typeof drawerCashOut === "function") drawerCashOut(amt, `Expense, ${expCatPick}${note ? " (" + note + ")" : ""}`);
+    if (typeof auditLog === "function") auditLog("expense", `Expense ${fmt(amt)}, ${expCatPick}${note ? " (" + note + ")" : ""}`);
     persistState();
     closeSheetEl();
     toast(`Expense saved: ${fmt(amt)} · ${expCatPick}`);
@@ -9535,7 +9541,7 @@ function renderSettings() {
     $("#settle-due-amt").textContent = fmt(state.settleDue);
     $("#settle-due-sub").textContent = state.settleDue
       ? "Yesterday's UPI → HDFC ••4821"
-      : "Nothing due — all caught up";
+      : "Nothing due, all caught up";
     $("#settle-today").textContent = `Today's UPI collection ${fmt(upiToday)} → settles tomorrow, 9:00 AM`;
     const btn = $("#btn-settle");
     btn.disabled = !state.settleDue;
@@ -9557,7 +9563,7 @@ function renderSettings() {
     if (st) {
       st.innerHTML = "";
       if (!(state.mailImports || []).length)
-        st.appendChild(el("p", "recon-empty", "No statement imported yet — connect Gmail above."));
+        st.appendChild(el("p", "recon-empty", "No statement imported yet, connect Gmail above."));
       (state.mailImports || []).forEach((s) => {
         const row = el("div", "recon-row");
         const top = el("div", "recon-top");
@@ -9566,7 +9572,7 @@ function renderSettings() {
         sub.innerHTML = `<strong>${s.source}</strong> · ${s.file}`;
         const pill = el("span", "settle-pill st-" + s.status,
           s.status === "matched" ? "Matched with T+1 due" :
-          s.status === "duplicate" ? "Duplicate — already settled via HDFC" :
+          s.status === "duplicate" ? "Duplicate, already settled via HDFC" :
           s.status === "short" ? `Short by ${fmt(Math.max(0, s.expected - s.amount))} (gateway fee)` :
           "No dues pending");
         row.append(top, sub, pill);
@@ -9591,12 +9597,12 @@ function renderSettings() {
           inbox.appendChild(row);
         });
         if (!inbox.children.length)
-          inbox.appendChild(el("p", "set-hint", "Inbox scanned — no new settlement files."));
+          inbox.appendChild(el("p", "set-hint", "Inbox scanned, no new settlement files."));
       }
     }
   }
   const MAIL_SEED = [
-    { id: "m-hdfc", from: "HDFC Bank · SmartGateway", subj: "Payout file — UPI collections", file: "hdfc_payout_0411.csv" },
+    { id: "m-hdfc", from: "HDFC Bank · SmartGateway", subj: "Payout file, UPI collections", file: "hdfc_payout_0411.csv" },
     { id: "m-pp", from: "PhonePe · PG", subj: "Settlement statement attached", file: "phonepe_settle_0411.csv" },
     { id: "m-paytm", from: "Paytm · PG", subj: "Your daily settlement report", file: "paytm_settlement_0411.pdf" },
   ];
@@ -9616,7 +9622,7 @@ function renderSettings() {
   $("#btn-mail-connect").addEventListener("click", () => {
     state.mailConnected = true;
     persistState(); renderSettlement();
-    toast(state.mailImports && state.mailImports.length ? "Inbox re-scanned (simulated)" : "Gmail connected — 3 settlement mails found (simulated)");
+    toast(state.mailImports && state.mailImports.length ? "Inbox re-scanned (simulated)" : "Gmail connected, 3 settlement mails found (simulated)");
   });
   $("#btn-settle").addEventListener("click", () => {
     const btn = $("#btn-settle");
@@ -9642,7 +9648,7 @@ function renderSettings() {
      so the UPI-push payment lands decoupled from the bill and queues in recon.
      A DYNAMIC QR encodes the billed amount at generation time, a payment link
      fixes the amount in the URL, and a card machine authorises at the terminal
-     — all three settle for the exact amount, so they auto-match with no
+     all three settle for the exact amount, so they auto-match with no
      manual review. */
   const FF_DEFS = [
     ["soundbox", "SoundBox", "Soundbox"],
@@ -9652,7 +9658,7 @@ function renderSettings() {
     ["linkpay", "Link Pay", "Link Pay"],
     ["allinone", "All-in-One", "All-in-One device"],
   ];
-  const barcodeOn = () => state.settings.barcode !== false;   // opt-out toggle — setup & Settings
+  const barcodeOn = () => state.settings.barcode !== false;   // opt-out toggle, setup & Settings
   function payFF() { return state.settings.payFF || { soundbox: true, standee: true, dqr: false, edc: false, linkpay: false, allinone: false }; }
   function enabledFFs() { const f = payFF(); return FF_DEFS.filter(([k]) => f[k]); }
 
@@ -9699,14 +9705,14 @@ function renderSettings() {
 
     const pBox = $("#recon-pending");
     pBox.innerHTML = "";
-    if (!pending.length) pBox.appendChild(el("p", "recon-empty", "All caught up — every payment is matched."));
+    if (!pending.length) pBox.appendChild(el("p", "recon-empty", "All caught up, every payment is matched."));
     pending.forEach((p) => {
       const row = el("div", "recon-row");
       const top = el("div", "recon-top");
       top.append(el("span", "recon-amt", fmt(p.amount)), el("span", "recon-time", timeStr(p.date)), ffBadge(p));
       const guess = el("div", "recon-guess");
       if (p.guess.length === 1) guess.innerHTML = `Likely sold: <strong>${p.guess[0].label}</strong>`;
-      else if (p.guess.length > 1) guess.innerHTML = `Could be <strong>${p.guess.length} things</strong> — pick what was sold:`;
+      else if (p.guess.length > 1) guess.innerHTML = `Could be <strong>${p.guess.length} things</strong>, pick what was sold:`;
       else guess.innerHTML = `No item combo matches this amount.`;
       const actions = el("div", "recon-actions");
       p.guess.forEach((c) => {
@@ -9769,7 +9775,7 @@ function renderSettings() {
     return [amt(0, 1), amt(4, 1), amt(0, 2), amt(2, 1), pair(0, I.length - 1), amt(3, 1), 5000];
   }
   /* amount-exact arrival: dynamic QR, payment link and card machine all know
-     the billed amount at the source, so the payment lands pre-matched — item
+     the billed amount at the source, so the payment lands pre-matched, item
      combo (if the amount fits the catalog) is booked and stock decremented
      without any manual recon step */
   function arriveExact(amount, kind, ff) {
@@ -9855,7 +9861,7 @@ function renderSettings() {
     if (f.linkpay) kinds.push(["linkpay", 1]);
     if (f.edc) kinds.push(["edc", 1]);
     if (f.allinone) kinds.push(["allinone", 3]);
-    if (!kinds.length) return;  // no payment form factors selected — nothing to listen for
+    if (!kinds.length) return;  // no payment form factors selected, nothing to listen for
     const totalW = kinds.reduce((a, [, w]) => a + w, 0);
     let ticks = 0;
     soundboxTimer = setInterval(() => {
@@ -9894,15 +9900,15 @@ function renderSettings() {
     state.catalog[state.catalog.length - 1].name;
   const CAMPAIGN_TEMPLATES = [
     { id: "khata",  name: "Khata reminder",      audLabel: "Udhaar due",            aud: (c) => khataBalance(c.id) > 0,
-      msg: (first, c) => `${first} ji, a gentle reminder — ${fmt(khataBalance(c.id))} is due on your khata at ${state.bizName}. Pay via UPI anytime. Dhanyavaad!` },
+      msg: (first, c) => `${first} ji, a gentle reminder, ${fmt(khataBalance(c.id))} is due on your khata at ${state.bizName}. Pay via UPI anytime. Dhanyavaad!` },
     { id: "miss",   name: "We miss you",         audLabel: "At-risk · 14+ days away", aud: (c) => c.lastSeenDays >= 14,
-      msg: (first) => `Namaste ${first}! We haven't seen you in a while — show this message for a free ${state.catalog[0].name} on us. — ${state.bizName}` },
+      msg: (first) => `Namaste ${first}! We haven't seen you in a while, show this message for a free ${state.catalog[0].name} on us., ${state.bizName}` },
     { id: "new",    name: "New arrival shoutout", audLabel: "All customers",          aud: () => true,
-      msg: (first) => `${first}, just in at ${state.bizName}: ${newestItemName()}! Fresh stock — come grab yours before it runs out.` },
+      msg: (first) => `${first}, just in at ${state.bizName}: ${newestItemName()}! Fresh stock, come grab yours before it runs out.` },
     { id: "fest",   name: "Festival offer",       audLabel: "All customers",          aud: () => true,
       msg: () => `Festive dhamaka at ${state.bizName}! Flat 10% off this weekend. Bring a friend along!` },
     { id: "disc", name: "Regulars discount day", audLabel: "Regulars · 10+ visits",  aud: (c) => c.visits >= 10,
-      msg: (first) => `${first}, you're one of our regulars — show this message tomorrow for an extra 5% off at the counter. See you!` },
+      msg: (first) => `${first}, you're one of our regulars, show this message tomorrow for an extra 5% off at the counter. See you!` },
   ];
   function tplMsg(tpl, first, c) {
     const custom = (state.waTemplates && state.waTemplates[tpl.id] || "").trim();
@@ -9925,7 +9931,7 @@ function renderSettings() {
      payment is one tap away (Link Pay rail) */
   function khataPayLink(c) {
     const due = khataBalance(c.id);
-    return `upi://pay?pa=${encodeURIComponent(shopVpa())}&pn=${encodeURIComponent(state.bizName)}&am=${(due / 100).toFixed(2)}&cu=INR&tn=${encodeURIComponent("Khata payment — " + c.name)}`;
+    return `upi://pay?pa=${encodeURIComponent(shopVpa())}&pn=${encodeURIComponent(state.bizName)}&am=${(due / 100).toFixed(2)}&cu=INR&tn=${encodeURIComponent("Khata payment, " + c.name)}`;
   }
   function campComposedMsg() {
     const base = $("#camp-f-msg").value;
@@ -10040,7 +10046,7 @@ function renderSettings() {
       const btn = $("#camp-send");
       if (!campArm) {
         campArm = true;
-        btn.textContent = `Tap again — send to ${campSel.size} customer${campSel.size === 1 ? "" : "s"}`;
+        btn.textContent = `Tap again, send to ${campSel.size} customer${campSel.size === 1 ? "" : "s"}`;
         clearTimeout(campArmTimer);
         campArmTimer = setTimeout(() => { campArm = false; btn.textContent = "Send campaign (simulated)"; }, 3000);
         return;
@@ -10104,7 +10110,7 @@ function renderSettings() {
     const [hook, offerLine, cta] = g[studio.lang].map((t) => t.replaceAll("{shop}", shop));
     const offer = ($("#st-prompt").value || "").trim() || offerLine;
     const tag = (shop || "shop").replace(/[^A-Za-z]/g, "");
-    const caption = `${hook} — ${offer}. ${shop}. ${cta}.`;
+    const caption = `${hook}, ${offer}. ${shop}. ${cta}.`;
     const wa = `${hook}\n${offer}\n${cta} · ${shop}` + (studio.fmt === "ad" ? "\nReply YES to order" : "");
     return { glyph: g.glyph, hook, offer, cta, shop, caption, wa, tags: `#${tag} #${(MCC_STORES[state.mcc].label || "shop").replace(/[^A-Za-z]/g, "")} #Offer`, goal: studio.goal, fmt: studio.fmt };
   }
@@ -10392,7 +10398,7 @@ function renderSettings() {
     $("#store-f-name").value = "";
     $("#store-add-form").hidden = true;
     persistState(); renderStoresSettings(); renderStorePill();
-    toast(`Store added — ${name}`);
+    toast(`Store added, ${name}`);
   });
 
   /* ---------- khata: add customer inline ---------- */
@@ -10442,9 +10448,9 @@ function renderSettings() {
       if (diff > 0) msg = `Added ${fmt(added)} of ${fmt(target)} · ${fmt(diff)} to go`;
       else if (diff < 0) { msg = `${fmt(added)} of ${fmt(target)} · ${fmt(-diff)} over target`; cls += " over"; }
       else { msg = `Matched ${fmt(target)} exactly`; cls += " ok"; }
-    } else if (target > 0) msg = `Target ${fmt(target)} — tap items below to build the bill`;
-    else if (added > 0) msg = `Items ${fmt(added)} — key an amount to set a target`;
-    else msg = "Key an amount, then tap items — or charge the amount alone";
+    } else if (target > 0) msg = `Target ${fmt(target)}, tap items below to build the bill`;
+    else if (added > 0) msg = `Items ${fmt(added)}, key an amount to set a target`;
+    else msg = "Key an amount, then tap items, or charge the amount alone";
     prog.textContent = msg;
     prog.className = cls;
   }
@@ -10762,7 +10768,7 @@ function renderSettings() {
     const chat = $("#wa-chat");
     const sample = waSampleText();
     chat.innerHTML = "";
-    const msg = waBubble("in", `Namaste! ${sample} — ghar pe bhej dena, paisa UPI kar dunga`);
+    const msg = waBubble("in", `Namaste! ${sample}, ghar pe bhej dena, paisa UPI kar dunga`);
     msg.appendChild(el("small", null, `from ${WA_SENDER}`));
     chat.appendChild(msg);
     const pin = waBubble("in", "Location pinned on Google Maps");
@@ -11155,7 +11161,7 @@ function renderSettings() {
       { id: "kh-2", custId: "c7", desc: `2× ${I[ci(2)].name}`, amount: amt(2, 2), type: "credit", date: dAgo(24) },
       { id: "kh-3", custId: "c5", desc: "Udhaar",              amount: 15000,     type: "credit", date: dAgo(12) },
       { id: "kh-4", custId: "c5", desc: "Settled (UPI)",       amount: 15000,     type: "paid",   date: dAgo(5)  },
-      { id: "kh-5", custId: "c3", desc: `Bulk order — ${I[ci(2)].name} ×10`, amount: amt(2, 10), type: "credit", date: dAgo(2) },
+      { id: "kh-5", custId: "c3", desc: `Bulk order, ${I[ci(2)].name} ×10`, amount: amt(2, 10), type: "credit", date: dAgo(2) },
     );
 
     // static-QR payments — soundbox heard them, recon engine works out the items
@@ -11205,7 +11211,7 @@ function renderSettings() {
     supB.total += settledPo.total;
     state.supEntries.unshift(
       { id: "se-seed-b1", supplierId: supB.id, type: "credit", amount: settledPo.total, desc: `${settledPo.qty}× ${settledPo.name} @ ${fmt(settledPo.rate)}`, date: settledPo.date },
-      { id: "se-seed-b2", supplierId: supB.id, type: "paid", amount: settledPo.total, desc: "Settled earlier — bill paid in advance", date: mAgo(5900) },
+      { id: "se-seed-b2", supplierId: supB.id, type: "paid", amount: settledPo.total, desc: "Settled earlier, bill paid in advance", date: mAgo(5900) },
     );
     state.suppliers.push(supA, supB);
     state.supPay.push({ id: "sp-seed-1", supplierId: supB.id, name: supB.name, amt: 40000, date: mAgo(5900) });
@@ -11225,7 +11231,7 @@ function renderSettings() {
     // cash drawer — day already started with a float
     state.drawer = { day: new Date().toDateString(), float: 50000, entries: [
       { type: "in", amt: 20000, note: "Change money from owner", date: mAgo(300) },
-      { type: "out", amt: 12000, note: "Petty expense — morning", date: mAgo(120) },
+      { type: "out", amt: 12000, note: "Petty expense, morning", date: mAgo(120) },
     ], z: null };
 
     // team + a believable activity trail
@@ -11456,7 +11462,7 @@ function renderSettings() {
     const banner = $("#ob-reg-banner");
     if (state.regMcc && state.regMcc === state.mcc && state.auth.mobile) {
       banner.hidden = false;
-      banner.textContent = `${MCC_STORES[state.regMcc].label} auto-selected — matched to your ${state.regVia || "QR code"} registration from submitted documents. Change it anytime.`;
+      banner.textContent = `${MCC_STORES[state.regMcc].label} auto-selected, matched to your ${state.regVia || "QR code"} registration from submitted documents. Change it anytime.`;
     } else banner.hidden = true;
   }
 
@@ -11491,7 +11497,7 @@ function renderSettings() {
     sugg.forEach((it) => mkChip(it, false));
     cust.forEach((it) => mkChip(it, true));
     if (!sugg.length && !cust.length)
-      grid.appendChild(el("p", "tx-empty", "No items match — try voice: \u201ccold drink 40 rupaye\u201d to add your own."));
+      grid.appendChild(el("p", "tx-empty", "No items match, try voice: \u201ccold drink 40 rupaye\u201d to add your own."));
     const n = state.myItemIds.length;
     const next = $("#ob-next");
     next.textContent = "Continue";
@@ -12108,7 +12114,7 @@ function renderSettings() {
       lines.push({ item: it, qty: Math.max(1, Math.min(99, qty)) });
     });
     if (!cust) return hlPush("bot", `Who should I bill? Say “invoice <customer name>”, like “invoice ${(state.customers[0] || { name: "Meena" }).name.toLowerCase()} 2 ${state.catalog[0].name.toLowerCase()}”.`);
-    if (!lines.length) return hlPush("bot", `No items matched in “${raw}” — name what ${cust.name.split(" ")[0]} took, like “2 ${state.catalog[0].name.toLowerCase()}”.`);
+    if (!lines.length) return hlPush("bot", `No items matched in “${raw}”, name what ${cust.name.split(" ")[0]} took, like “2 ${state.catalog[0].name.toLowerCase()}”.`);
     const amount = lines.reduce((a, l) => a + l.item.price * l.qty, 0);
     const due = new Date(Date.now() + state.invDueDays * 86400000);
     const num = "INV-" + String(state.invSeq++).padStart(4, "0");
@@ -12261,7 +12267,7 @@ function renderSettings() {
         : `DM-DUKAAN: Your DukaanOS login OTP is `);
     const code = el("strong", null, state.auth.otp);
     const tail = el("span", null, ch === "wa" ? `. Valid for 10 minutes. Do not share it with anyone.` : `. Valid 10 min. Never share it.`);
-    const hint = el("small", null, "Demo — no real message is sent. Tap the bubble to autofill.");
+    const hint = el("small", null, "Demo, no real message is sent. Tap the bubble to autofill.");
     const fill = el("span", "otp-fill", "Tap to autofill");
     bubble.append(body, code, tail, hint, fill);
     const wrap = $("#otp-demo");
@@ -12314,11 +12320,11 @@ function renderSettings() {
     authEl.hidden = true;
     if (profile) {
       hydrateMerchant(state.auth.mobile, profile);
-      toast(`Welcome back, ${(profile.owner || "").split(" ")[0] || "ji"} — ${profile.bizName} loaded`);
+      toast(`Welcome back, ${(profile.owner || "").split(" ")[0] || "ji"}, ${profile.bizName} loaded`);
       goRoot("register");
     } else {
       state.ownerName = null;
-      toast("New number — let's set up your shop");
+      toast("New number, let's set up your shop");
       openOnboarding(1);
     }
   }
