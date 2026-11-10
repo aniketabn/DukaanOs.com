@@ -137,6 +137,28 @@ const server = http.createServer(async (req, res) => {
       return send(res, 200, { events: stmt.listEvents.all(m, limit) });
     }
 
+    // CSV export of one shop's events (opens in Excel / Google Sheets). Protected by the same read key.
+    if (req.method === "GET" && url.pathname === "/api/events.csv") {
+      const m = url.searchParams.get("mobile");
+      if (!isMobile(m)) return send(res, 400, { error: "mobile required" });
+      const limit = Math.min(Number(url.searchParams.get("limit") || 5000), 20000);
+      const rows = stmt.listEvents.all(m, limit);
+      const cell = (v) => {
+        const s = v == null ? "" : String(v);
+        return /[",\r\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+      };
+      const header = ["time_utc", "session_id", "who", "category", "what", "device_id", "ip"];
+      const lines = [header.join(",")].concat(
+        rows.map((r) => [r.ts, r.session_id, r.who, r.cat, r.what, r.device_id, r.ip].map(cell).join(","))
+      );
+      res.writeHead(200, {
+        "content-type": "text/csv; charset=utf-8",
+        "content-disposition": `attachment; filename="dukaanos-events-${m}.csv"`,
+        "access-control-allow-origin": CORS_ORIGIN,
+      });
+      return res.end("﻿" + lines.join("\r\n") + "\r\n");
+    }
+
     return send(res, 404, { error: "no such route" });
   } catch (e) {
     return send(res, 400, { error: String(e.message || e) });
