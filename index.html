@@ -5393,7 +5393,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
         if (lpFired) { lpFired = false; return; }
         const go = () => {
           if (item.price == null) { openItemSheet(item); return; }
-          if (state.stock[item.id] === 0) { toast(`${item.name} is out of stock, hold to edit or restock`); return; }
+          if (state.stock[item.id] === 0) toast(`${item.name} is not in stock, billed anyway`);
           addToCart({ key: item.id, name: item.name, price: item.price });
         };
         if (item.skuSearch) askOpeningQty(item, go); else go();
@@ -5536,7 +5536,7 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
       if (viaCamera) setScanStatus("Barcode not in your catalog, check the code");
       return;
     }
-    if (state.stock[pick.id] === 0) { toast(`${pick.name} is out of stock`); if (viaCamera) setScanStatus("That item is out of stock, scan another"); return; }
+    if (state.stock[pick.id] === 0) toast(`${pick.name} is not in stock, billed anyway`);
     stopScanner();
     closeSheetEl();
     addToCart({ key: pick.id, name: pick.name, price: pick.price });
