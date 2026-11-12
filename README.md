@@ -19,5 +19,4 @@ Open `index.html` in a browser. No install or server is needed.
 3. The site is served at the Pages URL. The `data/` folder must stay next to `index.html`.
 
 ## Notes
-- Demo login: phone `98765 43210`, OTP is shown on screen.
 - Payments, WhatsApp delivery and partner delivery status are simulated. Real use needs the provider APIs.
