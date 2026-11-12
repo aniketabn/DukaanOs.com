@@ -3321,6 +3321,30 @@ button.sheet-empty:active{transform:scale(.98)}
             <span>Customer name</span>
             <input id="tag-f-name" type="text" maxlength="26" autocomplete="off" placeholder="e.g. Arjun Mehta">
           </label>
+          <div class="form-2col">
+            <label class="ob-field">
+              <span>Mobile <small style="text-transform:none;letter-spacing:0;font-weight:400">optional</small></span>
+              <input id="tag-f-mobile" type="tel" inputmode="numeric" maxlength="10" autocomplete="off" placeholder="98XXXXXXXX">
+            </label>
+            <label class="ob-field">
+              <span>Birthday <small style="text-transform:none;letter-spacing:0;font-weight:400">optional</small></span>
+              <input id="tag-f-bday" type="text" inputmode="numeric" maxlength="5" autocomplete="off" placeholder="DD/MM">
+            </label>
+          </div>
+          <div class="form-2col">
+            <label class="ob-field">
+              <span>Area / neighbourhood <small style="text-transform:none;letter-spacing:0;font-weight:400">optional</small></span>
+              <input id="tag-f-area" type="text" maxlength="24" autocomplete="off" placeholder="e.g. Gandhi Chowk">
+            </label>
+            <label class="ob-field">
+              <span>Credit limit (₹) <small style="text-transform:none;letter-spacing:0;font-weight:400">optional</small></span>
+              <input id="tag-f-limit" type="text" inputmode="numeric" maxlength="6" autocomplete="off" placeholder="e.g. 2000">
+            </label>
+          </div>
+          <label class="ob-field">
+            <span>Note <small style="text-transform:none;letter-spacing:0;font-weight:400">optional</small></span>
+            <input id="tag-f-note" type="text" maxlength="40" autocomplete="off" placeholder="e.g. likes less sugar">
+          </label>
           <small class="set-hint">Next time this UPI id pays at your counter, the sale tags itself, no typing, no phone number needed.</small>
           <button class="charge-btn" id="tag-f-save">Tag customer</button>
           <button class="ghost-btn" id="tag-f-skip">Skip for now</button>
@@ -6062,12 +6086,13 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
     tagCtx = { vpa, txId: tx ? tx.id : null };
     $("#tag-vpa").textContent = vpa;
     $("#tag-f-name").value = guessNameFromVpa(vpa);
+    ["#tag-f-mobile", "#tag-f-bday", "#tag-f-area", "#tag-f-limit", "#tag-f-note"].forEach((s) => { $(s).value = ""; });
     openSheetElFn($("#tag-sheet"));
   }
   $("#tag-f-save").addEventListener("click", () => {
-    const name = $("#tag-f-name").value.trim();
-    if (!name) { toast("Give the customer a name"); return; }
-    const c = createCustomer(name, tagCtx.vpa);
+    const d = readCustFields("#tag-f-");
+    if (!d) return;
+    const c = createCustomer(d.name, tagCtx.vpa, d);
     state.transactions.forEach((t2) => {
       if (t2.payerVpa === tagCtx.vpa && !t2.customerId) {
         t2.customerId = c.id;
@@ -7194,6 +7219,10 @@ var QRCode;!function(){function a(a){this.mode=c.MODE_8BIT_BYTE,this.data=a,this
     if (c.area) metaBits.push(c.area);
     ht.append(el("strong", null, c.name), el("small", null, metaBits.join(" · ")));
     hero.append(av, ht);
+    const missing = !c.mobile || !c.area || !c.creditLimit || !c.vpa;
+    const editBtn = el("button", "ghost-btn ghost-sm", missing ? "Add missing details" : "Edit details");
+    editBtn.addEventListener("click", () => openCustEdit(c));
+    hero.appendChild(editBtn);
     if (c.bday || c.note || c.creditLimit) {
       const extra = el("div", "cust-extra");
       if (c.bday) extra.append(el("span", "cust-tag", "🎂 " + c.bday));
@@ -8868,7 +8897,61 @@ function renderSettings() {
   }
     /* add customer sheet — full details a small business needs */
   let custAddLink = null; // optional tx to link after saving
+  let custEditId = null;  // set when the same sheet edits an existing customer
+  function readCustFields(p) {
+    const val = (k) => ($(p + k) ? $(p + k).value.trim() : "");
+    const name = val("name");
+    if (!name) { toast("Customer name is required"); return null; }
+    const mobile = val("mobile");
+    if (mobile && !/^\d{10}$/.test(mobile)) { toast("Mobile should be 10 digits"); return null; }
+    const bday = val("bday");
+    if (bday && !/^\d{1,2}\/\d{1,2}$/.test(bday)) { toast("Birthday as DD/MM, e.g. 12/11"); return null; }
+    const limitIn = parseFloat(val("limit"));
+    return {
+      name, mobile: mobile || null, bday: bday || null,
+      area: val("area") || null, note: val("note") || null,
+      creditLimit: limitIn > 0 ? Math.round(limitIn * 100) : null,
+      vpa: p === "#ca-f-" ? (val("vpa") || null) : null,
+    };
+  }
+  function openCustEdit(c) {
+    custEditId = c.id;
+    custAddLink = null;
+    $("#ca-f-name").value = c.name;
+    $("#ca-f-mobile").value = c.mobile || "";
+    $("#ca-f-bday").value = c.bday || "";
+    $("#ca-f-vpa").value = c.vpa || "";
+    $("#ca-f-area").value = c.area || "";
+    $("#ca-f-note").value = c.note || "";
+    $("#ca-f-limit").value = c.creditLimit ? String(Math.round(c.creditLimit / 100)) : "";
+    $("#custadd-sheet .sheet-head span").textContent = "Edit customer";
+    $("#ca-f-save").textContent = "Save details";
+    openSheetElFn($("#custadd-sheet"));
+    setTimeout(() => $("#ca-f-name").focus(), 250);
+  }
+  function saveCustEdit() {
+    const c = state.customers.find((x) => x.id === custEditId);
+    custEditId = null;
+    const d = readCustFields("#ca-f-");
+    if (!c) { closeSheetEl(); return; }
+    if (!d) { custEditId = c.id; return; }
+    c.name = titleCase(d.name);
+    c.initials = d.name.split(/\s+/).map((w) => w[0]).join("").slice(0, 2).toUpperCase();
+    c.mobile = d.mobile; c.bday = d.bday; c.area = d.area; c.note = d.note; c.creditLimit = d.creditLimit;
+    if (d.vpa && d.vpa !== c.vpa) {
+      if (c.vpa && state.payers[c.vpa] === c.id) delete state.payers[c.vpa];
+      c.vpa = d.vpa;
+      state.payers[d.vpa] = c.id;
+    }
+    persistState();
+    closeSheetEl();
+    renderCustomers(); renderAnalytics(); renderDashboard();
+    openCustomer(c);
+    toast(`${c.name} details saved`);
+  }
   function openCustAdd(linkTx) {
+    custEditId = null;
+    $("#custadd-sheet .sheet-head span").textContent = "Add customer";
     custAddLink = linkTx || null;
     ["#ca-f-name", "#ca-f-mobile", "#ca-f-vpa", "#ca-f-area", "#ca-f-note", "#ca-f-limit"].forEach((s) => { $(s).value = ""; });
     $("#ca-f-bday").value = "";
@@ -8877,6 +8960,7 @@ function renderSettings() {
     setTimeout(() => $("#ca-f-name").focus(), 250);
   }
   $("#ca-f-save").addEventListener("click", () => {
+    if (custEditId) { saveCustEdit(); return; }
     const name = $("#ca-f-name").value.trim();
     if (!name) { toast("Customer name is required"); return; }
     const mobile = $("#ca-f-mobile").value.trim();
