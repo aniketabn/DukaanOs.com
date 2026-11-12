@@ -12415,6 +12415,7 @@ function renderSettings() {
   let resendTimer = null;
 
   function authGo(step) {
+    if (step !== 2) abortWebOtp();
     document.querySelectorAll("[data-astep]").forEach((s) => s.classList.toggle("is-on", +s.dataset.astep === step));
     $("#auth-back").hidden = step === 1;
     $("#auth-next").textContent = step === 1 ? "Send OTP" : "Verify & login";
@@ -12479,7 +12480,31 @@ function renderSettings() {
     renderOtpDemo();
     startResendTimer();
     authGo(2);
+    startWebOtp();
     toast(`OTP sent on ${state.auth.channel === "wa" ? "WhatsApp" : "SMS"}`);
+  }
+
+  /* SMS auto-fill via the Web OTP API (Chrome on Android). WhatsApp codes cannot be read this way,
+     and the demo bubble above stays as the tap-to-fill path. Any failure leaves manual entry working. */
+  let otpAbort = null;
+  function abortWebOtp() {
+    if (otpAbort) { otpAbort.abort(); otpAbort = null; }
+  }
+  function startWebOtp() {
+    abortWebOtp();
+    if (!("OTPCredential" in window) || !navigator.credentials || state.auth.channel !== "sms") return;
+    const ctl = new AbortController();
+    otpAbort = ctl;
+    navigator.credentials.get({ otp: { transport: ["sms"] }, signal: ctl.signal })
+      .then((cred) => {
+        if (otpAbort !== ctl || !cred || !cred.code) return;
+        otpAbort = null;
+        const digits = String(cred.code).replace(/\D/g, "").slice(0, 4);
+        if (digits.length < 4) return;
+        digits.split("").forEach((d, j) => { otpBoxes[j].value = d; });
+        if (document.querySelector('[data-astep="2"]').classList.contains("is-on")) verifyOtp();
+      })
+      .catch(() => { if (otpAbort === ctl) otpAbort = null; });
   }
 
   function verifyOtp() {
@@ -12493,6 +12518,7 @@ function renderSettings() {
     }
     $("#auth-err").hidden = true;
     clearInterval(resendTimer);
+    abortWebOtp();
     const reg = loadRegistry();
     const profile = reg[state.auth.mobile];
     try { localStorage.setItem(LS_SESSION, state.auth.mobile); } catch (_) { /* private mode */ }
@@ -12547,6 +12573,7 @@ function renderSettings() {
     state.auth.otp = String(1000 + Math.floor(Math.random() * 9000));
     renderOtpDemo();
     startResendTimer();
+    startWebOtp();
     toast("OTP resent");
   });
   $("#auth-phone").addEventListener("input", (e) => {
