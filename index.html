@@ -3530,7 +3530,6 @@ button.sheet-empty:active{transform:scale(.98)}
                 <button class="seg" data-ch="sms">SMS</button>
               </div>
             </div>
-            <button class="ob-skiplink" id="auth-demo">Use the demo account · 98765 43210</button>
           </section>
 
           <section class="ostep ostep-center" data-astep="2">
@@ -12549,10 +12548,6 @@ function renderSettings() {
     renderOtpDemo();
     startResendTimer();
     toast("OTP resent");
-  });
-  $("#auth-demo").addEventListener("click", () => {
-    $("#auth-phone").value = "9876543210";
-    sendOtp();
   });
   $("#auth-phone").addEventListener("input", (e) => {
     e.target.value = e.target.value.replace(/\D/g, "").slice(0, 10);
